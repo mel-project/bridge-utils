@@ -24,30 +24,6 @@ fn main() {
     submit_header_and_verify_tx();
 }
 
-fn create_smt_proof(tx_hash: &[u8; 32]) -> [u8; 32 * 256] {
-    let proof = &mut [0u8; 32 * 256];
-    let mut hash = tx_hash.clone();
-    let zero = [0u8; 32];
-
-    for i in 0..256 {
-        let mut buf = [0u8; 64];
-        for bit in (0..8).rev() {
-            if tx_hash[i/8] >> bit & 1 == 0 {
-                buf[..32].copy_from_slice(&hash);
-                buf[32..].copy_from_slice(&zero);
-                hash = *blake3::keyed_hash(blake3::hash(NODE_HASH_KEY).as_bytes(), &buf).as_bytes();
-                proof[i * 32..(i + 1) * 32].copy_from_slice(&hash);
-            } else {
-                buf[..32].copy_from_slice(&zero);
-                buf[32..].copy_from_slice(&hash);
-                hash = *blake3::keyed_hash(blake3::hash(NODE_HASH_KEY).as_bytes(), &buf).as_bytes();
-                proof[i *32..(i + 1) * 32].copy_from_slice(&hash);
-            }
-        }
-    }
-    *proof
-}
-
 fn create_datablocks(num: u8) -> Vec<Transaction> {
     let mut datablocks: Vec<Transaction> = Vec::new();
 
