@@ -1,0 +1,17 @@
+[package]
+name = "bridge_utils"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+blake3 = "1.2.0"
+stdcode = "0.1.2"
+themelio-stf = "0.7.2"
+tmelcrypt = "0.2.3"
+hex = "0.4.3"
+rs_merkle = "1.1.0"
+rand = "0.8.4"
+sha3 = "0.9.1"
+hex-literal = "0.3.1"
