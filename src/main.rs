@@ -24,16 +24,16 @@ fn main() {
     submit_header_and_verify_tx();
 }
 
-fn create_datablocks(num: u8) -> Vec<Transaction> {
+fn create_datablocks(num: u32) -> Vec<Transaction> {
     let mut datablocks: Vec<Transaction> = Vec::new();
 
-    for i in 0..num {
+    for _i in 0..num {
         datablocks.push(
             Transaction {
                 kind: TxKind::Swap,
                 inputs: vec![ CoinID {
                     txhash: TxHash(HashVal::random()),
-                    index: i
+                    index: rand::thread_rng().gen(),
                 }],
                 outputs: vec![ CoinData {
                     covhash: Address(HashVal::random()),
@@ -152,7 +152,7 @@ fn submit_header_and_verify_tx() {
     std::io::stdin()
         .read_line(&mut num_datablocks)
         .expect("Failed to read line.");
-    let num_datablocks: u8 = num_datablocks.trim().parse().expect("Please type a number.");
+    let num_datablocks: u32 = num_datablocks.trim().parse().expect("Please type a number.");
 
     // create required number of random Transaction type datablocks to turn into leaves
     let datablocks = create_datablocks(num_datablocks);
@@ -163,7 +163,7 @@ fn submit_header_and_verify_tx() {
 
     // use leaves to create Merkle tree and extract a random datablock to create its proof
     let merkle_tree = MerkleTree::<Blake3Algorithm>::from_leaves(&leaves);
-    let index: usize = rand::thread_rng().gen_range(0..num_datablocks).into();
+    let index: usize = rand::thread_rng().gen_range(0..num_datablocks).try_into().unwrap();
     let datablock_to_prove = datablocks.get(index).ok_or("Can't get datablocks to prove.").unwrap();
     let merkle_proof = merkle_tree.proof(&vec![index]);
     let merkle_root = merkle_tree.root().ok_or("Couldn't get the merkle root.").unwrap();
@@ -185,16 +185,18 @@ fn submit_header_and_verify_tx() {
     
     // send `cast send <contract> <calldata>` to relayHeader()
     let output = Command::new("seth")
-        .args(["send", "0x55c07f4c92398ee2714dfe85d00871992802a628", "--password", "/home/marco/password", &calldata])
+        .args(["send", "0xd9741b289a7a00761a2edb16b793ece448efb374", "--password", "/home/marco/password", &calldata])
         .status()
         .expect("Failed to send tx to relayHeader()");
+    println!("{}", output);
 
     // encode raw_tx, tx_index, block_height, and proof
     let (datablock, index, height, proof) = format_verify_tx_args(datablock_to_prove, index, header.height, merkle_proof);
     
     // send RPC to verifyTx()
     let output = Command::new("seth")
-        .args(["send", "0x55c07f4c92398ee2714dfe85d00871992802a628", "--password", "/home/marco/password", "verifyTx(bytes,uint256,uint256,bytes32[])", &datablock, &index, &height, &proof])
+        .args(["send", "0xd9741b289a7a00761a2edb16b793ece448efb374", "--password", "/home/marco/password", "verifyTx(bytes,uint256,uint256,bytes32[])", &datablock, &index, &height, &proof])
         .status()
         .expect("Failed to send tx to verifyTx()");
+    println!("{}", output);
 }
