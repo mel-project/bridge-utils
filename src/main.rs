@@ -127,18 +127,18 @@ fn format_verify_tx_args(
 ) -> (String, String, String, String) {
     let serialized_datablock = String::from("0x") + &hex::encode(stdcode::serialize(datablock_to_prove).unwrap());
     let height = height.to_string();
-    let proof = hex::encode(merkle_proof.to_bytes());
-    let mut proof = proof
-    .chars()
-    .collect::<Vec<char>>()
-    .chunks(64)
-    .map(|c| c.iter().collect::<String>())
-    .collect::<Vec<String>>()
-    .join(",0x");
+    let mut proof = hex::encode(merkle_proof.to_bytes());
 
     if proof.len() == 0 {
         proof = format!("[{}]", proof);
     } else {
+        proof = proof
+            .chars()
+            .collect::<Vec<char>>()
+            .chunks(64)
+            .map(|c| c.iter().collect::<String>())
+            .collect::<Vec<String>>()
+            .join(",0x");
         proof = format!("[0x{}]", proof);
     }
 
