@@ -1,11 +1,12 @@
 use std::{str::FromStr, process::Command};
 use std::ops;
+use std::process::ExitStatus;
 
 use blake3;
 use rand::Rng;
 use rayon::iter::{IntoParallelIterator, ParallelIterator};
 use rs_merkle::{MerkleTree, MerkleProof, Hasher};
-use sha3::Digest;
+use sha3::{Digest, Keccak256};
 use themelio_structs::{Address, CoinData, CoinID, Denom, Header, NetID, BlockHeight, CoinValue, Transaction, TxKind, TxHash};
 use tmelcrypt::HashVal;
 
@@ -49,7 +50,7 @@ fn create_datablocks(num: u32) -> Vec<Transaction> {
 
         let covenants: Vec<Vec<u8>> = vec![vec![rand::thread_rng().gen()]];
 
-        let sigs = vec![vec![rand::thread_rng().gen()]];
+        let sigs: Vec<Vec<u8>> = vec![vec![rand::thread_rng().gen()]];
 
         Transaction {
             kind: TxKind::Swap,
@@ -82,33 +83,33 @@ fn random_header() -> Header {
 
 fn encode_header(header: Header) -> String {
     let network: u8 = header.network.into();
-    let network = hex::encode([network]);
-    let network = format!("{:0<64}", network);
+    let network: String = hex::encode([network]);
+    let network: String = format!("{:0<64}", network);
 
     let previous = header.previous.to_string();
 
-    let height = header.height.to_string();
-    let height = format!("{:0>64}", height);
+    let height: String = header.height.to_string();
+    let height: String = format!("{:0>64}", height);
 
-    let history_hash = header.history_hash.to_string();
-    let coins_hash = header.coins_hash.to_string();
-    let transactions_hash = header.transactions_hash.to_string();
+    let history_hash: String = header.history_hash.to_string();
+    let coins_hash: String = header.coins_hash.to_string();
+    let transactions_hash: String = header.transactions_hash.to_string();
 
-    let fee_pool = header.fee_pool.to_string();
-    let fee_pool = format!("{:0>64}", (fee_pool));
-    let fee_pool = fee_pool.replace(".", "0");
+    let fee_pool: String = header.fee_pool.to_string();
+    let fee_pool: String = format!("{:0>64}", (fee_pool));
+    let fee_pool: String = fee_pool.replace(".", "0");
 
-    let fee_multiplier = header.fee_multiplier.to_string();
-    let fee_multiplier = format!("{:0>64}", fee_multiplier);
+    let fee_multiplier: String = header.fee_multiplier.to_string();
+    let fee_multiplier: String = format!("{:0>64}", fee_multiplier);
 
-    let dosc_speed = header.dosc_speed.to_string();
-    let dosc_speed = format!("{:0>64}", dosc_speed);
+    let dosc_speed: String = header.dosc_speed.to_string();
+    let dosc_speed: String = format!("{:0>64}", dosc_speed);
 
-    let pools_hash = header.pools_hash.to_string();
-    let stakes_hash = header.stakes_hash.to_string();
+    let pools_hash: String = header.pools_hash.to_string();
+    let stakes_hash: String = header.stakes_hash.to_string();
 
-    let address = &String::from(hex::encode(HashVal::random()))[0..40];
-    let address = format!("{:0>64}", address);
+    let address: &str = &String::from(hex::encode(HashVal::random()))[0..40];
+    let address: String = format!("{:0>64}", address);
 
     format!(
         "{}{}{}{}{}{}{}{}{}{}{}{}",
@@ -133,11 +134,12 @@ fn format_verify_tx_args(
     height: BlockHeight,
     merkle_proof: MerkleProof<Blake3Algorithm>
 ) -> (String, String, String, String) {
-    let serialized_datablock = String::from("0x") + &hex::encode(stdcode::serialize(datablock_to_prove).unwrap());
-    let height = height.to_string();
-    let mut proof = hex::encode(merkle_proof.to_bytes());
+    let serialized_datablock: String = String::from("0x") + &hex::encode(stdcode::serialize(datablock_to_prove).unwrap());
+    let height: String = height.to_string();
 
-    if proof.len() == 0 {
+    let mut proof: String = hex::encode(merkle_proof.to_bytes());
+
+    if proof.is_empty() {
         proof = format!("[{}]", proof);
     } else {
         proof = proof
@@ -155,7 +157,7 @@ fn format_verify_tx_args(
 
 fn submit_header_and_verify_tx() {
     // Prompt user for number of leaves desired in Merkle tree
-    let mut num_datablocks = String::new();
+    let mut num_datablocks: String = String::new();
     println!("How many leaves?:");
     std::io::stdin()
         .read_line(&mut num_datablocks)
@@ -163,46 +165,46 @@ fn submit_header_and_verify_tx() {
     let num_datablocks: u32 = num_datablocks.trim().parse().expect("Please type a number.");
 
     // create required number of random Transaction type datablocks to turn into leaves
-    let datablocks = create_datablocks(num_datablocks);
+    let datablocks: Vec<Transaction> = create_datablocks(num_datablocks);
     let leaves: Vec<[u8; 32]> = datablocks
         .iter()
         .map(|x| *blake3::keyed_hash(blake3::hash(DATA_BLOCK_HASH_KEY).as_bytes(), &stdcode::serialize(&x).unwrap()).as_bytes())
         .collect();
 
     // use leaves to create Merkle tree and extract a random datablock to create its proof
-    let merkle_tree = MerkleTree::<Blake3Algorithm>::from_leaves(&leaves);
+    let merkle_tree: MerkleTree<Blake3Algorithm> = MerkleTree::<Blake3Algorithm>::from_leaves(&leaves);
     let index: usize = rand::thread_rng().gen_range(0..num_datablocks).try_into().unwrap();
-    let datablock_to_prove = datablocks.get(index).ok_or("Can't get datablocks to prove.").unwrap();
-    let merkle_proof = merkle_tree.proof(&vec![index]);
-    let merkle_root = merkle_tree.root().ok_or("Couldn't get the merkle root.").unwrap();
+    let datablock_to_prove: &Transaction = datablocks.get(index).ok_or("Can't get datablocks to prove.").unwrap();
+    let merkle_proof: MerkleProof<Blake3Algorithm> = merkle_tree.proof(&vec![index]);
+    let merkle_root: [u8; 32] = merkle_tree.root().ok_or("Couldn't get the merkle root.").expect("Fill in a reason");
 
     // hash function signature and save the first 4 bytes to derive function selector
-    let mut hasher = sha3::Keccak256::new();
+    let mut hasher: Keccak256 = sha3::Keccak256::new();
     let func_signature = "relayHeader((bytes1,bytes32,uint64,bytes32,bytes32,bytes32,uint128,uint128,uint128,bytes32,bytes32,address))";
     hasher.update(func_signature);
     let function_hash = hex::encode(hasher.finalize());
     let function_selector = &function_hash[0..8];
 
     // instantiate a random Header and save the merkle root of tree in header.transactions_hash for proof verification
-    let mut header = random_header();
+    let mut header: Header = random_header();
     header.transactions_hash = HashVal::from_str(&hex::encode(merkle_root)).unwrap();
 
     // encode header and format it and function selector into calldata
-    let encoded_header = encode_header(header);
-    let calldata = format!("{}{}{}", "0x", function_selector, encoded_header);
+    let encoded_header: String = encode_header(header);
+    let calldata: String = format!("{}{}{}", "0x", function_selector, encoded_header);
     
     // send `cast send <contract> <calldata>` to relayHeader()
-    let output = Command::new("seth")
+    let output: ExitStatus = Command::new("seth")
         .args(["send", "0xd9741b289a7a00761a2edb16b793ece448efb374", "--password", "/home/marco/password", &calldata])
         .status()
         .expect("Failed to send tx to relayHeader()");
     println!("{}", output);
 
     // encode raw_tx, tx_index, block_height, and proof
-    let (datablock, index, height, proof) = format_verify_tx_args(datablock_to_prove, index, header.height, merkle_proof);
+    let (datablock, index, height, proof): (String, String, String, String) = format_verify_tx_args(datablock_to_prove, index, header.height, merkle_proof);
     
     // send RPC to verifyTx()
-    let output = Command::new("seth")
+    let output: ExitStatus = Command::new("seth")
         .args(["send", "0xd9741b289a7a00761a2edb16b793ece448efb374", "--password", "/home/marco/password", "verifyTx(bytes,uint256,uint256,bytes32[])", &datablock, &index, &height, &proof])
         .status()
         .expect("Failed to send tx to verifyTx()");
