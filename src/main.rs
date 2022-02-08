@@ -3,6 +3,7 @@ use std::ops;
 
 use blake3;
 use rand::Rng;
+use rayon::iter::{IntoParallelIterator, ParallelIterator};
 use rs_merkle::{MerkleTree, MerkleProof, Hasher};
 use sha3::Digest;
 use themelio_structs::{Address, CoinData, CoinID, Denom, Header, NetID, BlockHeight, CoinValue, Transaction, TxKind, TxHash};
@@ -24,7 +25,7 @@ impl Hasher for Blake3Algorithm {
 fn create_datablocks(num: u32) -> Vec<Transaction> {
     let range: ops::Range<u32> = 0..num;
 
-    range.into_iter().map(|_index| {
+    range.into_par_iter().map(|_index| {
         let inputs: Vec<CoinID> = vec![ CoinID {
             txhash: TxHash(HashVal::random()),
             index: rand::thread_rng().gen(),
