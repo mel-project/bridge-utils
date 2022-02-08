@@ -22,76 +22,45 @@ impl Hasher for Blake3Algorithm {
 }
 
 fn create_datablocks(num: u32) -> Vec<Transaction> {
-    let mut datablocks: Vec<Transaction> = Vec::new();
+    let range: ops::Range<u32> = 0..num;
 
-    // thing.iter().map(|variable_name| do_things_here).collect::<Vec<Transaction>>()
-
-    // let range: ops::Range<u32> = 0..num;
-    //
-    // range.into_iter().for_each(|index| {
-    //     println!("{index}");
-    // });
-
-
-
-
-
-    // pub struct CoinData {
-    //     pub covhash: Address,
-    //     pub value: CoinValue,
-    //     pub denom: Denom,
-    //     pub additional_data: Vec<u8>,
-    // }
-
-
-    // pub struct Transaction {
-    //     pub kind: TxKind,
-    //     pub inputs: Vec<CoinID>,
-    //     pub outputs: Vec<CoinData>,
-    //     pub fee: CoinValue,
-    //     pub covenants: Vec<Vec<u8>>,
-    //     pub data: Vec<u8>,
-    //     pub sigs: Vec<Vec<u8>>,
-    // }
-
-    for _i in 0..num {
+    range.into_iter().map(|_index| {
         let inputs: Vec<CoinID> = vec![ CoinID {
             txhash: TxHash(HashVal::random()),
             index: rand::thread_rng().gen(),
         }];
 
-        let outputs: Vec<CoinData> = vec![ CoinData {
+        let output_one: CoinData = CoinData {
             covhash: Address(HashVal::random()),
             value: CoinValue(rand::thread_rng().gen()),
             denom: Denom::Mel,
             additional_data: vec![],
-        }, CoinData {
+        };
+
+        let output_two: CoinData = CoinData {
             covhash: Address(HashVal::random()),
             value: CoinValue(rand::thread_rng().gen()),
             denom: Denom::Mel,
             additional_data: vec![]
-        }];
+        };
+
+        let outputs: Vec<CoinData> = vec![output_one, output_two];
 
         let covenants: Vec<Vec<u8>> = vec![vec![rand::thread_rng().gen()]];
 
         let sigs = vec![vec![rand::thread_rng().gen()]];
 
-        datablocks.push(
-            Transaction {
-                kind: TxKind::Swap,
-                inputs,
-                outputs,
-                fee: CoinValue(rand::thread_rng().gen()),
-                covenants,
-                // scripts: vec![Covenant((0..162).map(|_| { rand::thread_rng().gen::<u8>() }).collect())],
-                data: (0..2).map(|_| { rand::thread_rng().gen::<u8>() }).collect(),
-                sigs,
-            }
-        );
-    }
+        Transaction {
+            kind: TxKind::Swap,
+            inputs,
+            outputs,
+            fee: CoinValue(rand::thread_rng().gen()),
+            covenants,
+            data: (0..2).map(|_| { rand::thread_rng().gen::<u8>() }).collect(),
+            sigs,
+        }
 
-
-    datablocks
+    }).collect::<Vec<Transaction>>()
 }
 
 fn random_header() -> Header {
