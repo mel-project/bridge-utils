@@ -1,11 +1,12 @@
-use themelio_stf::{Header, NetID, BlockHeight, CoinValue, Transaction, TxKind, TxHash, HexBytes, Denom};
-use tmelcrypt::HashVal;
 use std::{str::FromStr, process::Command};
-use themelio_stf::melvm::{Address, Covenant, CoinID, CoinData};
+use std::ops;
+
 use blake3;
-use rs_merkle::{MerkleTree, MerkleProof, Hasher};
 use rand::Rng;
+use rs_merkle::{MerkleTree, MerkleProof, Hasher};
 use sha3::Digest;
+use themelio_structs::{Address, CoinData, CoinID, Denom, Header, NetID, BlockHeight, CoinValue, Transaction, TxKind, TxHash};
+use tmelcrypt::HashVal;
 
 const DATA_BLOCK_HASH_KEY: &[u8; 13] = b"smt_datablock";
 const NODE_HASH_KEY: &[u8; 8] = b"smt_node";
@@ -20,39 +21,76 @@ impl Hasher for Blake3Algorithm {
     }
 }
 
-fn main() {
-    submit_header_and_verify_tx();
-}
-
 fn create_datablocks(num: u32) -> Vec<Transaction> {
     let mut datablocks: Vec<Transaction> = Vec::new();
 
+    // thing.iter().map(|variable_name| do_things_here).collect::<Vec<Transaction>>()
+
+    // let range: ops::Range<u32> = 0..num;
+    //
+    // range.into_iter().for_each(|index| {
+    //     println!("{index}");
+    // });
+
+
+
+
+
+    // pub struct CoinData {
+    //     pub covhash: Address,
+    //     pub value: CoinValue,
+    //     pub denom: Denom,
+    //     pub additional_data: Vec<u8>,
+    // }
+
+
+    // pub struct Transaction {
+    //     pub kind: TxKind,
+    //     pub inputs: Vec<CoinID>,
+    //     pub outputs: Vec<CoinData>,
+    //     pub fee: CoinValue,
+    //     pub covenants: Vec<Vec<u8>>,
+    //     pub data: Vec<u8>,
+    //     pub sigs: Vec<Vec<u8>>,
+    // }
+
     for _i in 0..num {
+        let inputs: Vec<CoinID> = vec![ CoinID {
+            txhash: TxHash(HashVal::random()),
+            index: rand::thread_rng().gen(),
+        }];
+
+        let outputs: Vec<CoinData> = vec![ CoinData {
+            covhash: Address(HashVal::random()),
+            value: CoinValue(rand::thread_rng().gen()),
+            denom: Denom::Mel,
+            additional_data: vec![],
+        }, CoinData {
+            covhash: Address(HashVal::random()),
+            value: CoinValue(rand::thread_rng().gen()),
+            denom: Denom::Mel,
+            additional_data: vec![]
+        }];
+
+        let covenants: Vec<Vec<u8>> = vec![vec![rand::thread_rng().gen()]];
+
+        let sigs = vec![vec![rand::thread_rng().gen()]];
+
         datablocks.push(
             Transaction {
                 kind: TxKind::Swap,
-                inputs: vec![ CoinID {
-                    txhash: TxHash(HashVal::random()),
-                    index: rand::thread_rng().gen(),
-                }],
-                outputs: vec![ CoinData {
-                    covhash: Address(HashVal::random()),
-                    value: CoinValue(rand::thread_rng().gen()),
-                    denom: Denom::Mel,
-                    additional_data: vec![],
-                }, CoinData {
-                    covhash: Address(HashVal::random()),
-                    value: CoinValue(rand::thread_rng().gen()),
-                    denom: Denom::Mel,
-                    additional_data: vec![]
-                }],
+                inputs,
+                outputs,
                 fee: CoinValue(rand::thread_rng().gen()),
-                scripts: vec![Covenant((0..162).map(|_| { rand::thread_rng().gen::<u8>() }).collect())],
+                covenants,
+                // scripts: vec![Covenant((0..162).map(|_| { rand::thread_rng().gen::<u8>() }).collect())],
                 data: (0..2).map(|_| { rand::thread_rng().gen::<u8>() }).collect(),
-                sigs: vec![HexBytes((0..128).map(|_| { rand::thread_rng().gen::<u8>() }).collect())]
+                sigs,
             }
         );
     }
+
+
     datablocks
 }
 
@@ -199,4 +237,8 @@ fn submit_header_and_verify_tx() {
         .status()
         .expect("Failed to send tx to verifyTx()");
     println!("{}", output);
+}
+
+fn main() {
+    submit_header_and_verify_tx();
 }
