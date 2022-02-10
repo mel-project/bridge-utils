@@ -1,14 +1,14 @@
 use std::{str::FromStr, process::Command};
+use std::convert::TryFrom;
 use std::ops;
 use std::process::ExitStatus;
 
 use blake3;
-use ethers::core::k256::ecdsa::SigningKey;
-use ethers::prelude::{Http, LocalWallet, Provider, SignerMiddleware, Wallet};
-use ethers::providers::Middleware;
-use ethers::utils::{Ganache, GanacheInstance};
-use ethers::signers::Signer;
-use ethers::types::{TransactionReceipt, TransactionRequest};
+//use ethers::core::k256::ecdsa::SigningKey;
+use ethers::providers::{Provider, Middleware, Http};
+use ethers::middleware::SignerMiddleware;
+use ethers::signers::{Signer, LocalWallet};
+use ethers::types::{Address as EthersAddress, TransactionReceipt, TransactionRequest};
 use rand::Rng;
 use rayon::iter::{IntoParallelIterator, ParallelIterator};
 use rs_merkle::{MerkleTree, MerkleProof, Hasher};
@@ -220,46 +220,30 @@ fn submit_header_and_verify_tx() {
 #[tokio::main]
 async fn main() {
     // submit_header_and_verify_tx();
+    let wallet_one: LocalWallet = "a8bc40dc835d1a6ae6a33211f5c056e7d6ce8c25b8d1b57876488f5808da5570".parse().expect("Invalid signing key.");
+    let wallet_one: LocalWallet = wallet_one.with_chain_id(4u64);
 
-    let ganache: GanacheInstance = Ganache::new().spawn();
-
-    let wallet_one: LocalWallet = ganache.keys()[0].clone().into();
-    let wallet_two: LocalWallet = ganache.keys()[1].clone().into();
-
-
-    // In progress
-    //
-    // let wallet_one_address: String = String::from("a8bc40dc835d1a6ae6a33211f5c056e7d6ce8c25b8d1b57876488f5808da5570");
-    //
-    // let thingy = wallet_one_address.as_bytes();
-    //
-    // let other_thingy = SigningKey::from_bytes(thingy).expect("This is horrible.");
-    //
-    // let wallet_one: LocalWallet = LocalWallet::new(&mut other_thingy);
-    // let wallet_two: LocalWallet = LocalWallet::new(&mut rand::thread_rng());
+    let wallet_two: LocalWallet = "29937db89a73a6cb72af91105c666c02d0c5aacd7e96a4b94e63e74cbf4f0ed7".parse().expect("Invalid signing key.");
+    let wallet_two: LocalWallet = wallet_two.with_chain_id(4u64);
 
     let endpoint: String = String::from("https://rinkeby.infura.io/v3/0771c92c5c6c42669665a80daa68b848");
+    let provider: Provider<Http> = Provider::<Http>::try_from(endpoint).expect("Could not instantiate HTTP provider.");
 
-    // connect to the network
-    // let provider = Provider::<Http>::try_from(ganache.endpoint()).expect("Failed to create provider.");
-    let provider = Provider::<Http>::try_from(endpoint).expect("Failed to create provider.");
+    let client: SignerMiddleware<Provider<Http>, LocalWallet> = SignerMiddleware::new(provider, wallet_one);
+    
+    let transaction: TransactionRequest = TransactionRequest::new()
+        .to(wallet_two.address())
+        .value(100);
 
-    let client: SignerMiddleware<Provider<Http>, Wallet<SigningKey>> = SignerMiddleware::new(provider, wallet_one);
+    let pending_transaction = client.send_transaction(transaction, None).await.expect("Could not send transaction.");
 
-    let send_transaction: TransactionRequest = TransactionRequest::new().to(wallet_two.address()).value(10000);
-
-    let pending_transaction = client.send_transaction(send_transaction, None).await.expect("Could not send transaction.");
-
-    let receipt_option: Option<TransactionReceipt> = pending_transaction.await.expect("Connection to network failed.");
-
-    let receipt: TransactionReceipt = receipt_option.expect("Transaction returned None.");
-
-    let receipt_transaction: Option<ethers::prelude::Transaction> = client.get_transaction(receipt.transaction_hash).await.expect("Could not receive transaction.");
-
-    let receipt_transaction_string: String = serde_json::to_string(&receipt_transaction).expect("Could not convert receipt transaction to a string.");
-
+    let receipt_option: Option<TransactionReceipt> = pending_transaction.await.expect("Could not get transaction receipt.");
+    let receipt: TransactionReceipt = receipt_option.expect("Could not unwrap transaction receipt.");
     let receipt_string: String = serde_json::to_string(&receipt).expect("Could not convert receipt to a string.");
 
-    println!("Sent transaction: {}\n", receipt_transaction_string);
-    println!("Transaction receipt: {}", receipt_string);
+    let transaction_info: Option<ethers::prelude::Transaction> = client.get_transaction(receipt.transaction_hash).await.expect("Could not get transaction information.");
+    let transaction_info_string: String = serde_json::to_string(&transaction_info).expect("Could not convert receipt transaction to a string.");
+
+    println!("Transaction receipt: {}\n", receipt_string);
+    println!("Transaction information: {}", transaction_info_string);
 }
