@@ -317,6 +317,7 @@ name = "bridge_utils"
 version = "0.1.0"
 dependencies = [
  "blake3",
+ "ed25519-compact",
  "ethers",
  "hex",
  "hex-literal",
@@ -798,6 +799,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "74e1069e39f1454367eb2de793ed062fac4c35c2934b76a81d90dd9abcd28816"
 dependencies = [
  "signature",
+]
+
+[[package]]
+name = "ed25519-compact"
+version = "1.0.11"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "24e1f30f0312ac83726c1197abeacd91c9557f8a623e904a009ae6bc529ae8d8"
+dependencies = [
+ "getrandom 0.2.4",
 ]
 
 [[package]]

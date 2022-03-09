@@ -4,12 +4,12 @@ use std::ops;
 use std::process::ExitStatus;
 
 use blake3;
-//use ethers::core::k256::ecdsa::SigningKey;
+use ed25519_compact::{KeyPair, Signature, Seed, Noise};
 use ethers::providers::{Provider, Middleware, Http};
 use ethers::middleware::SignerMiddleware;
 use ethers::signers::{Signer, LocalWallet};
 use ethers::types::{Address as EthersAddress, TransactionReceipt, TransactionRequest};
-use rand::Rng;
+use rand::{Rng, rngs::OsRng};
 use rayon::iter::{IntoParallelIterator, ParallelIterator};
 use rs_merkle::{MerkleTree, MerkleProof, Hasher};
 use sha3::{Digest, Keccak256};
@@ -29,45 +29,48 @@ impl Hasher for Blake3Algorithm {
     }
 }
 
+fn random_transaction() -> Transaction {
+    let inputs: Vec<CoinID> = vec![ CoinID {
+        txhash: TxHash(HashVal::random()),
+        index: rand::thread_rng().gen(),
+    }];
+
+    let output_one: CoinData = CoinData {
+        covhash: Address(HashVal::random()),
+        value: CoinValue(rand::thread_rng().gen()),
+        denom: Denom::Mel,
+        additional_data: vec![],
+    };
+
+    let output_two: CoinData = CoinData {
+        covhash: Address(HashVal::random()),
+        value: CoinValue(rand::thread_rng().gen()),
+        denom: Denom::Mel,
+        additional_data: vec![]
+    };
+
+    let outputs: Vec<CoinData> = vec![output_one, output_two];
+
+    let covenants: Vec<Vec<u8>> = vec![vec![rand::thread_rng().gen()]];
+
+    let sigs: Vec<Vec<u8>> = vec![vec![rand::thread_rng().gen()]];
+
+    Transaction {
+        kind: TxKind::Swap,
+        inputs,
+        outputs,
+        fee: CoinValue(rand::thread_rng().gen()),
+        covenants,
+        data: (0..2).map(|_| { rand::thread_rng().gen::<u8>() }).collect(),
+        sigs,
+    }
+}
+
 fn create_datablocks(num: u32) -> Vec<Transaction> {
     let range: ops::Range<u32> = 0..num;
 
     range.into_par_iter().map(|_index| {
-        let inputs: Vec<CoinID> = vec![ CoinID {
-            txhash: TxHash(HashVal::random()),
-            index: rand::thread_rng().gen(),
-        }];
-
-        let output_one: CoinData = CoinData {
-            covhash: Address(HashVal::random()),
-            value: CoinValue(rand::thread_rng().gen()),
-            denom: Denom::Mel,
-            additional_data: vec![],
-        };
-
-        let output_two: CoinData = CoinData {
-            covhash: Address(HashVal::random()),
-            value: CoinValue(rand::thread_rng().gen()),
-            denom: Denom::Mel,
-            additional_data: vec![]
-        };
-
-        let outputs: Vec<CoinData> = vec![output_one, output_two];
-
-        let covenants: Vec<Vec<u8>> = vec![vec![rand::thread_rng().gen()]];
-
-        let sigs: Vec<Vec<u8>> = vec![vec![rand::thread_rng().gen()]];
-
-        Transaction {
-            kind: TxKind::Swap,
-            inputs,
-            outputs,
-            fee: CoinValue(rand::thread_rng().gen()),
-            covenants,
-            data: (0..2).map(|_| { rand::thread_rng().gen::<u8>() }).collect(),
-            sigs,
-        }
-
+        random_transaction()
     }).collect::<Vec<Transaction>>()
 }
 
@@ -75,13 +78,13 @@ fn random_header() -> Header {
     Header {
         network: NetID::Mainnet,
         previous: HashVal::random(),
-        height: BlockHeight(rand::thread_rng().gen_range(0..1000)),
+        height: BlockHeight(rand::thread_rng().gen()),
         history_hash: HashVal::random(),
         coins_hash: HashVal::random(),
         transactions_hash: HashVal::random(),
-        fee_pool: CoinValue(rand::thread_rng().gen_range(0..1000)),
-        fee_multiplier: rand::thread_rng().gen_range(0..1000),
-        dosc_speed: rand::thread_rng().gen_range(0..1000),
+        fee_pool: CoinValue(rand::thread_rng().gen()),
+        fee_multiplier: rand::thread_rng().gen(),
+        dosc_speed: rand::thread_rng().gen(),
         pools_hash: HashVal::random(),
         stakes_hash: HashVal::random(),
     }
@@ -217,9 +220,7 @@ fn submit_header_and_verify_tx() {
     println!("{}", output);
 }
 
-#[tokio::main]
-async fn main() {
-    // submit_header_and_verify_tx();
+async fn setup_account_provider() {
     let wallet_one: LocalWallet = "a8bc40dc835d1a6ae6a33211f5c056e7d6ce8c25b8d1b57876488f5808da5570".parse().expect("Invalid signing key.");
     let wallet_one: LocalWallet = wallet_one.with_chain_id(4u64);
 
@@ -246,4 +247,36 @@ async fn main() {
 
     println!("Transaction receipt: {}\n", receipt_string);
     println!("Transaction information: {}", transaction_info_string);
+}
+
+fn sign_data(message: &[u8]) {
+    let keypair: KeyPair = KeyPair::from_seed(Seed::default());
+
+    let signature: Signature = keypair.sk.sign(message, Some(Noise::generate()));
+
+    let signature_as_bytes: &[u8] = signature.as_ref();
+
+    println!("Secret key: {:?}", hex::encode(keypair.sk.as_ref()));
+    println!("Public key: {:?}", hex::encode(keypair.pk.as_ref()));
+    println!("Message: {:?}", hex::encode(message));
+    println!("Signature: {:?}", hex::encode(signature_as_bytes));
+}
+
+#[tokio::main]
+async fn main() {
+    // let header: Header = random_header();
+
+    // let serialized_header = stdcode::serialize(&header).expect("Unable to serialize header.");
+    // let hex_serialized_header = hex::encode(&serialized_header);
+
+    // println!("{:?}", header);
+
+    // println!("hex serialized: {}", hex_serialized_header);
+    // println!("size hex: {}", hex_serialized_header.len());
+    let tx = random_transaction();
+
+    let serialized_tx = hex::encode(stdcode::serialize(&tx).expect("Unable to serialize."));
+
+    println!("tx: {:?}", tx);
+    println!("serialized tx: {}", serialized_tx);
 }
