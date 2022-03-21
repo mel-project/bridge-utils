@@ -3,8 +3,9 @@ use std::convert::TryFrom;
 use std::ops;
 use std::process::ExitStatus;
 
+use bincode::Options;
 use blake3;
-use ed25519_compact::{KeyPair, Signature, Seed, Noise};
+use ed25519_compact::{KeyPair, PublicKey, Signature, Seed, Noise};
 use ethers::providers::{Provider, Middleware, Http};
 use ethers::middleware::SignerMiddleware;
 use ethers::signers::{Signer, LocalWallet};
@@ -35,11 +36,17 @@ fn random_transaction() -> Transaction {
         index: rand::thread_rng().gen(),
     }];
 
+    let range: ops::Range<u32> = 0..20;
+
+    let recipient_address = range.into_par_iter().map(|_index| {
+        rand::thread_rng().gen()
+    }).collect::<Vec<u8>>();
+
     let output_one: CoinData = CoinData {
         covhash: Address(HashVal::random()),
         value: CoinValue(rand::thread_rng().gen()),
         denom: Denom::Mel,
-        additional_data: vec![],
+        additional_data: recipient_address,
     };
 
     let output_two: CoinData = CoinData {
@@ -249,34 +256,93 @@ async fn setup_account_provider() {
     println!("Transaction information: {}", transaction_info_string);
 }
 
-fn sign_data(message: &[u8]) {
+fn sign_data(message: &[u8]) -> (PublicKey, Signature) {
     let keypair: KeyPair = KeyPair::from_seed(Seed::default());
 
     let signature: Signature = keypair.sk.sign(message, Some(Noise::generate()));
 
     let signature_as_bytes: &[u8] = signature.as_ref();
 
-    println!("Secret key: {:?}", hex::encode(keypair.sk.as_ref()));
-    println!("Public key: {:?}", hex::encode(keypair.pk.as_ref()));
-    println!("Message: {:?}", hex::encode(message));
-    println!("Signature: {:?}", hex::encode(signature_as_bytes));
+    (keypair.pk, signature)
+}
+
+fn test_data() {
+    // create a random block header
+    let mut header = random_header();
+    let header_epoch = header.height / 100000;
+
+    // create random transactions with ethereum addresses in additional_data
+    let num_datablocks = 4;
+    let datablocks = create_datablocks(num_datablocks);
+
+    // create a merkle tree and get the root, replace transactions_hash with it
+    // create merkle proof for a random tx to verify
+    let leaves: Vec<[u8; 32]> = datablocks
+        .iter()
+        .map(|x| *blake3::keyed_hash(blake3::hash(DATA_BLOCK_HASH_KEY).as_bytes(), &stdcode::serialize(&x).unwrap()).as_bytes())
+        .collect();
+
+    let merkle_tree: MerkleTree<Blake3Algorithm> = MerkleTree::<Blake3Algorithm>::from_leaves(&leaves);
+    let index: usize = rand::thread_rng().gen_range(0..num_datablocks).try_into().unwrap();
+    let tx_to_prove: &Transaction = datablocks.get(index).ok_or("Couldn't get datablocks to prove.").unwrap();
+    let serialized_tx = stdcode::serialize(&tx_to_prove).expect("Couldn't serialize tx.");
+    let merkle_proof: MerkleProof<Blake3Algorithm> = merkle_tree.proof(&vec![index]);
+    let merkle_root: [u8; 32] = merkle_tree.root().ok_or("Couldn't get the merkle root.").expect("Fill in a reason");
+
+    header.transactions_hash = HashVal(merkle_root);
+
+    // create random staker keypairs, serialize header and sign with each sk, store in vecs
+    let serialized_header = stdcode::serialize(&header).expect("Unable to serialize header.");
+    let (signer1, signature1) = sign_data(&serialized_header);
+    let (signer2, signature2) = sign_data(&serialized_header);
+    let (signer3, signature3) = sign_data(&serialized_header);
+
+    let signers = vec![signer1.as_ref(), signer2.as_ref(), signer3.as_ref()];
+    let signatures = vec![signature1.as_ref(), signature2.as_ref(), signature3.as_ref()];
+
+    let tx_hash = hex::encode(
+        *blake3::keyed_hash(blake3::hash(DATA_BLOCK_HASH_KEY).as_bytes(),
+        &serialized_tx).as_bytes()
+    );
+
+    // signers
+    println!(
+        "signers:\n{}\n{}\n{}\n\n",
+        hex::encode(signers[0]),
+        hex::encode(signers[1]),
+        hex::encode(signers[2])
+    );
+
+    // header info
+    println!(
+        "header:\n{}\nmerkle root: {}\nheight: {}\nepoch: {}\n\n",
+        hex::encode(serialized_header),
+        hex::encode(merkle_root),
+        header.height,
+        header_epoch
+    );
+
+    // signatures
+    println!(
+        "signatures:\n{}\n{}\n{}\n\n",
+        hex::encode(signatures[0]),
+        hex::encode(signatures[1]),
+        hex::encode(signatures[2])
+    );
+
+    // tx info
+    println!(
+        "tx:\n{}\nindex: {}\nblockHeight: {}\ntxHash: {}\n\n",
+        hex::encode(serialized_tx),
+        index,
+        header.height,
+        tx_hash
+    );
+
+    println!("proof:\n{}", hex::encode(merkle_proof.to_bytes()));
 }
 
 #[tokio::main]
 async fn main() {
-    // let header: Header = random_header();
-
-    // let serialized_header = stdcode::serialize(&header).expect("Unable to serialize header.");
-    // let hex_serialized_header = hex::encode(&serialized_header);
-
-    // println!("{:?}", header);
-
-    // println!("hex serialized: {}", hex_serialized_header);
-    // println!("size hex: {}", hex_serialized_header.len());
-    let tx = random_transaction();
-
-    let serialized_tx = hex::encode(stdcode::serialize(&tx).expect("Unable to serialize."));
-
-    println!("tx: {:?}", tx);
-    println!("serialized tx: {}", serialized_tx);
+    test_data();
 }

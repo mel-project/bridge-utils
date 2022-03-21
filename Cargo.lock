@@ -316,6 +316,7 @@ checksum = "8d696c370c750c948ada61c69a0ee2cbbb9c50b1019ddb86d9317157a99c2cae"
 name = "bridge_utils"
 version = "0.1.0"
 dependencies = [
+ "bincode",
  "blake3",
  "ed25519-compact",
  "ethers",
