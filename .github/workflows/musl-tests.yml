@@ -29,4 +29,4 @@ jobs:
 #          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Run Musl Tests
-        run: cross test --target x86_64-unknown-linux-musl --verbose
+        run: cargo test --target x86_64-unknown-linux-musl --verbose
