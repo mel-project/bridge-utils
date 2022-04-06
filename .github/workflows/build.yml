@@ -14,6 +14,9 @@ jobs:
 
     runs-on: self-hosted
 
+    container:
+      image: ghcr.io/cross-rs/x86_64-unknown-linux-musl:latest
+
     steps:
       - uses: actions/checkout@v2
 
@@ -27,20 +30,5 @@ jobs:
 #            target/
 #          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
-      - name: Update Apt
-        run: sudo apt update
-
-      - name: Install Musl
-        run: sudo apt install -y musl musl-tools
-
-      - name: Install Rustup
-        run: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-
-      - name: Add Rustup To Path
-        run: echo "$HOME/.cargo/bin" >> $GITHUB_PATH
-
-      - name: Add Musl Target
-        run: rustup target add x86_64-unknown-linux-musl
-
       - name: Run Musl Build
-        run: cargo build --target x86_64-unknown-linux-musl --verbose
+        run: cross build --target x86_64-unknown-linux-musl --verbose
