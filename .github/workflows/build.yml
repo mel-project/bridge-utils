@@ -1,4 +1,4 @@
-name: Build
+name: MuslBuild
 
 on:
   push:
@@ -10,7 +10,7 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build:
+  musl-build:
 
     runs-on: self-hosted
 
