@@ -1,20 +1,22 @@
 use std::{str::FromStr, process::Command};
 use std::convert::TryFrom;
-use std::ops;
+use std::ops::{Range, Deref};
 use std::process::ExitStatus;
+use std::sync::Arc;
 
-use bincode::Options;
+use bindings::themelio_bridge::ThemelioBridge;
 use blake3;
 use ed25519_compact::{KeyPair, PublicKey, Signature, Seed, Noise};
-use ethers::providers::{Provider, Middleware, Http};
-use ethers::middleware::SignerMiddleware;
-use ethers::signers::{Signer, LocalWallet};
-use ethers::types::{Address as EthersAddress, TransactionReceipt, TransactionRequest};
-use rand::{Rng, rngs::OsRng};
+use ethers::prelude::{Http, LocalWallet, Middleware, SignerMiddleware, Wallet};
+use ethers::providers::Provider;
+use ethers::signers::Signer;
+use ethers::types::{Address as EthersAddress, Bytes, TransactionReceipt, TransactionRequest, U256};
+use eyre::Result;
+use rand::Rng;
 use rayon::iter::{IntoParallelIterator, ParallelIterator};
 use rs_merkle::{MerkleTree, MerkleProof, Hasher};
 use sha3::{Digest, Keccak256};
-use themelio_structs::{Address, CoinData, CoinID, Denom, Header, NetID, BlockHeight, CoinValue, Transaction, TxKind, TxHash};
+use themelio_structs::{Address as ThemelioAddress, CoinData, CoinID, Denom, Header, NetID, BlockHeight, CoinValue, Transaction, TxKind, TxHash};
 use tmelcrypt::HashVal;
 
 const DATA_BLOCK_HASH_KEY: &[u8; 13] = b"smt_datablock";
@@ -25,10 +27,28 @@ pub struct Blake3Algorithm {}
 
 impl Hasher for Blake3Algorithm {
     type Hash = [u8; 32];
+
     fn hash(data: &[u8]) -> [u8; 32] {
         *blake3::keyed_hash(blake3::hash(NODE_HASH_KEY).as_bytes(), data).as_bytes()
     }
 }
+
+// struct StakerInfo<'a> {
+//     public_key: PublicKey,
+//     syms_staked: u32,
+//     header_signature: &'a [u8]
+// }
+
+// impl<T: Send> FromParallelIterator<T> for StakerInfo {
+//     fn from_par_iter<I>(par_iter: I) -> self
+//         where I: IntoParallelIterator<Item = T>
+//     {
+//         let par_iter = par_iter.into_par_iter();
+//         StakerInfo {
+//             public_key
+//         }
+//     }
+// }
 
 fn random_transaction() -> Transaction {
     let inputs: Vec<CoinID> = vec![ CoinID {
@@ -36,21 +56,21 @@ fn random_transaction() -> Transaction {
         index: rand::thread_rng().gen(),
     }];
 
-    let range: ops::Range<u32> = 0..20;
+    let range: Range<u32> = 0..20;
 
     let recipient_address = range.into_par_iter().map(|_index| {
         rand::thread_rng().gen()
     }).collect::<Vec<u8>>();
 
     let output_one: CoinData = CoinData {
-        covhash: Address(HashVal::random()),
+        covhash: ThemelioAddress(HashVal::random()),
         value: CoinValue(rand::thread_rng().gen()),
         denom: Denom::Mel,
         additional_data: recipient_address,
     };
 
     let output_two: CoinData = CoinData {
-        covhash: Address(HashVal::random()),
+        covhash: ThemelioAddress(HashVal::random()),
         value: CoinValue(rand::thread_rng().gen()),
         denom: Denom::Mel,
         additional_data: vec![]
@@ -74,7 +94,7 @@ fn random_transaction() -> Transaction {
 }
 
 fn create_datablocks(num: u32) -> Vec<Transaction> {
-    let range: ops::Range<u32> = 0..num;
+    let range: Range<u32> = 0..num;
 
     range.into_par_iter().map(|_index| {
         random_transaction()
@@ -227,52 +247,87 @@ fn submit_header_and_verify_tx() {
     println!("{}", output);
 }
 
-async fn setup_account_provider() {
-    let wallet_one: LocalWallet = "a8bc40dc835d1a6ae6a33211f5c056e7d6ce8c25b8d1b57876488f5808da5570".parse().expect("Invalid signing key.");
-    let wallet_one: LocalWallet = wallet_one.with_chain_id(4u64);
-
-    let wallet_two: LocalWallet = "29937db89a73a6cb72af91105c666c02d0c5aacd7e96a4b94e63e74cbf4f0ed7".parse().expect("Invalid signing key.");
-    let wallet_two: LocalWallet = wallet_two.with_chain_id(4u64);
-
-    let endpoint: String = String::from("https://rinkeby.infura.io/v3/0771c92c5c6c42669665a80daa68b848");
-    let provider: Provider<Http> = Provider::<Http>::try_from(endpoint).expect("Could not instantiate HTTP provider.");
-
-    let client: SignerMiddleware<Provider<Http>, LocalWallet> = SignerMiddleware::new(provider, wallet_one);
-    
-    let transaction: TransactionRequest = TransactionRequest::new()
-        .to(wallet_two.address())
-        .value(100);
-
-    let pending_transaction = client.send_transaction(transaction, None).await.expect("Could not send transaction.");
-
-    let receipt_option: Option<TransactionReceipt> = pending_transaction.await.expect("Could not get transaction receipt.");
-    let receipt: TransactionReceipt = receipt_option.expect("Could not unwrap transaction receipt.");
-    let receipt_string: String = serde_json::to_string(&receipt).expect("Could not convert receipt to a string.");
-
-    let transaction_info: Option<ethers::prelude::Transaction> = client.get_transaction(receipt.transaction_hash).await.expect("Could not get transaction information.");
-    let transaction_info_string: String = serde_json::to_string(&transaction_info).expect("Could not convert receipt transaction to a string.");
-
-    println!("Transaction receipt: {}\n", receipt_string);
-    println!("Transaction information: {}", transaction_info_string);
-}
-
-fn sign_data(message: &[u8]) -> (PublicKey, Signature) {
+fn random_staker(message: &[u8]) -> ([u8; 32], U256, [u8; 64]) {
     let keypair: KeyPair = KeyPair::from_seed(Seed::default());
+    
+    let syms_staked: u32 = rand::thread_rng().gen_range(0..1024);
+    let syms_staked: String = hex::encode(syms_staked.to_ne_bytes());
+    let syms_staked: U256 = U256::from_str(&syms_staked).unwrap();
 
     let signature: Signature = keypair.sk.sign(message, Some(Noise::generate()));
 
-    let signature_as_bytes: &[u8] = signature.as_ref();
-
-    (keypair.pk, signature)
+    (*keypair.pk, syms_staked, *signature.deref())
 }
 
-fn test_data() {
+fn create_stakers(num: u32, message: &[u8]) -> (Vec<[u8; 32]>, Vec<U256>, Vec<[u8; 32]>) {
+    let mut public_keys: Vec<[u8; 32]> = vec![];
+    let mut staked_syms: Vec<U256> = vec![];
+    let mut signatures: Vec<[u8; 32]> = vec![];
+
+    for _i in 0..num {
+        let staker = random_staker(message);
+        let mut signature_slice: [u8; 32] = [0; 32];
+
+        public_keys.push(staker.0);
+        staked_syms.push(staker.1);
+
+        signature_slice.copy_from_slice(&staker.2[0..32]);
+        signatures.push(signature_slice);
+
+        signature_slice.copy_from_slice(&staker.2[32..64]);
+        signatures.push(signature_slice);
+    }
+
+    (public_keys, staked_syms, signatures)
+}
+
+// TESTS
+async fn setup_bridge() -> ThemelioBridge<SignerMiddleware<Provider<Http>, LocalWallet>>{
+    let provider = Provider::<Http>::try_from(
+        "https://rinkeby.infura.io/v3/0771c92c5c6c42669665a80daa68b848",
+    ).expect("Provider unable to be initialized.");
+
+    let chain_id = provider.get_chainid().await.unwrap().as_u64();
+
+    let wallet: LocalWallet = "acba26d579163e4780ed8212feedd5ca4dfd381df47d7a6d9b20076ba3ddefe2".parse().unwrap();
+    let wallet = wallet.with_chain_id(chain_id);
+
+    let client = SignerMiddleware::new(provider.clone(), wallet);
+    let client = Arc::new(client);
+
+    let address = "0x3f7bac807fc581226c2e7ea83b5c0ce54172dc4b".parse::<EthersAddress>()
+        .expect("Address unable to be parsed");
+
+    let bridge = ThemelioBridge::new(address, client.clone());
+
+    bridge
+}
+
+async fn test_decimals() {
+    let bridge = setup_bridge().await;
+
+    let decimals = bridge.decimals().call().await.unwrap();
+
+    if decimals == 9 {
+        println!("test_decimals: [PASSED]");
+    } else {
+        println!("test_decimals: [FAILED]");
+    }
+}
+
+async fn test_end2end() -> Result<()> {
+    let bridge = setup_bridge().await;
+
     // create a random block header
     let mut header = random_header();
-    let header_epoch = header.height / 100000;
 
-    // create random transactions with ethereum addresses in additional_data
-    let num_datablocks = 4;
+    let header_epoch: String = hex::encode(header.height.epoch().to_ne_bytes());
+    let header_epoch = U256::from_str(&header_epoch).unwrap();
+
+    let block_height = U256::from(header.height.0);
+
+    // create random transactions with ethereum addresses in additional_data of first output
+    let num_datablocks = rand::thread_rng().gen_range(0..1024);
     let datablocks = create_datablocks(num_datablocks);
 
     // create a merkle tree and get the root, replace transactions_hash with it
@@ -283,66 +338,92 @@ fn test_data() {
         .collect();
 
     let merkle_tree: MerkleTree<Blake3Algorithm> = MerkleTree::<Blake3Algorithm>::from_leaves(&leaves);
-    let index: usize = rand::thread_rng().gen_range(0..num_datablocks).try_into().unwrap();
-    let tx_to_prove: &Transaction = datablocks.get(index).ok_or("Couldn't get datablocks to prove.").unwrap();
-    let serialized_tx = stdcode::serialize(&tx_to_prove).expect("Couldn't serialize tx.");
-    let merkle_proof: MerkleProof<Blake3Algorithm> = merkle_tree.proof(&vec![index]);
-    let merkle_root: [u8; 32] = merkle_tree.root().ok_or("Couldn't get the merkle root.").expect("Fill in a reason");
 
+    let index: usize = rand::thread_rng().gen_range(0..num_datablocks).try_into().unwrap();
+    let index_u256 = U256::from(index);
+
+    let tx_to_prove: &Transaction = datablocks.get(index).ok_or("Unable to get datablocks to prove.").unwrap();
+
+    let mel_amount: u128 = tx_to_prove.outputs[0].value.into();
+    let mel_amount = U256::from(mel_amount);
+
+    let serialized_tx = stdcode::serialize(&tx_to_prove).expect("Unable to serialize tx.");
+    let serialized_tx_str = hex::encode(serialized_tx);
+    let serialized_tx_bytes = Bytes::from_str(&serialized_tx_str).expect("Unable to create Bytes tx.");
+
+    let merkle_proof: MerkleProof<Blake3Algorithm> = merkle_tree.proof(&vec![index]);
+    let merkle_proof_vec: Vec<[u8; 32]> = merkle_proof.proof_hashes().to_vec();
+
+    let merkle_root: [u8; 32] = merkle_tree.root().ok_or("Unable to get merkle root.").expect("Fill in a reason");
+
+    // replace the random 'transactions_hash' from 'header' with the root of our merkle tree
     header.transactions_hash = HashVal(merkle_root);
 
     // create random staker keypairs, serialize header and sign with each sk, store in vecs
+    let num_stakers = rand::thread_rng().gen_range(0..16);
+
     let serialized_header = stdcode::serialize(&header).expect("Unable to serialize header.");
-    let (signer1, signature1) = sign_data(&serialized_header);
-    let (signer2, signature2) = sign_data(&serialized_header);
-    let (signer3, signature3) = sign_data(&serialized_header);
+    let serialized_header_str = hex::encode(&serialized_header);
+    let serialized_header_bytes = Bytes::from_str(&serialized_header_str)?;
 
-    let signers = vec![signer1.as_ref(), signer2.as_ref(), signer3.as_ref()];
-    let signatures = vec![signature1.as_ref(), signature2.as_ref(), signature3.as_ref()];
+    let stakers_info = create_stakers(num_stakers, &serialized_header);
 
-    let tx_hash = hex::encode(
-        *blake3::keyed_hash(blake3::hash(DATA_BLOCK_HASH_KEY).as_bytes(),
-        &serialized_tx).as_bytes()
-    );
 
-    // signers
-    println!(
-        "signers:\n{}\n{}\n{}\n\n",
-        hex::encode(signers[0]),
-        hex::encode(signers[1]),
-        hex::encode(signers[2])
-    );
+    let stakers: Vec<[u8; 32]> = stakers_info.0;
+    let staker_syms: Vec<U256> = stakers_info.1;
+    let signatures: Vec<[u8; 32]> = stakers_info.2;
 
-    // header info
-    println!(
-        "header:\n{}\nmerkle root: {}\nheight: {}\nepoch: {}\n\n",
-        hex::encode(serialized_header),
-        hex::encode(merkle_root),
-        header.height,
-        header_epoch
-    );
+    // send tx to relayStakers()
+    println!("header_epoch:\n{}\nstakers:\n{:?}\nstaker_syms:\n{:?}\n", header_epoch, stakers, staker_syms);
 
-    // signatures
-    println!(
-        "signatures:\n{}\n{}\n{}\n\n",
-        hex::encode(signatures[0]),
-        hex::encode(signatures[1]),
-        hex::encode(signatures[2])
-    );
+    let call = bridge.relay_stakers(header_epoch, stakers.clone(), staker_syms);
+    let pending_tx = call.send().await?;
+    let receipt = pending_tx.await?;
 
-    // tx info
-    println!(
-        "tx:\n{}\nindex: {}\nblockHeight: {}\ntxHash: {}\n\n",
-        hex::encode(serialized_tx),
-        index,
-        header.height,
-        tx_hash
-    );
+    println!("relayStakers() receipt:\n{:?}", receipt.unwrap());
+    //assert
 
-    println!("proof:\n{}", hex::encode(merkle_proof.to_bytes()));
+    // send tx to relayHeader
+    println!("serialized_header_bytes:\n{}\nstakers:\n{:?}\nsignatures:\n{:?}\n", serialized_header_bytes, stakers.clone(), signatures);
+    println!("serialized_header_str:\n{}\n", serialized_header_str);
+    let call = bridge.relay_header(serialized_header_bytes, stakers.clone(), signatures);
+    let pending_tx = call.send().await?;
+    let receipt = pending_tx.await?;
+
+    println!("relayHeader() receipt:\n{:?}", receipt.unwrap());
+    // assert
+
+    // send tx to verifyTx()
+    println!("serialized_tx_bytes:\n{}\nindex_u256:\n{}\nblock_height:\n{}\nmerkle_proof:\n{:?}\n", serialized_tx_bytes, index_u256, block_height, merkle_proof_vec);
+    println!("serialized_tx_str:\n{}\nmerkle_proof:\n{:?}\n", serialized_tx_str, hex::encode(&merkle_proof.to_bytes()));
+    let call = bridge.verify_tx(serialized_tx_bytes, index_u256, block_height, merkle_proof_vec);
+    let pending_tx = call.send().await?;
+    let receipt = pending_tx.await?;
+
+    println!("verifyTx() receipt:\n{:?}", receipt.unwrap());
+    //assert
+
+    // send tx to burn()
+    let call = bridge.burn(mel_amount);
+    let pending_tx = call.send().await?;
+    let receipt = pending_tx.await?;
+
+    println!("verifyTx() receipt:\n{:?}", receipt.unwrap());
+    //assert
+
+    Ok(())
+}
+
+async fn run_tests() {
+    test_decimals().await;
+    let results = test_end2end().await;
+
+    println!("{:?}", results);
 }
 
 #[tokio::main]
-async fn main() {
-    test_data();
+async fn main() -> Result<()> {
+    run_tests().await;
+
+    Ok(())
 }
