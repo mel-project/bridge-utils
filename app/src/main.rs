@@ -251,8 +251,7 @@ fn random_staker(message: &[u8]) -> ([u8; 32], U256, [u8; 64]) {
     let keypair: KeyPair = KeyPair::from_seed(Seed::default());
     
     let syms_staked: u32 = rand::thread_rng().gen_range(0..1024);
-    let syms_staked: String = hex::encode(syms_staked.to_ne_bytes());
-    let syms_staked: U256 = U256::from_str(&syms_staked).unwrap();
+    let syms_staked: U256 = U256::from(syms_staked);
 
     let signature: Signature = keypair.sk.sign(message, Some(Noise::generate()));
 
@@ -295,7 +294,7 @@ async fn setup_bridge() -> ThemelioBridge<SignerMiddleware<Provider<Http>, Local
     let client = SignerMiddleware::new(provider.clone(), wallet);
     let client = Arc::new(client);
 
-    let address = "0x3f7bac807fc581226c2e7ea83b5c0ce54172dc4b".parse::<EthersAddress>()
+    let address = "0x7328a9f7614b2d681a4ddcb8d493b80269a24973".parse::<EthersAddress>()
         .expect("Address unable to be parsed");
 
     let bridge = ThemelioBridge::new(address, client.clone());
@@ -319,12 +318,12 @@ async fn test_end2end() -> Result<()> {
     let bridge = setup_bridge().await;
 
     // create a random block header
-    let mut header = random_header();
-
-    let header_epoch: String = hex::encode(header.height.epoch().to_ne_bytes());
-    let header_epoch = U256::from_str(&header_epoch).unwrap();
+    let mut header: Header = random_header();
 
     let block_height = U256::from(header.height.0);
+
+    let header_epoch = header.height.epoch();
+    let header_epoch = U256::from(header_epoch);
 
     // create random transactions with ethereum addresses in additional_data of first output
     let num_datablocks = rand::thread_rng().gen_range(0..1024);
@@ -348,8 +347,7 @@ async fn test_end2end() -> Result<()> {
     let mel_amount = U256::from(mel_amount);
 
     let serialized_tx = stdcode::serialize(&tx_to_prove).expect("Unable to serialize tx.");
-    let serialized_tx_str = hex::encode(serialized_tx);
-    let serialized_tx_bytes = Bytes::from_str(&serialized_tx_str).expect("Unable to create Bytes tx.");
+    let serialized_tx_bytes = Bytes::from(serialized_tx);
 
     let merkle_proof: MerkleProof<Blake3Algorithm> = merkle_tree.proof(&vec![index]);
     let merkle_proof_vec: Vec<[u8; 32]> = merkle_proof.proof_hashes().to_vec();
@@ -360,47 +358,43 @@ async fn test_end2end() -> Result<()> {
     header.transactions_hash = HashVal(merkle_root);
 
     // create random staker keypairs, serialize header and sign with each sk, store in vecs
-    let num_stakers = rand::thread_rng().gen_range(0..16);
+    let num_stakers = 1;//rand::thread_rng().gen_range(1..16);
 
     let serialized_header = stdcode::serialize(&header).expect("Unable to serialize header.");
-    let serialized_header_str = hex::encode(&serialized_header);
-    let serialized_header_bytes = Bytes::from_str(&serialized_header_str)?;
+    let serialized_header_bytes = Bytes::from(serialized_header.clone());
 
     let stakers_info = create_stakers(num_stakers, &serialized_header);
-
 
     let stakers: Vec<[u8; 32]> = stakers_info.0;
     let staker_syms: Vec<U256> = stakers_info.1;
     let signatures: Vec<[u8; 32]> = stakers_info.2;
 
     // send tx to relayStakers()
-    println!("header_epoch:\n{}\nstakers:\n{:?}\nstaker_syms:\n{:?}\n", header_epoch, stakers, staker_syms);
-
     let call = bridge.relay_stakers(header_epoch, stakers.clone(), staker_syms);
     let pending_tx = call.send().await?;
     let receipt = pending_tx.await?;
 
-    println!("relayStakers() receipt:\n{:?}", receipt.unwrap());
+    println!("\n*** relayStakers() receipt ***\n{:#?}\n", receipt.unwrap());
     //assert
 
     // send tx to relayHeader
-    println!("serialized_header_bytes:\n{}\nstakers:\n{:?}\nsignatures:\n{:?}\n", serialized_header_bytes, stakers.clone(), signatures);
-    println!("serialized_header_str:\n{}\n", serialized_header_str);
-    let call = bridge.relay_header(serialized_header_bytes, stakers.clone(), signatures);
+    let call = bridge
+        .relay_header(serialized_header_bytes, stakers.clone(), signatures)
+        .gas(20000000);
     let pending_tx = call.send().await?;
     let receipt = pending_tx.await?;
 
-    println!("relayHeader() receipt:\n{:?}", receipt.unwrap());
+    println!("\n*** relayHeader() receipt ***\n{:#?}\n", receipt);
     // assert
 
     // send tx to verifyTx()
-    println!("serialized_tx_bytes:\n{}\nindex_u256:\n{}\nblock_height:\n{}\nmerkle_proof:\n{:?}\n", serialized_tx_bytes, index_u256, block_height, merkle_proof_vec);
-    println!("serialized_tx_str:\n{}\nmerkle_proof:\n{:?}\n", serialized_tx_str, hex::encode(&merkle_proof.to_bytes()));
-    let call = bridge.verify_tx(serialized_tx_bytes, index_u256, block_height, merkle_proof_vec);
+    let call = bridge
+        .verify_tx(serialized_tx_bytes, index_u256, block_height, merkle_proof_vec)
+        .gas(20000000);
     let pending_tx = call.send().await?;
     let receipt = pending_tx.await?;
 
-    println!("verifyTx() receipt:\n{:?}", receipt.unwrap());
+    println!("verifyTx() receipt:\n{:#?}", receipt.unwrap());
     //assert
 
     // send tx to burn()
@@ -408,7 +402,7 @@ async fn test_end2end() -> Result<()> {
     let pending_tx = call.send().await?;
     let receipt = pending_tx.await?;
 
-    println!("verifyTx() receipt:\n{:?}", receipt.unwrap());
+    println!("verifyTx() receipt:\n{:#?}", receipt.unwrap());
     //assert
 
     Ok(())

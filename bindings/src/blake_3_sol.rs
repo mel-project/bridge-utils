@@ -335,7 +335,7 @@ mod blake3sol_mod {
     }
 
     impl Default for Hasher {
-        fn default() -> Self {
+        fn default() -> Hasher {
             Hasher {
                 chunk_state: Default::default(),
                 key_words: Default::default(),
