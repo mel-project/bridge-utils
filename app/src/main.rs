@@ -21,6 +21,7 @@ use tmelcrypt::HashVal;
 
 const DATA_BLOCK_HASH_KEY: &[u8; 13] = b"smt_datablock";
 const NODE_HASH_KEY: &[u8; 8] = b"smt_node";
+const GAS_LIMIT: u32 = 20_000_000;
 
 #[derive(Clone)]
 pub struct Blake3Algorithm {}
@@ -294,7 +295,7 @@ async fn setup_bridge() -> ThemelioBridge<SignerMiddleware<Provider<Http>, Local
     let client = SignerMiddleware::new(provider.clone(), wallet);
     let client = Arc::new(client);
 
-    let address = "0x7328a9f7614b2d681a4ddcb8d493b80269a24973".parse::<EthersAddress>()
+    let address = "0x77653c46fbbadb73a389f99bc2a19ab5efb2ec01".parse::<EthersAddress>()
         .expect("Address unable to be parsed");
 
     let bridge = ThemelioBridge::new(address, client.clone());
@@ -302,19 +303,7 @@ async fn setup_bridge() -> ThemelioBridge<SignerMiddleware<Provider<Http>, Local
     bridge
 }
 
-async fn test_decimals() {
-    let bridge = setup_bridge().await;
-
-    let decimals = bridge.decimals().call().await.unwrap();
-
-    if decimals == 9 {
-        println!("test_decimals: [PASSED]");
-    } else {
-        println!("test_decimals: [FAILED]");
-    }
-}
-
-async fn test_end2end() -> Result<()> {
+async fn test_e2e() -> Result<()> {
     let bridge = setup_bridge().await;
 
     // create a random block header
@@ -380,11 +369,11 @@ async fn test_end2end() -> Result<()> {
     // send tx to relayHeader
     let call = bridge
         .relay_header(serialized_header_bytes, stakers.clone(), signatures)
-        .gas(20000000);
+        .gas(GAS_LIMIT);
     let pending_tx = call.send().await?;
     let receipt = pending_tx.await?;
 
-    println!("\n*** relayHeader() receipt ***\n{:#?}\n", receipt);
+    println!("\n***** relayHeader() receipt *****\n{:#?}\n", receipt);
     // assert
 
     // send tx to verifyTx()
@@ -394,30 +383,23 @@ async fn test_end2end() -> Result<()> {
     let pending_tx = call.send().await?;
     let receipt = pending_tx.await?;
 
-    println!("verifyTx() receipt:\n{:#?}", receipt.unwrap());
+    println!("\n***** verifyTx() receipt *****\n{:#?}", receipt.unwrap());
     //assert
 
     // send tx to burn()
-    let call = bridge.burn(mel_amount);
+    let call = bridge.burn(mel_amount).gas(20000000);
     let pending_tx = call.send().await?;
     let receipt = pending_tx.await?;
 
-    println!("verifyTx() receipt:\n{:#?}", receipt.unwrap());
+    println!("\n***** burn() receipt *****\n{:#?}", receipt.unwrap());
     //assert
 
     Ok(())
 }
 
-async fn run_tests() {
-    test_decimals().await;
-    let results = test_end2end().await;
-
-    println!("{:?}", results);
-}
-
 #[tokio::main]
 async fn main() -> Result<()> {
-    run_tests().await;
+    test_e2e().await?;
 
     Ok(())
 }
