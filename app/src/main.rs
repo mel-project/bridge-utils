@@ -1,5 +1,5 @@
 use std::convert::TryFrom;
-use std::env;
+use std::{env, io};
 use std::ops::{Range, Deref};
 use std::sync::Arc;
 
@@ -14,12 +14,24 @@ use eyre::Result;
 use rand::Rng;
 use rayon::iter::{IntoParallelIterator, ParallelIterator};
 use rs_merkle::{MerkleTree, MerkleProof, Hasher};
-use themelio_structs::{Address as ThemelioAddress, CoinData, CoinID, Denom, Header, NetID, BlockHeight, CoinValue, Transaction, TxKind, TxHash};
+use themelio_structs::{
+    Address as ThemelioAddress,
+    BlockHeight,
+    CoinData,
+    CoinID,
+    Denom,
+    Header,
+    NetID,
+    CoinValue,
+    Transaction,
+    TxKind,
+    TxHash
+};
 use tmelcrypt::HashVal;
 
 const DATA_BLOCK_HASH_KEY: &[u8; 13] = b"smt_datablock";
 const NODE_HASH_KEY: &[u8; 8] = b"smt_node";
-const GAS_LIMIT: u32 = 20_000_000;
+const GAS_LIMIT: u32 = 29_000_000;
 
 pub struct Config {
     pub wallet: LocalWallet,
@@ -151,7 +163,7 @@ fn create_stakers(num: u32, message: &[u8]) -> (Vec<[u8; 32]>, Vec<U256>, Vec<[u
 }
 
 // TESTS
-async fn setup_bridge() -> ThemelioBridge<SignerMiddleware<Provider<Http>, LocalWallet>>{
+async fn setup_bridge(address: &str) -> ThemelioBridge<SignerMiddleware<Provider<Http>, LocalWallet>>{
     let provider = Provider::<Http>::try_from(
         "https://rinkeby.infura.io/v3/0771c92c5c6c42669665a80daa68b848",
     ).expect("Provider unable to be initialized.");
@@ -167,7 +179,7 @@ async fn setup_bridge() -> ThemelioBridge<SignerMiddleware<Provider<Http>, Local
     let client = SignerMiddleware::new(provider.clone(), wallet);
     let client = Arc::new(client);
 
-    let address = "0x77653c46FBbaDb73A389f99bc2A19Ab5EFB2ec01".parse::<EthersAddress>()
+    let address = address.parse::<EthersAddress>()
         .expect("Unable to parse address.");
 
     let bridge = ThemelioBridge::new(address, client.clone());
@@ -175,8 +187,8 @@ async fn setup_bridge() -> ThemelioBridge<SignerMiddleware<Provider<Http>, Local
     bridge
 }
 
-async fn test_e2e() -> Result<()> {
-    let bridge = setup_bridge().await;
+async fn test_e2e(address: &str, num_stakers: u32, merkle_tree_height: u32) -> Result<()> {
+    let bridge = setup_bridge(address).await;
 
     // create a random block header
     let mut header: Header = random_header();
@@ -187,7 +199,7 @@ async fn test_e2e() -> Result<()> {
     let header_epoch = U256::from(header_epoch);
 
     // create random transactions with ethereum addresses in additional_data of first output
-    let num_datablocks = rand::thread_rng().gen_range(0..1024);
+    let num_datablocks = rand::thread_rng().gen_range(2u32.pow(merkle_tree_height - 1)..2u32.pow(merkle_tree_height));
     let datablocks = create_datablocks(num_datablocks);
 
     // create a merkle tree and get the root, replace transactions_hash with it
@@ -219,8 +231,6 @@ async fn test_e2e() -> Result<()> {
     header.transactions_hash = HashVal(merkle_root);
 
     // create random staker keypairs, serialize header and sign with each sk, store in vecs
-    let num_stakers = 1;//rand::thread_rng().gen_range(1..16);
-
     let serialized_header = stdcode::serialize(&header).expect("Unable to serialize header.");
     let serialized_header_bytes = Bytes::from(serialized_header.clone());
 
@@ -231,7 +241,7 @@ async fn test_e2e() -> Result<()> {
     let signatures: Vec<[u8; 32]> = stakers_info.2;
 
     // send tx to relayStakers()
-    let call = bridge.relay_stakers(header_epoch, stakers.clone(), staker_syms);
+    let call = bridge.relay_stakers(header_epoch, stakers.clone(), staker_syms.clone());
     let pending_tx = call.send().await?;
     let receipt = pending_tx.await?;
 
@@ -240,7 +250,7 @@ async fn test_e2e() -> Result<()> {
 
     // send tx to relayHeader
     let call = bridge
-        .relay_header(serialized_header_bytes, stakers.clone(), signatures)
+        .relay_header(serialized_header_bytes.clone(), stakers.clone(), signatures.clone())
         .gas(GAS_LIMIT);
     let pending_tx = call.send().await?;
     let receipt = pending_tx.await?;
@@ -250,8 +260,8 @@ async fn test_e2e() -> Result<()> {
 
     // send tx to verifyTx()
     let call = bridge
-        .verify_tx(serialized_tx_bytes, index_u256, block_height, merkle_proof_vec)
-        .gas(20000000);
+        .verify_tx(serialized_tx_bytes.clone(), index_u256, block_height, merkle_proof_vec.clone())
+        .gas(GAS_LIMIT);
     let pending_tx = call.send().await?;
     let receipt = pending_tx.await?;
 
@@ -259,7 +269,7 @@ async fn test_e2e() -> Result<()> {
     //assert
 
     // send tx to burn()
-    let call = bridge.burn(mel_amount).gas(20000000);
+    let call = bridge.burn(mel_amount).gas(GAS_LIMIT);
     let pending_tx = call.send().await?;
     let receipt = pending_tx.await?;
 
@@ -268,10 +278,36 @@ async fn test_e2e() -> Result<()> {
 
     Ok(())
 }
-
+// blake3: 0xA2DAa21c41546aF27ecE20a5A3e08d40bAe3cF66
+// ed25519: 0x8c77CF199f6cAD870b65eD559bc3bA1560b60587
+// themeliobridge: 0x8e27C1C496dD6D850E62e0825eD120e1b6d0b560
 #[tokio::main]
 async fn main() -> Result<()> {
-    test_e2e().await?;
+    let address = "0x77653c46FBbaDb73A389f99bc2A19Ab5EFB2ec01";
+
+    let mut num_stakers = String::new();
+    let mut merkle_tree_height = String::new();
+
+    println!("Input the desired number of stakers: ");
+    io::stdin()
+        .read_line(&mut num_stakers)
+        .expect("Failed to read number of stakers.");
+
+    println!("Input the desired Merkle tree height: ");
+    io::stdin()
+        .read_line(&mut merkle_tree_height)
+        .expect("Failed to read Merkle tree height.")
+        ;
+
+    let num_stakers: u32 = num_stakers
+        .trim()
+        .parse()?;
+
+    let merkle_tree_height: u32 = merkle_tree_height
+        .trim()
+        .parse()?;
+
+    test_e2e(address, num_stakers, merkle_tree_height).await?;
 
     Ok(())
 }
