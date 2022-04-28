@@ -269,7 +269,7 @@ async fn test_e2e(address: &str, num_stakers: u32, merkle_tree_height: u32) -> R
     //assert
 
     // send tx to burn()
-    let call = bridge.burn(mel_amount).gas(GAS_LIMIT);
+    let call = bridge.burn(mel_amount, *b"00000000000000000000000000000000").gas(GAS_LIMIT);
     let pending_tx = call.send().await?;
     let receipt = pending_tx.await?;
 
@@ -278,12 +278,10 @@ async fn test_e2e(address: &str, num_stakers: u32, merkle_tree_height: u32) -> R
 
     Ok(())
 }
-// blake3: 0xA2DAa21c41546aF27ecE20a5A3e08d40bAe3cF66
-// ed25519: 0x8c77CF199f6cAD870b65eD559bc3bA1560b60587
-// themeliobridge: 0x8e27C1C496dD6D850E62e0825eD120e1b6d0b560
+
 #[tokio::main]
 async fn main() -> Result<()> {
-    let address = "0x77653c46FBbaDb73A389f99bc2A19Ab5EFB2ec01";
+    let address = "0x8e27C1C496dD6D850E62e0825eD120e1b6d0b560";
 
     let mut num_stakers = String::new();
     let mut merkle_tree_height = String::new();
@@ -296,8 +294,7 @@ async fn main() -> Result<()> {
     println!("Input the desired Merkle tree height: ");
     io::stdin()
         .read_line(&mut merkle_tree_height)
-        .expect("Failed to read Merkle tree height.")
-        ;
+        .expect("Failed to read Merkle tree height.");
 
     let num_stakers: u32 = num_stakers
         .trim()
