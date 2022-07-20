@@ -70,7 +70,7 @@ impl Config {
             .unwrap();
 
         let rpc: String = env::var("RPC_URL")
-            .parse();
+            .expect("Unable to parse RPC_URL.");
 
         Ok(Config { wallet, rpc })
     }
@@ -79,8 +79,8 @@ impl Config {
 #[derive(Parser, Debug)]
 #[clap(author, version, about, long_about = None)]
 struct Args {
-    #[clap(short, long, default_value = "")]
-    data: String,
+    #[clap(long)]
+    initial_conditions: bool,
 }
 
 #[derive(Clone)]
@@ -287,9 +287,12 @@ fn random_transaction() -> Transaction {
 fn create_datablocks(num: u32) -> Vec<Transaction> {
     let range: Range<u32> = 0..num;
 
-    range.into_par_iter().map(|_index| {
-        random_transaction()
-    }).collect::<Vec<Transaction>>()
+    range
+        .into_par_iter()
+        .map(|_index| {
+            random_transaction()
+        })
+        .collect::<Vec<Transaction>>()
 }
 
 fn random_staker(message: &[u8]) -> ([u8; 32], U256, [u8; 64]) {
@@ -327,17 +330,22 @@ fn create_stakers(num: u32, message: &[u8]) -> (Vec<[u8; 32]>, Vec<U256>, Vec<[u
 
 // TESTS
 async fn setup_bridge(address: &str) -> ThemelioBridge<SignerMiddleware<Provider<Http>, LocalWallet>> {
-    let provider = Provider::<Http>::try_from(
-        "https://rinkeby.infura.io/v3/0771c92c5c6c42669665a80daa68b848",
-    ).expect("Provider unable to be initialized.");
+    let config = Config::new()
+        .expect("Error initializing configuration.");
 
-    let chain_id = provider.get_chainid().await.unwrap().as_u64();
+    let provider = Provider::<Http>::try_from(config.rpc)
+        .expect("Provider unable to be initialized.");
 
-    let wallet: LocalWallet = Config::new()
-        .expect("Missing env variables.")
-        .wallet;
+    let wallet: LocalWallet = config.wallet;
 
-    let wallet = wallet.with_chain_id(chain_id);
+    let chain_id = provider
+        .get_chainid()
+        .await
+        .unwrap()
+        .as_u64();
+
+    let wallet = wallet
+        .with_chain_id(chain_id);
 
     let client = SignerMiddleware::new(provider.clone(), wallet);
     let client = Arc::new(client);
@@ -405,22 +413,21 @@ async fn test_e2e(address: &str, num_stakers: u32, merkle_tree_height: u32) -> R
     let signatures: Vec<[u8; 32]> = stakers_info.2;
 
     // send tx to relayStakers()
-    let call = bridge.relay_stakers(header_epoch, stakers.clone(), staker_syms.clone());
-    let pending_tx = call.send().await?;
-    let receipt = pending_tx.await?;
+    // let call = bridge.verify_stakes(Bytes::from(stakers.clone()));
+    // let pending_tx = call.send().await?;
+    // let receipt = pending_tx.await?;
 
-    println!("\n*** relayStakers() receipt ***\n{:#?}\n********************\n", receipt.unwrap());
-    //assert
+    // println!("\n*** relayStakers() receipt ***\n{:#?}\n********************\n", receipt.unwrap());
 
     // send tx to relayHeader
-    let call = bridge
-        .relay_header(serialized_header_bytes.clone(), stakers.clone(), signatures.clone())
-        .gas(GAS_LIMIT);
-    let pending_tx = call.send().await?;
-    let receipt = pending_tx.await?;
+    // let call = bridge
+    //     .verify_header(serialized_header_bytes.clone(), stakers.clone(), signatures.clone())
+    //     .gas(GAS_LIMIT);
+    // let pending_tx = call.send().await?;
+    // let receipt = pending_tx.await?;
 
-    println!("\n***** relayHeader() receipt *****\n{:#?}\n********************\n", receipt.unwrap());
-    // assert
+    // println!("\n***** relayHeader() receipt *****\n{:#?}\n********************\n", receipt.unwrap());
+
     // send tx to verifyTx()
     let call = bridge
         .verify_tx(serialized_tx_bytes.clone(), index_u256, block_height, merkle_proof_vec.clone())
@@ -429,25 +436,23 @@ async fn test_e2e(address: &str, num_stakers: u32, merkle_tree_height: u32) -> R
     let receipt = pending_tx.await?;
 
     println!("\n***** verifyTx() receipt *****\n{:#?}\n********************\n", receipt.unwrap());
-    //assert
 
     // send tx to burn()
-    let call = bridge.burn(mel_amount, *b"00000000000000000000000000000000").gas(GAS_LIMIT);
-    let pending_tx = call.send().await?;
-    let receipt = pending_tx.await?;
+    // let call = bridge.burn(mel_amount, *b"00000000000000000000000000000000").gas(GAS_LIMIT);
+    // let pending_tx = call.send().await?;
+    // let receipt = pending_tx.await?;
 
-    println!("\n***** burn() receipt *****\n{:#?}\n********************\n", receipt.unwrap());
-    //assert
+    // println!("\n***** burn() receipt *****\n{:#?}\n********************\n", receipt.unwrap());
 
     Ok(())
 }
 
 #[tokio::main]
-async fn main() {//} -> Result<()> {
+async fn main() -> Result<()> {
     let args = Args::parse();
 
-    if args.data.len() > 0 {
-        println!("{}", args.data);
+    if args.initial_conditions {
+
     } else {
         let address = "0x8e27C1C496dD6D850E62e0825eD120e1b6d0b560";
 
@@ -479,6 +484,5 @@ async fn main() {//} -> Result<()> {
             .expect("Error awaiting end-to-end test.");
     }
     
-    print!("{}", blake3_differential());
-    //Ok(())
+    Ok(())
 }
