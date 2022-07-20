@@ -57,7 +57,8 @@ const GAS_LIMIT: u32 = 29_000_000;
 
 struct Config {
     pub wallet: LocalWallet,
-    pub rpc: String
+    pub rpc: String,
+    pub bridge_proxy_address: String,
 }
 
 impl Config {
@@ -72,7 +73,16 @@ impl Config {
         let rpc: String = env::var("RPC_URL")
             .expect("Unable to parse RPC_URL.");
 
-        Ok(Config { wallet, rpc })
+        let bridge_proxy_address = env::var("BRIDGE_PROXY_ADDRESS")
+            .expect("Unable to parse BRIDGE_PROXY_ADDRESS.");
+
+        Ok(
+            Config {
+                wallet,
+                rpc,
+                bridge_proxy_address
+            }
+        )
     }
 }
 
@@ -454,7 +464,10 @@ async fn main() -> Result<()> {
     if args.initial_conditions {
 
     } else {
-        let address = "0x8e27C1C496dD6D850E62e0825eD120e1b6d0b560";
+        let config = Config::new()
+            .expect("Unable to initialize config.");
+
+        let address = config.bridge_proxy_address;
 
         let mut num_stakers = String::new();
         let mut merkle_tree_height = String::new();
@@ -479,7 +492,7 @@ async fn main() -> Result<()> {
             .parse()
             .expect("Error parsing Merkle tree height.");
 
-        test_e2e(address, num_stakers, merkle_tree_height)
+        test_e2e(&address, num_stakers, merkle_tree_height)
             .await
             .expect("Error awaiting end-to-end test.");
     }
