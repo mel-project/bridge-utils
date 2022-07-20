@@ -1,6 +1,6 @@
-pub use sha512_mod::*;
+pub use storageslot_mod::*;
 #[allow(clippy::too_many_arguments, non_camel_case_types)]
-pub mod sha512_mod {
+pub mod storageslot_mod {
     #![allow(clippy::enum_variant_names)]
     #![allow(dead_code)]
     #![allow(clippy::type_complexity)]
@@ -14,35 +14,35 @@ pub mod sha512_mod {
         types::*,
     };
     use ethers::providers::Middleware;
-    #[doc = "Sha512 was auto-generated with ethers-rs Abigen. More information at: https://github.com/gakonst/ethers-rs"]
+    #[doc = "StorageSlot was auto-generated with ethers-rs Abigen. More information at: https://github.com/gakonst/ethers-rs"]
     use std::sync::Arc;
-    pub static SHA512_ABI: ethers::contract::Lazy<ethers::core::abi::Abi> =
+    pub static STORAGESLOT_ABI: ethers::contract::Lazy<ethers::core::abi::Abi> =
         ethers::contract::Lazy::new(|| serde_json::from_str("[]").expect("invalid abi"));
     #[doc = r" Bytecode of the #name contract"]
-    pub static SHA512_BYTECODE: ethers::contract::Lazy<ethers::core::types::Bytes> =
+    pub static STORAGESLOT_BYTECODE: ethers::contract::Lazy<ethers::core::types::Bytes> =
         ethers::contract::Lazy::new(|| {
-            "0x60808060405234601757603a9081601d823930815050f35b600080fdfe600080fdfea2646970667358221220a6ee28c0641f07eb7dc68af59a8d252ebdded70ab54e2b34f7900600bc6dab9c64736f6c634300080d0033" . parse () . expect ("invalid bytecode")
+            "0x60808060405234601757603a9081601d823930815050f35b600080fdfe600080fdfea264697066735822122033282089dd5b2f08a2aea034bbbe1c5e3d301588adf72d6debe3e645a9772ca864736f6c634300080d0033" . parse () . expect ("invalid bytecode")
         });
-    pub struct Sha512<M>(ethers::contract::Contract<M>);
-    impl<M> Clone for Sha512<M> {
+    pub struct StorageSlot<M>(ethers::contract::Contract<M>);
+    impl<M> Clone for StorageSlot<M> {
         fn clone(&self) -> Self {
-            Sha512(self.0.clone())
+            StorageSlot(self.0.clone())
         }
     }
-    impl<M> std::ops::Deref for Sha512<M> {
+    impl<M> std::ops::Deref for StorageSlot<M> {
         type Target = ethers::contract::Contract<M>;
         fn deref(&self) -> &Self::Target {
             &self.0
         }
     }
-    impl<M: ethers::providers::Middleware> std::fmt::Debug for Sha512<M> {
+    impl<M: ethers::providers::Middleware> std::fmt::Debug for StorageSlot<M> {
         fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-            f.debug_tuple(stringify!(Sha512))
+            f.debug_tuple(stringify!(StorageSlot))
                 .field(&self.address())
                 .finish()
         }
     }
-    impl<M: ethers::providers::Middleware> Sha512<M> {
+    impl<M: ethers::providers::Middleware> StorageSlot<M> {
         #[doc = r" Creates a new contract instance with the specified `ethers`"]
         #[doc = r" client at the given `Address`. The contract derefs to a `ethers::Contract`"]
         #[doc = r" object"]
@@ -50,7 +50,7 @@ pub mod sha512_mod {
             address: T,
             client: ::std::sync::Arc<M>,
         ) -> Self {
-            ethers::contract::Contract::new(address.into(), SHA512_ABI.clone(), client).into()
+            ethers::contract::Contract::new(address.into(), STORAGESLOT_ABI.clone(), client).into()
         }
         #[doc = r" Constructs the general purpose `Deployer` instance based on the provided constructor arguments and sends it."]
         #[doc = r" Returns a new instance of a deployer that returns an instance of this contract after sending the transaction"]
@@ -83,8 +83,8 @@ pub mod sha512_mod {
             ethers::contract::ContractError<M>,
         > {
             let factory = ethers::contract::ContractFactory::new(
-                SHA512_ABI.clone(),
-                SHA512_BYTECODE.clone().into(),
+                STORAGESLOT_ABI.clone(),
+                STORAGESLOT_BYTECODE.clone().into(),
                 client,
             );
             let deployer = factory.deploy(constructor_args)?;
@@ -92,7 +92,7 @@ pub mod sha512_mod {
             Ok(deployer)
         }
     }
-    impl<M: ethers::providers::Middleware> From<ethers::contract::Contract<M>> for Sha512<M> {
+    impl<M: ethers::providers::Middleware> From<ethers::contract::Contract<M>> for StorageSlot<M> {
         fn from(contract: ethers::contract::Contract<M>) -> Self {
             Self(contract)
         }

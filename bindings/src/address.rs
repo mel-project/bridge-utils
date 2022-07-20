@@ -1,6 +1,6 @@
-pub use context_mod::*;
-#[allow(clippy::too_many_arguments)]
-mod context_mod {
+pub use address_mod::*;
+#[allow(clippy::too_many_arguments, non_camel_case_types)]
+pub mod address_mod {
     #![allow(clippy::enum_variant_names)]
     #![allow(dead_code)]
     #![allow(clippy::type_complexity)]
@@ -14,29 +14,35 @@ mod context_mod {
         types::*,
     };
     use ethers::providers::Middleware;
-    #[doc = "Context was auto-generated with ethers-rs Abigen. More information at: https://github.com/gakonst/ethers-rs"]
+    #[doc = "Address was auto-generated with ethers-rs Abigen. More information at: https://github.com/gakonst/ethers-rs"]
     use std::sync::Arc;
-    pub static CONTEXT_ABI: ethers::contract::Lazy<ethers::core::abi::Abi> =
+    pub static ADDRESS_ABI: ethers::contract::Lazy<ethers::core::abi::Abi> =
         ethers::contract::Lazy::new(|| serde_json::from_str("[]").expect("invalid abi"));
     #[doc = r" Bytecode of the #name contract"]
-    pub static CONTEXT_BYTECODE: ethers::contract::Lazy<ethers::core::types::Bytes> =
-        ethers::contract::Lazy::new(|| "0x".parse().expect("invalid bytecode"));
-    #[derive(Clone)]
-    pub struct Context<M>(ethers::contract::Contract<M>);
-    impl<M> std::ops::Deref for Context<M> {
+    pub static ADDRESS_BYTECODE: ethers::contract::Lazy<ethers::core::types::Bytes> =
+        ethers::contract::Lazy::new(|| {
+            "0x60808060405234601757603a9081601d823930815050f35b600080fdfe600080fdfea26469706673582212208f2bc5cc2da42d29406bcb2614f228f38696050764ed71b167c1da087e3a4af264736f6c634300080d0033" . parse () . expect ("invalid bytecode")
+        });
+    pub struct Address<M>(ethers::contract::Contract<M>);
+    impl<M> Clone for Address<M> {
+        fn clone(&self) -> Self {
+            Address(self.0.clone())
+        }
+    }
+    impl<M> std::ops::Deref for Address<M> {
         type Target = ethers::contract::Contract<M>;
         fn deref(&self) -> &Self::Target {
             &self.0
         }
     }
-    impl<M: ethers::providers::Middleware> std::fmt::Debug for Context<M> {
+    impl<M: ethers::providers::Middleware> std::fmt::Debug for Address<M> {
         fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-            f.debug_tuple(stringify!(Context))
+            f.debug_tuple(stringify!(Address))
                 .field(&self.address())
                 .finish()
         }
     }
-    impl<'a, M: ethers::providers::Middleware> Context<M> {
+    impl<M: ethers::providers::Middleware> Address<M> {
         #[doc = r" Creates a new contract instance with the specified `ethers`"]
         #[doc = r" client at the given `Address`. The contract derefs to a `ethers::Contract`"]
         #[doc = r" object"]
@@ -44,7 +50,7 @@ mod context_mod {
             address: T,
             client: ::std::sync::Arc<M>,
         ) -> Self {
-            ethers::contract::Contract::new(address.into(), CONTEXT_ABI.clone(), client).into()
+            ethers::contract::Contract::new(address.into(), ADDRESS_ABI.clone(), client).into()
         }
         #[doc = r" Constructs the general purpose `Deployer` instance based on the provided constructor arguments and sends it."]
         #[doc = r" Returns a new instance of a deployer that returns an instance of this contract after sending the transaction"]
@@ -77,8 +83,8 @@ mod context_mod {
             ethers::contract::ContractError<M>,
         > {
             let factory = ethers::contract::ContractFactory::new(
-                CONTEXT_ABI.clone(),
-                CONTEXT_BYTECODE.clone().into(),
+                ADDRESS_ABI.clone(),
+                ADDRESS_BYTECODE.clone().into(),
                 client,
             );
             let deployer = factory.deploy(constructor_args)?;
@@ -86,7 +92,7 @@ mod context_mod {
             Ok(deployer)
         }
     }
-    impl<M: ethers::providers::Middleware> From<ethers::contract::Contract<M>> for Context<M> {
+    impl<M: ethers::providers::Middleware> From<ethers::contract::Contract<M>> for Address<M> {
         fn from(contract: ethers::contract::Contract<M>) -> Self {
             Self(contract)
         }

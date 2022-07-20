@@ -57,6 +57,7 @@ const GAS_LIMIT: u32 = 29_000_000;
 
 struct Config {
     pub wallet: LocalWallet,
+    pub rpc: String
 }
 
 impl Config {
@@ -68,7 +69,10 @@ impl Config {
             .parse()
             .unwrap();
 
-        Ok(Config { wallet })
+        let rpc: String = env::var("RPC_URL")
+            .parse();
+
+        Ok(Config { wallet, rpc })
     }
 }
 

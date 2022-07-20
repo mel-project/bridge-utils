@@ -1,6 +1,6 @@
 pub use stdmath_mod::*;
-#[allow(clippy::too_many_arguments)]
-mod stdmath_mod {
+#[allow(clippy::too_many_arguments, non_camel_case_types)]
+pub mod stdmath_mod {
     #![allow(clippy::enum_variant_names)]
     #![allow(dead_code)]
     #![allow(clippy::type_complexity)]
@@ -21,10 +21,14 @@ mod stdmath_mod {
     #[doc = r" Bytecode of the #name contract"]
     pub static STDMATH_BYTECODE: ethers::contract::Lazy<ethers::core::types::Bytes> =
         ethers::contract::Lazy::new(|| {
-            "0x60566037600b82828239805160001a607314602a57634e487b7160e01b600052600060045260246000fd5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea264697066735822122059ff74bc773ed9ea259188e82ca47323757c1bad80394ebea88487c3a9b323cb64736f6c634300080d0033" . parse () . expect ("invalid bytecode")
+            "0x60808060405234601757603a9081601d823930815050f35b600080fdfe600080fdfea2646970667358221220e60c1e9dae5231e3cecf4be546a54e3bd123b07b09388aa810313c0e10a3e50864736f6c634300080d0033" . parse () . expect ("invalid bytecode")
         });
-    #[derive(Clone)]
     pub struct stdMath<M>(ethers::contract::Contract<M>);
+    impl<M> Clone for stdMath<M> {
+        fn clone(&self) -> Self {
+            stdMath(self.0.clone())
+        }
+    }
     impl<M> std::ops::Deref for stdMath<M> {
         type Target = ethers::contract::Contract<M>;
         fn deref(&self) -> &Self::Target {
@@ -38,7 +42,7 @@ mod stdmath_mod {
                 .finish()
         }
     }
-    impl<'a, M: ethers::providers::Middleware> stdMath<M> {
+    impl<M: ethers::providers::Middleware> stdMath<M> {
         #[doc = r" Creates a new contract instance with the specified `ethers`"]
         #[doc = r" client at the given `Address`. The contract derefs to a `ethers::Contract`"]
         #[doc = r" object"]

@@ -1,6 +1,6 @@
 pub use dstest_mod::*;
-#[allow(clippy::too_many_arguments)]
-mod dstest_mod {
+#[allow(clippy::too_many_arguments, non_camel_case_types)]
+pub mod dstest_mod {
     #![allow(clippy::enum_variant_names)]
     #![allow(dead_code)]
     #![allow(clippy::type_complexity)]
@@ -23,10 +23,14 @@ mod dstest_mod {
     #[doc = r" Bytecode of the #name contract"]
     pub static DSTEST_BYTECODE: ethers::contract::Lazy<ethers::core::types::Bytes> =
         ethers::contract::Lazy::new(|| {
-            "0x60806040526000805460ff1916600117905534801561001d57600080fd5b506102598061002d6000396000f3fe608060405234801561001057600080fd5b50600436106100365760003560e01c8063ba414fa61461003b578063fa7626d414610057575b600080fd5b610043610064565b604051901515815260200160405180910390f35b6000546100439060ff1681565b60008054610100900460ff16156100845750600054610100900460ff1690565b6000737109709ecfa91a80626ff3989d68f67f5b1dd12d3b1561018a5760408051737109709ecfa91a80626ff3989d68f67f5b1dd12d602082018190526519985a5b195960d21b82840152825180830384018152606083019093526000929091610112917f667f9d70ca411d70ead50d8d5c22070dafc36ad75f3dcf5e7237b22ade9aecc4916080016101ca565b60408051601f198184030181529082905261012c916101ee565b6000604051808303816000865af19150503d8060008114610169576040519150601f19603f3d011682016040523d82523d6000602084013e61016e565b606091505b50915050808060200190518101906101869190610201565b9150505b919050565b6000815160005b818110156101b05760208185018101518683015201610196565b818111156101bf576000828601525b509290920192915050565b6001600160e01b03198316815260006101e6600483018461018f565b949350505050565b60006101fa828461018f565b9392505050565b60006020828403121561021357600080fd5b815180151581146101fa57600080fdfea2646970667358221220ed8ecb19d02db57c4b3c2543d3271eb06658f9b41d5d8468ea89bf7c6758680664736f6c634300080d0033" . parse () . expect ("invalid bytecode")
+            "0x6080806040523461002357600160ff19600054161760005561028090816100298239f35b600080fdfe6080604052600436101561001257600080fd5b6000803560e01c8063ba414fa6146100585763fa7626d4146100345750600080fd5b3461005557806003193601126100555760ff60209154166040519015158152f35b80fd5b5034610055578060031936011261005557602061007361017c565b6040519015158152f35b50634e487b7160e01b600052604160045260246000fd5b90601f8019910116810190811067ffffffffffffffff8211176100b657604052565b6100be61007d565b604052565b630667f9d760e41b81528151916000905b8382106100f95750908260049392116100ec57010190565b6000838383010152010190565b908060208092840101516004828601015201906100d4565b3d1561015a573d9067ffffffffffffffff821161014d575b60405191610141601f8201601f191660200184610094565b82523d6000602084013e565b61015561007d565b610129565b606090565b90816020910312610177575180151581036101775790565b600080fd5b6000805460081c60ff1615610198575460081c60ff1690565b90565b80737109709ecfa91a80626ff3989d68f67f5b1dd12d803b6101b957505090565b81925060405182816101f660208201906040820191737109709ecfa91a80626ff3989d68f67f5b1dd12d815260206519985a5b195960d21b910152565b03610209601f1991828101855284610094565b61022b604051918261021f6020820196876100c3565b03908101835282610094565b51925af15061019561023b610111565b6020808251830101910161015f56fea2646970667358221220ba53f1db6c9e074ce5b8ccaf12ff2fbdf621773ba58fac3634f4c0eea97092c864736f6c634300080d0033" . parse () . expect ("invalid bytecode")
         });
-    #[derive(Clone)]
     pub struct DSTest<M>(ethers::contract::Contract<M>);
+    impl<M> Clone for DSTest<M> {
+        fn clone(&self) -> Self {
+            DSTest(self.0.clone())
+        }
+    }
     impl<M> std::ops::Deref for DSTest<M> {
         type Target = ethers::contract::Contract<M>;
         fn deref(&self) -> &Self::Target {
@@ -40,7 +44,7 @@ mod dstest_mod {
                 .finish()
         }
     }
-    impl<'a, M: ethers::providers::Middleware> DSTest<M> {
+    impl<M: ethers::providers::Middleware> DSTest<M> {
         #[doc = r" Creates a new contract instance with the specified `ethers`"]
         #[doc = r" client at the given `Address`. The contract derefs to a `ethers::Contract`"]
         #[doc = r" object"]
@@ -498,7 +502,7 @@ mod dstest_mod {
             }
         }
     }
-    #[doc = "Container type for all input parameters for the `IS_TEST`function with signature `IS_TEST()` and selector `[250, 118, 38, 212]`"]
+    #[doc = "Container type for all input parameters for the `IS_TEST` function with signature `IS_TEST()` and selector `[250, 118, 38, 212]`"]
     #[derive(
         Clone,
         Debug,
@@ -510,7 +514,7 @@ mod dstest_mod {
     )]
     #[ethcall(name = "IS_TEST", abi = "IS_TEST()")]
     pub struct IsTestCall;
-    #[doc = "Container type for all input parameters for the `failed`function with signature `failed()` and selector `[186, 65, 79, 166]`"]
+    #[doc = "Container type for all input parameters for the `failed` function with signature `failed()` and selector `[186, 65, 79, 166]`"]
     #[derive(
         Clone,
         Debug,
@@ -566,4 +570,26 @@ mod dstest_mod {
             DSTestCalls::Failed(var)
         }
     }
+    #[doc = "Container type for all return fields from the `IS_TEST` function with signature `IS_TEST()` and selector `[250, 118, 38, 212]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthAbiType,
+        ethers :: contract :: EthAbiCodec,
+    )]
+    pub struct IsTestReturn(pub bool);
+    #[doc = "Container type for all return fields from the `failed` function with signature `failed()` and selector `[186, 65, 79, 166]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthAbiType,
+        ethers :: contract :: EthAbiCodec,
+    )]
+    pub struct FailedReturn(pub bool);
 }

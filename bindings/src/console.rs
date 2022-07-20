@@ -1,6 +1,6 @@
 pub use console_mod::*;
-#[allow(clippy::too_many_arguments)]
-mod console_mod {
+#[allow(clippy::too_many_arguments, non_camel_case_types)]
+pub mod console_mod {
     #![allow(clippy::enum_variant_names)]
     #![allow(dead_code)]
     #![allow(clippy::type_complexity)]
@@ -21,10 +21,14 @@ mod console_mod {
     #[doc = r" Bytecode of the #name contract"]
     pub static CONSOLE_BYTECODE: ethers::contract::Lazy<ethers::core::types::Bytes> =
         ethers::contract::Lazy::new(|| {
-            "0x60566037600b82828239805160001a607314602a57634e487b7160e01b600052600060045260246000fd5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea264697066735822122093e7b9cdeaea084f2cf0599084c5b1972944b071f8c9239678f82b5411c4f13764736f6c634300080d0033" . parse () . expect ("invalid bytecode")
+            "0x60808060405234601757603a9081601d823930815050f35b600080fdfe600080fdfea264697066735822122037366d9a93d1541fe4da0b70ee8d205c93913e6a9d5d4661b6231b4494877a9e64736f6c634300080d0033" . parse () . expect ("invalid bytecode")
         });
-    #[derive(Clone)]
     pub struct console<M>(ethers::contract::Contract<M>);
+    impl<M> Clone for console<M> {
+        fn clone(&self) -> Self {
+            console(self.0.clone())
+        }
+    }
     impl<M> std::ops::Deref for console<M> {
         type Target = ethers::contract::Contract<M>;
         fn deref(&self) -> &Self::Target {
@@ -38,7 +42,7 @@ mod console_mod {
                 .finish()
         }
     }
-    impl<'a, M: ethers::providers::Middleware> console<M> {
+    impl<M: ethers::providers::Middleware> console<M> {
         #[doc = r" Creates a new contract instance with the specified `ethers`"]
         #[doc = r" client at the given `Address`. The contract derefs to a `ethers::Contract`"]
         #[doc = r" object"]

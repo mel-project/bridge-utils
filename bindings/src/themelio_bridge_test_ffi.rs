@@ -1,6 +1,6 @@
-pub use themeliobridgetest_mod::*;
+pub use themeliobridgetestffi_mod::*;
 #[allow(clippy::too_many_arguments, non_camel_case_types)]
-pub mod themeliobridgetest_mod {
+pub mod themeliobridgetestffi_mod {
     #![allow(clippy::enum_variant_names)]
     #![allow(dead_code)]
     #![allow(clippy::type_complexity)]
@@ -14,32 +14,32 @@ pub mod themeliobridgetest_mod {
         types::*,
     };
     use ethers::providers::Middleware;
-    #[doc = "ThemelioBridgeTest was auto-generated with ethers-rs Abigen. More information at: https://github.com/gakonst/ethers-rs"]
+    #[doc = "ThemelioBridgeTestFFI was auto-generated with ethers-rs Abigen. More information at: https://github.com/gakonst/ethers-rs"]
     use std::sync::Arc;
-    pub static THEMELIOBRIDGETEST_ABI: ethers::contract::Lazy<ethers::core::abi::Abi> =
+    pub static THEMELIOBRIDGETESTFFI_ABI: ethers::contract::Lazy<ethers::core::abi::Abi> =
         ethers::contract::Lazy::new(|| {
-            serde_json :: from_str ("[{\"inputs\":[],\"type\":\"error\",\"name\":\"ERC1155NotOwnerOrApproved\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"height\",\"type\":\"uint256\",\"components\":[]}],\"type\":\"error\",\"name\":\"HeaderAlreadyVerified\",\"outputs\":[]},{\"inputs\":[],\"type\":\"error\",\"name\":\"HeaderNotVerified\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"covhash\",\"type\":\"bytes32\",\"components\":[]}],\"type\":\"error\",\"name\":\"InvalidCovhash\",\"outputs\":[]},{\"inputs\":[],\"type\":\"error\",\"name\":\"InvalidStakes\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"verifierHeight\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"headerHeight\",\"type\":\"uint256\",\"components\":[]}],\"type\":\"error\",\"name\":\"InvalidVerifier\",\"outputs\":[]},{\"inputs\":[],\"type\":\"error\",\"name\":\"MalformedData\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"height\",\"type\":\"uint256\",\"components\":[]}],\"type\":\"error\",\"name\":\"MissingHeader\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"height\",\"type\":\"uint256\",\"components\":[]}],\"type\":\"error\",\"name\":\"MissingVerifier\",\"outputs\":[]},{\"inputs\":[],\"type\":\"error\",\"name\":\"NotOwner\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"start\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"end\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"dataLength\",\"type\":\"uint256\",\"components\":[]}],\"type\":\"error\",\"name\":\"OutOfBoundsSlice\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"txHash\",\"type\":\"bytes32\",\"components\":[]}],\"type\":\"error\",\"name\":\"TxAlreadyVerified\",\"outputs\":[]},{\"inputs\":[],\"type\":\"error\",\"name\":\"TxNotVerified\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"previousAdmin\",\"type\":\"address\",\"components\":[],\"indexed\":false},{\"internalType\":\"address\",\"name\":\"newAdmin\",\"type\":\"address\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"AdminChanged\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"bool\",\"name\":\"approved\",\"type\":\"bool\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"ApprovalForAll\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"beacon\",\"type\":\"address\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"BeaconUpgraded\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"height\",\"type\":\"uint256\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"HeaderVerified\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"uint8\",\"name\":\"version\",\"type\":\"uint8\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"Initialized\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"keccakStakesHash\",\"type\":\"bytes32\",\"components\":[],\"indexed\":false},{\"internalType\":\"bytes32\",\"name\":\"blake3StakesHash\",\"type\":\"bytes32\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"StakesVerified\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"themelioRecipient\",\"type\":\"bytes32\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"TokensBurned\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"TokensMinted\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"uint256[]\",\"name\":\"ids\",\"type\":\"uint256[]\",\"components\":[],\"indexed\":false},{\"internalType\":\"uint256[]\",\"name\":\"values\",\"type\":\"uint256[]\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"TransferBatch\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\",\"components\":[],\"indexed\":false},{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"TransferSingle\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"tx_hash\",\"type\":\"bytes32\",\"components\":[],\"indexed\":true},{\"internalType\":\"uint256\",\"name\":\"height\",\"type\":\"uint256\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"TxVerified\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"value\",\"type\":\"string\",\"components\":[],\"indexed\":false},{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"URI\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"implementation\",\"type\":\"address\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"Upgraded\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"log\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"log_address\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"uint256[]\",\"name\":\"val\",\"type\":\"uint256[]\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"log_array\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"int256[]\",\"name\":\"val\",\"type\":\"int256[]\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"log_array\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"val\",\"type\":\"address[]\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"log_array\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"log_bytes\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"log_bytes32\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"int256\",\"name\":\"\",\"type\":\"int256\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"log_int\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"key\",\"type\":\"string\",\"components\":[],\"indexed\":false},{\"internalType\":\"address\",\"name\":\"val\",\"type\":\"address\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"log_named_address\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"key\",\"type\":\"string\",\"components\":[],\"indexed\":false},{\"internalType\":\"uint256[]\",\"name\":\"val\",\"type\":\"uint256[]\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"log_named_array\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"key\",\"type\":\"string\",\"components\":[],\"indexed\":false},{\"internalType\":\"int256[]\",\"name\":\"val\",\"type\":\"int256[]\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"log_named_array\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"key\",\"type\":\"string\",\"components\":[],\"indexed\":false},{\"internalType\":\"address[]\",\"name\":\"val\",\"type\":\"address[]\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"log_named_array\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"key\",\"type\":\"string\",\"components\":[],\"indexed\":false},{\"internalType\":\"bytes\",\"name\":\"val\",\"type\":\"bytes\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"log_named_bytes\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"key\",\"type\":\"string\",\"components\":[],\"indexed\":false},{\"internalType\":\"bytes32\",\"name\":\"val\",\"type\":\"bytes32\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"log_named_bytes32\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"key\",\"type\":\"string\",\"components\":[],\"indexed\":false},{\"internalType\":\"int256\",\"name\":\"val\",\"type\":\"int256\",\"components\":[],\"indexed\":false},{\"internalType\":\"uint256\",\"name\":\"decimals\",\"type\":\"uint256\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"log_named_decimal_int\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"key\",\"type\":\"string\",\"components\":[],\"indexed\":false},{\"internalType\":\"uint256\",\"name\":\"val\",\"type\":\"uint256\",\"components\":[],\"indexed\":false},{\"internalType\":\"uint256\",\"name\":\"decimals\",\"type\":\"uint256\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"log_named_decimal_uint\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"key\",\"type\":\"string\",\"components\":[],\"indexed\":false},{\"internalType\":\"int256\",\"name\":\"val\",\"type\":\"int256\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"log_named_int\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"key\",\"type\":\"string\",\"components\":[],\"indexed\":false},{\"internalType\":\"string\",\"name\":\"val\",\"type\":\"string\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"log_named_string\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"key\",\"type\":\"string\",\"components\":[],\"indexed\":false},{\"internalType\":\"uint256\",\"name\":\"val\",\"type\":\"uint256\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"log_named_uint\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"log_string\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"log_uint\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"logs\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"IS_SCRIPT\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"IS_TEST\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"balanceOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"accounts\",\"type\":\"address[]\",\"components\":[]},{\"internalType\":\"uint256[]\",\"name\":\"ids\",\"type\":\"uint256[]\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"balanceOfBatch\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account_\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"id_\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"value_\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"bytes32\",\"name\":\"themelioRecipient_\",\"type\":\"bytes32\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"burn\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account_\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256[]\",\"name\":\"ids_\",\"type\":\"uint256[]\",\"components\":[]},{\"internalType\":\"uint256[]\",\"name\":\"values_\",\"type\":\"uint256[]\",\"components\":[]},{\"internalType\":\"bytes32\",\"name\":\"themelioRecipient_\",\"type\":\"bytes32\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"burnBatch\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"txHash\",\"type\":\"bytes32\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"bytes32[]\",\"name\":\"proof\",\"type\":\"bytes32[]\",\"components\":[]}],\"stateMutability\":\"pure\",\"type\":\"function\",\"name\":\"computeMerkleRootHelper\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"give\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"deal\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"give\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"bool\",\"name\":\"adjust\",\"type\":\"bool\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"deal\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"give\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"deal\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"header_\",\"type\":\"bytes\",\"components\":[]}],\"stateMutability\":\"pure\",\"type\":\"function\",\"name\":\"decodeHeaderHelper\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\",\"components\":[]},{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"encodedStakeDoc_\",\"type\":\"bytes\",\"components\":[]}],\"stateMutability\":\"pure\",\"type\":\"function\",\"name\":\"decodeStakeDocHelper\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"transactions_\",\"type\":\"bytes\",\"components\":[]}],\"stateMutability\":\"pure\",\"type\":\"function\",\"name\":\"decodeTransactionHelper\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"what\",\"type\":\"string\",\"components\":[]},{\"internalType\":\"bytes\",\"name\":\"args\",\"type\":\"bytes\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"deployCode\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"what\",\"type\":\"string\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"deployCode\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"failed\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\",\"components\":[]}],\"stateMutability\":\"pure\",\"type\":\"function\",\"name\":\"hashDatablockHelper\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"headerLimbo\",\"outputs\":[{\"internalType\":\"uint128\",\"name\":\"votes\",\"type\":\"uint128\",\"components\":[]},{\"internalType\":\"uint64\",\"name\":\"bytesVerified\",\"type\":\"uint64\",\"components\":[]},{\"internalType\":\"uint64\",\"name\":\"stakeDocIndex\",\"type\":\"uint64\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"headers\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"transactionsHash\",\"type\":\"bytes32\",\"components\":[]},{\"internalType\":\"bytes32\",\"name\":\"stakesHash\",\"type\":\"bytes32\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"who\",\"type\":\"address\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"hoax\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"who\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"address\",\"name\":\"origin\",\"type\":\"address\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"hoax\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"who\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"address\",\"name\":\"origin\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"give\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"hoax\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"who\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"give\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"hoax\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"blockHeight_\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"bytes32\",\"name\":\"transactionsHash_\",\"type\":\"bytes32\",\"components\":[]},{\"internalType\":\"bytes32\",\"name\":\"stakesHash_\",\"type\":\"bytes32\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"initialize\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"isApprovedForAll\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"mintHelper\",\"outputs\":[]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"proxiableUUID\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"time\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"rewind\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256[]\",\"name\":\"ids\",\"type\":\"uint256[]\",\"components\":[]},{\"internalType\":\"uint256[]\",\"name\":\"amounts\",\"type\":\"uint256[]\",\"components\":[]},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"safeBatchTransferFrom\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"safeTransferFrom\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"bool\",\"name\":\"approved\",\"type\":\"bool\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"setApprovalForAll\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"time\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"skip\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"spends\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"who\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"give\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"startHoax\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"who\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"address\",\"name\":\"origin\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"give\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"startHoax\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"who\",\"type\":\"address\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"startHoax\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"who\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"address\",\"name\":\"origin\",\"type\":\"address\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"startHoax\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"interfaceId\",\"type\":\"bytes4\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"supportsInterface\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"testEd25519\",\"outputs\":[]},{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"testHashNode\",\"outputs\":[]},{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"testSlice\",\"outputs\":[]},{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"testdecodeInteger\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"give\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"tip\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newImplementation\",\"type\":\"address\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"upgradeTo\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newImplementation\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\",\"components\":[]}],\"stateMutability\":\"payable\",\"type\":\"function\",\"name\":\"upgradeToAndCall\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"uri\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"verifierHeight_\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"bytes\",\"name\":\"header_\",\"type\":\"bytes\",\"components\":[]},{\"internalType\":\"bytes\",\"name\":\"stakes_\",\"type\":\"bytes\",\"components\":[]},{\"internalType\":\"bytes32[]\",\"name\":\"signatures_\",\"type\":\"bytes32[]\",\"components\":[]},{\"internalType\":\"bool\",\"name\":\"firstTime_\",\"type\":\"bool\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"verifyHeader\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"verifierStakesHash\",\"type\":\"bytes32\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"verifierHeight\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"verifyHeaderHelper\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"stakes_\",\"type\":\"bytes\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"verifyStakes\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"transaction_\",\"type\":\"bytes\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"txIndex_\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"blockHeight_\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"bytes32[]\",\"name\":\"proof_\",\"type\":\"bytes32[]\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"verifyTx\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"blockHeight\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"bytes32\",\"name\":\"transactionsHash\",\"type\":\"bytes32\",\"components\":[]},{\"internalType\":\"bytes32\",\"name\":\"stakesHash\",\"type\":\"bytes32\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"verifyTxHelper\",\"outputs\":[]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"vm\",\"outputs\":[{\"internalType\":\"contract Vm\",\"name\":\"\",\"type\":\"address\",\"components\":[]}]}]") . expect ("invalid abi")
+            serde_json :: from_str ("[{\"inputs\":[],\"type\":\"error\",\"name\":\"ERC1155NotOwnerOrApproved\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"height\",\"type\":\"uint256\",\"components\":[]}],\"type\":\"error\",\"name\":\"HeaderAlreadyVerified\",\"outputs\":[]},{\"inputs\":[],\"type\":\"error\",\"name\":\"HeaderNotVerified\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"covhash\",\"type\":\"bytes32\",\"components\":[]}],\"type\":\"error\",\"name\":\"InvalidCovhash\",\"outputs\":[]},{\"inputs\":[],\"type\":\"error\",\"name\":\"InvalidStakes\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"verifierHeight\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"headerHeight\",\"type\":\"uint256\",\"components\":[]}],\"type\":\"error\",\"name\":\"InvalidVerifier\",\"outputs\":[]},{\"inputs\":[],\"type\":\"error\",\"name\":\"MalformedData\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"height\",\"type\":\"uint256\",\"components\":[]}],\"type\":\"error\",\"name\":\"MissingHeader\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"height\",\"type\":\"uint256\",\"components\":[]}],\"type\":\"error\",\"name\":\"MissingVerifier\",\"outputs\":[]},{\"inputs\":[],\"type\":\"error\",\"name\":\"NotOwner\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"start\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"end\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"dataLength\",\"type\":\"uint256\",\"components\":[]}],\"type\":\"error\",\"name\":\"OutOfBoundsSlice\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"txHash\",\"type\":\"bytes32\",\"components\":[]}],\"type\":\"error\",\"name\":\"TxAlreadyVerified\",\"outputs\":[]},{\"inputs\":[],\"type\":\"error\",\"name\":\"TxNotVerified\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"previousAdmin\",\"type\":\"address\",\"components\":[],\"indexed\":false},{\"internalType\":\"address\",\"name\":\"newAdmin\",\"type\":\"address\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"AdminChanged\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"bool\",\"name\":\"approved\",\"type\":\"bool\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"ApprovalForAll\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"beacon\",\"type\":\"address\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"BeaconUpgraded\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"height\",\"type\":\"uint256\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"HeaderVerified\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"uint8\",\"name\":\"version\",\"type\":\"uint8\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"Initialized\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"keccakStakesHash\",\"type\":\"bytes32\",\"components\":[],\"indexed\":false},{\"internalType\":\"bytes32\",\"name\":\"blake3StakesHash\",\"type\":\"bytes32\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"StakesVerified\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"themelioRecipient\",\"type\":\"bytes32\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"TokensBurned\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"TokensMinted\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"uint256[]\",\"name\":\"ids\",\"type\":\"uint256[]\",\"components\":[],\"indexed\":false},{\"internalType\":\"uint256[]\",\"name\":\"values\",\"type\":\"uint256[]\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"TransferBatch\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\",\"components\":[],\"indexed\":false},{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"TransferSingle\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"tx_hash\",\"type\":\"bytes32\",\"components\":[],\"indexed\":true},{\"internalType\":\"uint256\",\"name\":\"height\",\"type\":\"uint256\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"TxVerified\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"value\",\"type\":\"string\",\"components\":[],\"indexed\":false},{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"URI\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"implementation\",\"type\":\"address\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"Upgraded\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"log\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"log_address\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"uint256[]\",\"name\":\"val\",\"type\":\"uint256[]\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"log_array\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"int256[]\",\"name\":\"val\",\"type\":\"int256[]\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"log_array\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"val\",\"type\":\"address[]\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"log_array\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"log_bytes\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"log_bytes32\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"int256\",\"name\":\"\",\"type\":\"int256\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"log_int\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"key\",\"type\":\"string\",\"components\":[],\"indexed\":false},{\"internalType\":\"address\",\"name\":\"val\",\"type\":\"address\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"log_named_address\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"key\",\"type\":\"string\",\"components\":[],\"indexed\":false},{\"internalType\":\"uint256[]\",\"name\":\"val\",\"type\":\"uint256[]\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"log_named_array\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"key\",\"type\":\"string\",\"components\":[],\"indexed\":false},{\"internalType\":\"int256[]\",\"name\":\"val\",\"type\":\"int256[]\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"log_named_array\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"key\",\"type\":\"string\",\"components\":[],\"indexed\":false},{\"internalType\":\"address[]\",\"name\":\"val\",\"type\":\"address[]\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"log_named_array\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"key\",\"type\":\"string\",\"components\":[],\"indexed\":false},{\"internalType\":\"bytes\",\"name\":\"val\",\"type\":\"bytes\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"log_named_bytes\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"key\",\"type\":\"string\",\"components\":[],\"indexed\":false},{\"internalType\":\"bytes32\",\"name\":\"val\",\"type\":\"bytes32\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"log_named_bytes32\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"key\",\"type\":\"string\",\"components\":[],\"indexed\":false},{\"internalType\":\"int256\",\"name\":\"val\",\"type\":\"int256\",\"components\":[],\"indexed\":false},{\"internalType\":\"uint256\",\"name\":\"decimals\",\"type\":\"uint256\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"log_named_decimal_int\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"key\",\"type\":\"string\",\"components\":[],\"indexed\":false},{\"internalType\":\"uint256\",\"name\":\"val\",\"type\":\"uint256\",\"components\":[],\"indexed\":false},{\"internalType\":\"uint256\",\"name\":\"decimals\",\"type\":\"uint256\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"log_named_decimal_uint\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"key\",\"type\":\"string\",\"components\":[],\"indexed\":false},{\"internalType\":\"int256\",\"name\":\"val\",\"type\":\"int256\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"log_named_int\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"key\",\"type\":\"string\",\"components\":[],\"indexed\":false},{\"internalType\":\"string\",\"name\":\"val\",\"type\":\"string\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"log_named_string\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"key\",\"type\":\"string\",\"components\":[],\"indexed\":false},{\"internalType\":\"uint256\",\"name\":\"val\",\"type\":\"uint256\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"log_named_uint\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"log_string\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"log_uint\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"logs\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"IS_SCRIPT\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"IS_TEST\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"balanceOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"accounts\",\"type\":\"address[]\",\"components\":[]},{\"internalType\":\"uint256[]\",\"name\":\"ids\",\"type\":\"uint256[]\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"balanceOfBatch\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account_\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"id_\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"value_\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"bytes32\",\"name\":\"themelioRecipient_\",\"type\":\"bytes32\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"burn\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account_\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256[]\",\"name\":\"ids_\",\"type\":\"uint256[]\",\"components\":[]},{\"internalType\":\"uint256[]\",\"name\":\"values_\",\"type\":\"uint256[]\",\"components\":[]},{\"internalType\":\"bytes32\",\"name\":\"themelioRecipient_\",\"type\":\"bytes32\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"burnBatch\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"txHash\",\"type\":\"bytes32\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"bytes32[]\",\"name\":\"proof\",\"type\":\"bytes32[]\",\"components\":[]}],\"stateMutability\":\"pure\",\"type\":\"function\",\"name\":\"computeMerkleRootHelper\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"give\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"deal\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"give\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"bool\",\"name\":\"adjust\",\"type\":\"bool\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"deal\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"give\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"deal\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"header_\",\"type\":\"bytes\",\"components\":[]}],\"stateMutability\":\"pure\",\"type\":\"function\",\"name\":\"decodeHeaderHelper\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\",\"components\":[]},{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"encodedStakeDoc_\",\"type\":\"bytes\",\"components\":[]}],\"stateMutability\":\"pure\",\"type\":\"function\",\"name\":\"decodeStakeDocHelper\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"decodeTransactionHelper\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"denom\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"pure\",\"type\":\"function\",\"name\":\"denomToStringHelper\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"what\",\"type\":\"string\",\"components\":[]},{\"internalType\":\"bytes\",\"name\":\"args\",\"type\":\"bytes\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"deployCode\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"what\",\"type\":\"string\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"deployCode\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"failed\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\",\"components\":[]}],\"stateMutability\":\"pure\",\"type\":\"function\",\"name\":\"hashDatablockHelper\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"headerLimbo\",\"outputs\":[{\"internalType\":\"uint128\",\"name\":\"votes\",\"type\":\"uint128\",\"components\":[]},{\"internalType\":\"uint64\",\"name\":\"bytesVerified\",\"type\":\"uint64\",\"components\":[]},{\"internalType\":\"uint64\",\"name\":\"stakeDocIndex\",\"type\":\"uint64\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"headers\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"transactionsHash\",\"type\":\"bytes32\",\"components\":[]},{\"internalType\":\"bytes32\",\"name\":\"stakesHash\",\"type\":\"bytes32\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"who\",\"type\":\"address\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"hoax\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"who\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"address\",\"name\":\"origin\",\"type\":\"address\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"hoax\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"who\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"address\",\"name\":\"origin\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"give\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"hoax\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"who\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"give\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"hoax\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"blockHeight_\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"bytes32\",\"name\":\"transactionsHash_\",\"type\":\"bytes32\",\"components\":[]},{\"internalType\":\"bytes32\",\"name\":\"stakesHash_\",\"type\":\"bytes32\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"initialize\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"isApprovedForAll\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"mintHelper\",\"outputs\":[]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"proxiableUUID\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"time\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"rewind\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256[]\",\"name\":\"ids\",\"type\":\"uint256[]\",\"components\":[]},{\"internalType\":\"uint256[]\",\"name\":\"amounts\",\"type\":\"uint256[]\",\"components\":[]},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"safeBatchTransferFrom\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"safeTransferFrom\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"bool\",\"name\":\"approved\",\"type\":\"bool\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"setApprovalForAll\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"time\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"skip\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"spends\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"who\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"give\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"startHoax\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"who\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"address\",\"name\":\"origin\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"give\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"startHoax\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"who\",\"type\":\"address\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"startHoax\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"who\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"address\",\"name\":\"origin\",\"type\":\"address\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"startHoax\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"interfaceId\",\"type\":\"bytes4\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"supportsInterface\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"testBlake3DifferentialFFI\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"uint128\",\"name\":\"integer\",\"type\":\"uint128\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"testDecodeIntegerDifferentialFFI\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"message\",\"type\":\"bytes\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"testEd25519DifferentialFFI\",\"outputs\":[]},{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"testKeccakBigHashFFI\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\",\"components\":[]},{\"internalType\":\"uint8\",\"name\":\"start\",\"type\":\"uint8\",\"components\":[]},{\"internalType\":\"uint8\",\"name\":\"end\",\"type\":\"uint8\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"testSliceDifferentialFFI\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"give\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"tip\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newImplementation\",\"type\":\"address\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"upgradeTo\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newImplementation\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\",\"components\":[]}],\"stateMutability\":\"payable\",\"type\":\"function\",\"name\":\"upgradeToAndCall\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"uri\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"verifierHeight_\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"bytes\",\"name\":\"header_\",\"type\":\"bytes\",\"components\":[]},{\"internalType\":\"bytes\",\"name\":\"stakes_\",\"type\":\"bytes\",\"components\":[]},{\"internalType\":\"bytes32[]\",\"name\":\"signatures_\",\"type\":\"bytes32[]\",\"components\":[]},{\"internalType\":\"bool\",\"name\":\"firstTime_\",\"type\":\"bool\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"verifyHeader\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"verifierStakesHash\",\"type\":\"bytes32\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"verifierHeight\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"verifyHeaderHelper\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"stakes_\",\"type\":\"bytes\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"verifyStakes\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"transaction_\",\"type\":\"bytes\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"txIndex_\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"blockHeight_\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"bytes32[]\",\"name\":\"proof_\",\"type\":\"bytes32[]\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"verifyTx\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"blockHeight\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"bytes32\",\"name\":\"transactionsHash\",\"type\":\"bytes32\",\"components\":[]},{\"internalType\":\"bytes32\",\"name\":\"stakesHash\",\"type\":\"bytes32\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"verifyTxHelper\",\"outputs\":[]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"vm\",\"outputs\":[{\"internalType\":\"contract Vm\",\"name\":\"\",\"type\":\"address\",\"components\":[]}]}]") . expect ("invalid abi")
         });
-    pub struct ThemelioBridgeTest<M>(ethers::contract::Contract<M>);
-    impl<M> Clone for ThemelioBridgeTest<M> {
+    pub struct ThemelioBridgeTestFFI<M>(ethers::contract::Contract<M>);
+    impl<M> Clone for ThemelioBridgeTestFFI<M> {
         fn clone(&self) -> Self {
-            ThemelioBridgeTest(self.0.clone())
+            ThemelioBridgeTestFFI(self.0.clone())
         }
     }
-    impl<M> std::ops::Deref for ThemelioBridgeTest<M> {
+    impl<M> std::ops::Deref for ThemelioBridgeTestFFI<M> {
         type Target = ethers::contract::Contract<M>;
         fn deref(&self) -> &Self::Target {
             &self.0
         }
     }
-    impl<M: ethers::providers::Middleware> std::fmt::Debug for ThemelioBridgeTest<M> {
+    impl<M: ethers::providers::Middleware> std::fmt::Debug for ThemelioBridgeTestFFI<M> {
         fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-            f.debug_tuple(stringify!(ThemelioBridgeTest))
+            f.debug_tuple(stringify!(ThemelioBridgeTestFFI))
                 .field(&self.address())
                 .finish()
         }
     }
-    impl<M: ethers::providers::Middleware> ThemelioBridgeTest<M> {
+    impl<M: ethers::providers::Middleware> ThemelioBridgeTestFFI<M> {
         #[doc = r" Creates a new contract instance with the specified `ethers`"]
         #[doc = r" client at the given `Address`. The contract derefs to a `ethers::Contract`"]
         #[doc = r" object"]
@@ -47,8 +47,12 @@ pub mod themeliobridgetest_mod {
             address: T,
             client: ::std::sync::Arc<M>,
         ) -> Self {
-            ethers::contract::Contract::new(address.into(), THEMELIOBRIDGETEST_ABI.clone(), client)
-                .into()
+            ethers::contract::Contract::new(
+                address.into(),
+                THEMELIOBRIDGETESTFFI_ABI.clone(),
+                client,
+            )
+            .into()
         }
         #[doc = "Calls the contract's `IS_SCRIPT` (0xf8ccbf47) function"]
         pub fn is_script(&self) -> ethers::contract::builders::ContractCall<M, bool> {
@@ -186,21 +190,19 @@ pub mod themeliobridgetest_mod {
                 .method_hash([34, 195, 125, 27], encoded_stake_doc)
                 .expect("method not found (this should never happen)")
         }
-        #[doc = "Calls the contract's `decodeTransactionHelper` (0xc2e0f1d8) function"]
-        pub fn decode_transaction_helper(
-            &self,
-            transactions: ethers::core::types::Bytes,
-        ) -> ethers::contract::builders::ContractCall<
-            M,
-            (
-                [u8; 32],
-                ethers::core::types::U256,
-                ethers::core::types::U256,
-                ethers::core::types::Address,
-            ),
-        > {
+        #[doc = "Calls the contract's `decodeTransactionHelper` (0x31748095) function"]
+        pub fn decode_transaction_helper(&self) -> ethers::contract::builders::ContractCall<M, ()> {
             self.0
-                .method_hash([194, 224, 241, 216], transactions)
+                .method_hash([49, 116, 128, 149], ())
+                .expect("method not found (this should never happen)")
+        }
+        #[doc = "Calls the contract's `denomToStringHelper` (0x03e47d44) function"]
+        pub fn denom_to_string_helper(
+            &self,
+            denom: ethers::core::types::U256,
+        ) -> ethers::contract::builders::ContractCall<M, String> {
+            self.0
+                .method_hash([3, 228, 125, 68], denom)
                 .expect("method not found (this should never happen)")
         }
         #[doc = "Calls the contract's `deployCode` (0x29ce9dde) function"]
@@ -445,28 +447,48 @@ pub mod themeliobridgetest_mod {
                 .method_hash([1, 255, 201, 167], interface_id)
                 .expect("method not found (this should never happen)")
         }
-        #[doc = "Calls the contract's `testEd25519` (0xb2d7ee31) function"]
-        pub fn test_ed_25519(&self) -> ethers::contract::builders::ContractCall<M, ()> {
+        #[doc = "Calls the contract's `testBlake3DifferentialFFI` (0x3a6dcf1d) function"]
+        pub fn test_blake_3_differential_ffi(
+            &self,
+            data: ethers::core::types::Bytes,
+        ) -> ethers::contract::builders::ContractCall<M, ()> {
             self.0
-                .method_hash([178, 215, 238, 49], ())
+                .method_hash([58, 109, 207, 29], data)
                 .expect("method not found (this should never happen)")
         }
-        #[doc = "Calls the contract's `testHashNode` (0xf34d5c4a) function"]
-        pub fn test_hash_node(&self) -> ethers::contract::builders::ContractCall<M, ()> {
+        #[doc = "Calls the contract's `testDecodeIntegerDifferentialFFI` (0x2ed5db4f) function"]
+        pub fn test_decode_integer_differential_ffi(
+            &self,
+            integer: u128,
+        ) -> ethers::contract::builders::ContractCall<M, ()> {
             self.0
-                .method_hash([243, 77, 92, 74], ())
+                .method_hash([46, 213, 219, 79], integer)
                 .expect("method not found (this should never happen)")
         }
-        #[doc = "Calls the contract's `testSlice` (0xe27c5b17) function"]
-        pub fn test_slice(&self) -> ethers::contract::builders::ContractCall<M, ()> {
+        #[doc = "Calls the contract's `testEd25519DifferentialFFI` (0x0dbd3927) function"]
+        pub fn test_ed_25519_differential_ffi(
+            &self,
+            message: ethers::core::types::Bytes,
+        ) -> ethers::contract::builders::ContractCall<M, ()> {
             self.0
-                .method_hash([226, 124, 91, 23], ())
+                .method_hash([13, 189, 57, 39], message)
                 .expect("method not found (this should never happen)")
         }
-        #[doc = "Calls the contract's `testdecodeInteger` (0x0b2ce479) function"]
-        pub fn testdecode_integer(&self) -> ethers::contract::builders::ContractCall<M, ()> {
+        #[doc = "Calls the contract's `testKeccakBigHashFFI` (0x7f52c271) function"]
+        pub fn test_keccak_big_hash_ffi(&self) -> ethers::contract::builders::ContractCall<M, ()> {
             self.0
-                .method_hash([11, 44, 228, 121], ())
+                .method_hash([127, 82, 194, 113], ())
+                .expect("method not found (this should never happen)")
+        }
+        #[doc = "Calls the contract's `testSliceDifferentialFFI` (0x2e69613f) function"]
+        pub fn test_slice_differential_ffi(
+            &self,
+            data: ethers::core::types::Bytes,
+            start: u8,
+            end: u8,
+        ) -> ethers::contract::builders::ContractCall<M, ()> {
+            self.0
+                .method_hash([46, 105, 97, 63], (data, start, end))
                 .expect("method not found (this should never happen)")
         }
         #[doc = "Calls the contract's `tip` (0xd82555f1) function"]
@@ -765,12 +787,12 @@ pub mod themeliobridgetest_mod {
             self.0.event()
         }
         #[doc = r" Returns an [`Event`](#ethers_contract::builders::Event) builder for all events of this contract"]
-        pub fn events(&self) -> ethers::contract::builders::Event<M, ThemelioBridgeTestEvents> {
+        pub fn events(&self) -> ethers::contract::builders::Event<M, ThemelioBridgeTestFFIEvents> {
             self.0.event_with_filter(Default::default())
         }
     }
     impl<M: ethers::providers::Middleware> From<ethers::contract::Contract<M>>
-        for ThemelioBridgeTest<M>
+        for ThemelioBridgeTestFFI<M>
     {
         fn from(contract: ethers::contract::Contract<M>) -> Self {
             Self(contract)
@@ -1273,7 +1295,7 @@ pub mod themeliobridgetest_mod {
     #[ethevent(name = "logs", abi = "logs(bytes)")]
     pub struct LogsFilter(pub ethers::core::types::Bytes);
     #[derive(Debug, Clone, PartialEq, Eq, ethers :: contract :: EthAbiType)]
-    pub enum ThemelioBridgeTestEvents {
+    pub enum ThemelioBridgeTestFFIEvents {
         AdminChangedFilter(AdminChangedFilter),
         ApprovalForAllFilter(ApprovalForAllFilter),
         BeaconUpgradedFilter(BeaconUpgradedFilter),
@@ -1310,157 +1332,161 @@ pub mod themeliobridgetest_mod {
         LogUintFilter(LogUintFilter),
         LogsFilter(LogsFilter),
     }
-    impl ethers::contract::EthLogDecode for ThemelioBridgeTestEvents {
+    impl ethers::contract::EthLogDecode for ThemelioBridgeTestFFIEvents {
         fn decode_log(log: &ethers::core::abi::RawLog) -> Result<Self, ethers::core::abi::Error>
         where
             Self: Sized,
         {
             if let Ok(decoded) = AdminChangedFilter::decode_log(log) {
-                return Ok(ThemelioBridgeTestEvents::AdminChangedFilter(decoded));
+                return Ok(ThemelioBridgeTestFFIEvents::AdminChangedFilter(decoded));
             }
             if let Ok(decoded) = ApprovalForAllFilter::decode_log(log) {
-                return Ok(ThemelioBridgeTestEvents::ApprovalForAllFilter(decoded));
+                return Ok(ThemelioBridgeTestFFIEvents::ApprovalForAllFilter(decoded));
             }
             if let Ok(decoded) = BeaconUpgradedFilter::decode_log(log) {
-                return Ok(ThemelioBridgeTestEvents::BeaconUpgradedFilter(decoded));
+                return Ok(ThemelioBridgeTestFFIEvents::BeaconUpgradedFilter(decoded));
             }
             if let Ok(decoded) = HeaderVerifiedFilter::decode_log(log) {
-                return Ok(ThemelioBridgeTestEvents::HeaderVerifiedFilter(decoded));
+                return Ok(ThemelioBridgeTestFFIEvents::HeaderVerifiedFilter(decoded));
             }
             if let Ok(decoded) = InitializedFilter::decode_log(log) {
-                return Ok(ThemelioBridgeTestEvents::InitializedFilter(decoded));
+                return Ok(ThemelioBridgeTestFFIEvents::InitializedFilter(decoded));
             }
             if let Ok(decoded) = StakesVerifiedFilter::decode_log(log) {
-                return Ok(ThemelioBridgeTestEvents::StakesVerifiedFilter(decoded));
+                return Ok(ThemelioBridgeTestFFIEvents::StakesVerifiedFilter(decoded));
             }
             if let Ok(decoded) = TokensBurnedFilter::decode_log(log) {
-                return Ok(ThemelioBridgeTestEvents::TokensBurnedFilter(decoded));
+                return Ok(ThemelioBridgeTestFFIEvents::TokensBurnedFilter(decoded));
             }
             if let Ok(decoded) = TokensMintedFilter::decode_log(log) {
-                return Ok(ThemelioBridgeTestEvents::TokensMintedFilter(decoded));
+                return Ok(ThemelioBridgeTestFFIEvents::TokensMintedFilter(decoded));
             }
             if let Ok(decoded) = TransferBatchFilter::decode_log(log) {
-                return Ok(ThemelioBridgeTestEvents::TransferBatchFilter(decoded));
+                return Ok(ThemelioBridgeTestFFIEvents::TransferBatchFilter(decoded));
             }
             if let Ok(decoded) = TransferSingleFilter::decode_log(log) {
-                return Ok(ThemelioBridgeTestEvents::TransferSingleFilter(decoded));
+                return Ok(ThemelioBridgeTestFFIEvents::TransferSingleFilter(decoded));
             }
             if let Ok(decoded) = TxVerifiedFilter::decode_log(log) {
-                return Ok(ThemelioBridgeTestEvents::TxVerifiedFilter(decoded));
+                return Ok(ThemelioBridgeTestFFIEvents::TxVerifiedFilter(decoded));
             }
             if let Ok(decoded) = UriFilter::decode_log(log) {
-                return Ok(ThemelioBridgeTestEvents::UriFilter(decoded));
+                return Ok(ThemelioBridgeTestFFIEvents::UriFilter(decoded));
             }
             if let Ok(decoded) = UpgradedFilter::decode_log(log) {
-                return Ok(ThemelioBridgeTestEvents::UpgradedFilter(decoded));
+                return Ok(ThemelioBridgeTestFFIEvents::UpgradedFilter(decoded));
             }
             if let Ok(decoded) = LogFilter::decode_log(log) {
-                return Ok(ThemelioBridgeTestEvents::LogFilter(decoded));
+                return Ok(ThemelioBridgeTestFFIEvents::LogFilter(decoded));
             }
             if let Ok(decoded) = LogAddressFilter::decode_log(log) {
-                return Ok(ThemelioBridgeTestEvents::LogAddressFilter(decoded));
+                return Ok(ThemelioBridgeTestFFIEvents::LogAddressFilter(decoded));
             }
             if let Ok(decoded) = LogArray1Filter::decode_log(log) {
-                return Ok(ThemelioBridgeTestEvents::LogArray1Filter(decoded));
+                return Ok(ThemelioBridgeTestFFIEvents::LogArray1Filter(decoded));
             }
             if let Ok(decoded) = LogArray2Filter::decode_log(log) {
-                return Ok(ThemelioBridgeTestEvents::LogArray2Filter(decoded));
+                return Ok(ThemelioBridgeTestFFIEvents::LogArray2Filter(decoded));
             }
             if let Ok(decoded) = LogArray3Filter::decode_log(log) {
-                return Ok(ThemelioBridgeTestEvents::LogArray3Filter(decoded));
+                return Ok(ThemelioBridgeTestFFIEvents::LogArray3Filter(decoded));
             }
             if let Ok(decoded) = LogBytesFilter::decode_log(log) {
-                return Ok(ThemelioBridgeTestEvents::LogBytesFilter(decoded));
+                return Ok(ThemelioBridgeTestFFIEvents::LogBytesFilter(decoded));
             }
             if let Ok(decoded) = LogBytes32Filter::decode_log(log) {
-                return Ok(ThemelioBridgeTestEvents::LogBytes32Filter(decoded));
+                return Ok(ThemelioBridgeTestFFIEvents::LogBytes32Filter(decoded));
             }
             if let Ok(decoded) = LogIntFilter::decode_log(log) {
-                return Ok(ThemelioBridgeTestEvents::LogIntFilter(decoded));
+                return Ok(ThemelioBridgeTestFFIEvents::LogIntFilter(decoded));
             }
             if let Ok(decoded) = LogNamedAddressFilter::decode_log(log) {
-                return Ok(ThemelioBridgeTestEvents::LogNamedAddressFilter(decoded));
+                return Ok(ThemelioBridgeTestFFIEvents::LogNamedAddressFilter(decoded));
             }
             if let Ok(decoded) = LogNamedArray1Filter::decode_log(log) {
-                return Ok(ThemelioBridgeTestEvents::LogNamedArray1Filter(decoded));
+                return Ok(ThemelioBridgeTestFFIEvents::LogNamedArray1Filter(decoded));
             }
             if let Ok(decoded) = LogNamedArray2Filter::decode_log(log) {
-                return Ok(ThemelioBridgeTestEvents::LogNamedArray2Filter(decoded));
+                return Ok(ThemelioBridgeTestFFIEvents::LogNamedArray2Filter(decoded));
             }
             if let Ok(decoded) = LogNamedArray3Filter::decode_log(log) {
-                return Ok(ThemelioBridgeTestEvents::LogNamedArray3Filter(decoded));
+                return Ok(ThemelioBridgeTestFFIEvents::LogNamedArray3Filter(decoded));
             }
             if let Ok(decoded) = LogNamedBytesFilter::decode_log(log) {
-                return Ok(ThemelioBridgeTestEvents::LogNamedBytesFilter(decoded));
+                return Ok(ThemelioBridgeTestFFIEvents::LogNamedBytesFilter(decoded));
             }
             if let Ok(decoded) = LogNamedBytes32Filter::decode_log(log) {
-                return Ok(ThemelioBridgeTestEvents::LogNamedBytes32Filter(decoded));
+                return Ok(ThemelioBridgeTestFFIEvents::LogNamedBytes32Filter(decoded));
             }
             if let Ok(decoded) = LogNamedDecimalIntFilter::decode_log(log) {
-                return Ok(ThemelioBridgeTestEvents::LogNamedDecimalIntFilter(decoded));
+                return Ok(ThemelioBridgeTestFFIEvents::LogNamedDecimalIntFilter(
+                    decoded,
+                ));
             }
             if let Ok(decoded) = LogNamedDecimalUintFilter::decode_log(log) {
-                return Ok(ThemelioBridgeTestEvents::LogNamedDecimalUintFilter(decoded));
+                return Ok(ThemelioBridgeTestFFIEvents::LogNamedDecimalUintFilter(
+                    decoded,
+                ));
             }
             if let Ok(decoded) = LogNamedIntFilter::decode_log(log) {
-                return Ok(ThemelioBridgeTestEvents::LogNamedIntFilter(decoded));
+                return Ok(ThemelioBridgeTestFFIEvents::LogNamedIntFilter(decoded));
             }
             if let Ok(decoded) = LogNamedStringFilter::decode_log(log) {
-                return Ok(ThemelioBridgeTestEvents::LogNamedStringFilter(decoded));
+                return Ok(ThemelioBridgeTestFFIEvents::LogNamedStringFilter(decoded));
             }
             if let Ok(decoded) = LogNamedUintFilter::decode_log(log) {
-                return Ok(ThemelioBridgeTestEvents::LogNamedUintFilter(decoded));
+                return Ok(ThemelioBridgeTestFFIEvents::LogNamedUintFilter(decoded));
             }
             if let Ok(decoded) = LogStringFilter::decode_log(log) {
-                return Ok(ThemelioBridgeTestEvents::LogStringFilter(decoded));
+                return Ok(ThemelioBridgeTestFFIEvents::LogStringFilter(decoded));
             }
             if let Ok(decoded) = LogUintFilter::decode_log(log) {
-                return Ok(ThemelioBridgeTestEvents::LogUintFilter(decoded));
+                return Ok(ThemelioBridgeTestFFIEvents::LogUintFilter(decoded));
             }
             if let Ok(decoded) = LogsFilter::decode_log(log) {
-                return Ok(ThemelioBridgeTestEvents::LogsFilter(decoded));
+                return Ok(ThemelioBridgeTestFFIEvents::LogsFilter(decoded));
             }
             Err(ethers::core::abi::Error::InvalidData)
         }
     }
-    impl ::std::fmt::Display for ThemelioBridgeTestEvents {
+    impl ::std::fmt::Display for ThemelioBridgeTestFFIEvents {
         fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
             match self {
-                ThemelioBridgeTestEvents::AdminChangedFilter(element) => element.fmt(f),
-                ThemelioBridgeTestEvents::ApprovalForAllFilter(element) => element.fmt(f),
-                ThemelioBridgeTestEvents::BeaconUpgradedFilter(element) => element.fmt(f),
-                ThemelioBridgeTestEvents::HeaderVerifiedFilter(element) => element.fmt(f),
-                ThemelioBridgeTestEvents::InitializedFilter(element) => element.fmt(f),
-                ThemelioBridgeTestEvents::StakesVerifiedFilter(element) => element.fmt(f),
-                ThemelioBridgeTestEvents::TokensBurnedFilter(element) => element.fmt(f),
-                ThemelioBridgeTestEvents::TokensMintedFilter(element) => element.fmt(f),
-                ThemelioBridgeTestEvents::TransferBatchFilter(element) => element.fmt(f),
-                ThemelioBridgeTestEvents::TransferSingleFilter(element) => element.fmt(f),
-                ThemelioBridgeTestEvents::TxVerifiedFilter(element) => element.fmt(f),
-                ThemelioBridgeTestEvents::UriFilter(element) => element.fmt(f),
-                ThemelioBridgeTestEvents::UpgradedFilter(element) => element.fmt(f),
-                ThemelioBridgeTestEvents::LogFilter(element) => element.fmt(f),
-                ThemelioBridgeTestEvents::LogAddressFilter(element) => element.fmt(f),
-                ThemelioBridgeTestEvents::LogArray1Filter(element) => element.fmt(f),
-                ThemelioBridgeTestEvents::LogArray2Filter(element) => element.fmt(f),
-                ThemelioBridgeTestEvents::LogArray3Filter(element) => element.fmt(f),
-                ThemelioBridgeTestEvents::LogBytesFilter(element) => element.fmt(f),
-                ThemelioBridgeTestEvents::LogBytes32Filter(element) => element.fmt(f),
-                ThemelioBridgeTestEvents::LogIntFilter(element) => element.fmt(f),
-                ThemelioBridgeTestEvents::LogNamedAddressFilter(element) => element.fmt(f),
-                ThemelioBridgeTestEvents::LogNamedArray1Filter(element) => element.fmt(f),
-                ThemelioBridgeTestEvents::LogNamedArray2Filter(element) => element.fmt(f),
-                ThemelioBridgeTestEvents::LogNamedArray3Filter(element) => element.fmt(f),
-                ThemelioBridgeTestEvents::LogNamedBytesFilter(element) => element.fmt(f),
-                ThemelioBridgeTestEvents::LogNamedBytes32Filter(element) => element.fmt(f),
-                ThemelioBridgeTestEvents::LogNamedDecimalIntFilter(element) => element.fmt(f),
-                ThemelioBridgeTestEvents::LogNamedDecimalUintFilter(element) => element.fmt(f),
-                ThemelioBridgeTestEvents::LogNamedIntFilter(element) => element.fmt(f),
-                ThemelioBridgeTestEvents::LogNamedStringFilter(element) => element.fmt(f),
-                ThemelioBridgeTestEvents::LogNamedUintFilter(element) => element.fmt(f),
-                ThemelioBridgeTestEvents::LogStringFilter(element) => element.fmt(f),
-                ThemelioBridgeTestEvents::LogUintFilter(element) => element.fmt(f),
-                ThemelioBridgeTestEvents::LogsFilter(element) => element.fmt(f),
+                ThemelioBridgeTestFFIEvents::AdminChangedFilter(element) => element.fmt(f),
+                ThemelioBridgeTestFFIEvents::ApprovalForAllFilter(element) => element.fmt(f),
+                ThemelioBridgeTestFFIEvents::BeaconUpgradedFilter(element) => element.fmt(f),
+                ThemelioBridgeTestFFIEvents::HeaderVerifiedFilter(element) => element.fmt(f),
+                ThemelioBridgeTestFFIEvents::InitializedFilter(element) => element.fmt(f),
+                ThemelioBridgeTestFFIEvents::StakesVerifiedFilter(element) => element.fmt(f),
+                ThemelioBridgeTestFFIEvents::TokensBurnedFilter(element) => element.fmt(f),
+                ThemelioBridgeTestFFIEvents::TokensMintedFilter(element) => element.fmt(f),
+                ThemelioBridgeTestFFIEvents::TransferBatchFilter(element) => element.fmt(f),
+                ThemelioBridgeTestFFIEvents::TransferSingleFilter(element) => element.fmt(f),
+                ThemelioBridgeTestFFIEvents::TxVerifiedFilter(element) => element.fmt(f),
+                ThemelioBridgeTestFFIEvents::UriFilter(element) => element.fmt(f),
+                ThemelioBridgeTestFFIEvents::UpgradedFilter(element) => element.fmt(f),
+                ThemelioBridgeTestFFIEvents::LogFilter(element) => element.fmt(f),
+                ThemelioBridgeTestFFIEvents::LogAddressFilter(element) => element.fmt(f),
+                ThemelioBridgeTestFFIEvents::LogArray1Filter(element) => element.fmt(f),
+                ThemelioBridgeTestFFIEvents::LogArray2Filter(element) => element.fmt(f),
+                ThemelioBridgeTestFFIEvents::LogArray3Filter(element) => element.fmt(f),
+                ThemelioBridgeTestFFIEvents::LogBytesFilter(element) => element.fmt(f),
+                ThemelioBridgeTestFFIEvents::LogBytes32Filter(element) => element.fmt(f),
+                ThemelioBridgeTestFFIEvents::LogIntFilter(element) => element.fmt(f),
+                ThemelioBridgeTestFFIEvents::LogNamedAddressFilter(element) => element.fmt(f),
+                ThemelioBridgeTestFFIEvents::LogNamedArray1Filter(element) => element.fmt(f),
+                ThemelioBridgeTestFFIEvents::LogNamedArray2Filter(element) => element.fmt(f),
+                ThemelioBridgeTestFFIEvents::LogNamedArray3Filter(element) => element.fmt(f),
+                ThemelioBridgeTestFFIEvents::LogNamedBytesFilter(element) => element.fmt(f),
+                ThemelioBridgeTestFFIEvents::LogNamedBytes32Filter(element) => element.fmt(f),
+                ThemelioBridgeTestFFIEvents::LogNamedDecimalIntFilter(element) => element.fmt(f),
+                ThemelioBridgeTestFFIEvents::LogNamedDecimalUintFilter(element) => element.fmt(f),
+                ThemelioBridgeTestFFIEvents::LogNamedIntFilter(element) => element.fmt(f),
+                ThemelioBridgeTestFFIEvents::LogNamedStringFilter(element) => element.fmt(f),
+                ThemelioBridgeTestFFIEvents::LogNamedUintFilter(element) => element.fmt(f),
+                ThemelioBridgeTestFFIEvents::LogStringFilter(element) => element.fmt(f),
+                ThemelioBridgeTestFFIEvents::LogUintFilter(element) => element.fmt(f),
+                ThemelioBridgeTestFFIEvents::LogsFilter(element) => element.fmt(f),
             }
         }
     }
@@ -1650,7 +1676,7 @@ pub mod themeliobridgetest_mod {
     pub struct DecodeStakeDocHelperCall {
         pub encoded_stake_doc: ethers::core::types::Bytes,
     }
-    #[doc = "Container type for all input parameters for the `decodeTransactionHelper` function with signature `decodeTransactionHelper(bytes)` and selector `[194, 224, 241, 216]`"]
+    #[doc = "Container type for all input parameters for the `decodeTransactionHelper` function with signature `decodeTransactionHelper()` and selector `[49, 116, 128, 149]`"]
     #[derive(
         Clone,
         Debug,
@@ -1660,12 +1686,21 @@ pub mod themeliobridgetest_mod {
         ethers :: contract :: EthCall,
         ethers :: contract :: EthDisplay,
     )]
-    #[ethcall(
-        name = "decodeTransactionHelper",
-        abi = "decodeTransactionHelper(bytes)"
+    #[ethcall(name = "decodeTransactionHelper", abi = "decodeTransactionHelper()")]
+    pub struct DecodeTransactionHelperCall;
+    #[doc = "Container type for all input parameters for the `denomToStringHelper` function with signature `denomToStringHelper(uint256)` and selector `[3, 228, 125, 68]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthCall,
+        ethers :: contract :: EthDisplay,
     )]
-    pub struct DecodeTransactionHelperCall {
-        pub transactions: ethers::core::types::Bytes,
+    #[ethcall(name = "denomToStringHelper", abi = "denomToStringHelper(uint256)")]
+    pub struct DenomToStringHelperCall {
+        pub denom: ethers::core::types::U256,
     }
     #[doc = "Container type for all input parameters for the `deployCode` function with signature `deployCode(string,bytes)` and selector `[41, 206, 157, 222]`"]
     #[derive(
@@ -2036,7 +2071,7 @@ pub mod themeliobridgetest_mod {
     pub struct SupportsInterfaceCall {
         pub interface_id: [u8; 4],
     }
-    #[doc = "Container type for all input parameters for the `testEd25519` function with signature `testEd25519()` and selector `[178, 215, 238, 49]`"]
+    #[doc = "Container type for all input parameters for the `testBlake3DifferentialFFI` function with signature `testBlake3DifferentialFFI(bytes)` and selector `[58, 109, 207, 29]`"]
     #[derive(
         Clone,
         Debug,
@@ -2046,9 +2081,14 @@ pub mod themeliobridgetest_mod {
         ethers :: contract :: EthCall,
         ethers :: contract :: EthDisplay,
     )]
-    #[ethcall(name = "testEd25519", abi = "testEd25519()")]
-    pub struct TestEd25519Call;
-    #[doc = "Container type for all input parameters for the `testHashNode` function with signature `testHashNode()` and selector `[243, 77, 92, 74]`"]
+    #[ethcall(
+        name = "testBlake3DifferentialFFI",
+        abi = "testBlake3DifferentialFFI(bytes)"
+    )]
+    pub struct TestBlake3DifferentialFFICall {
+        pub data: ethers::core::types::Bytes,
+    }
+    #[doc = "Container type for all input parameters for the `testDecodeIntegerDifferentialFFI` function with signature `testDecodeIntegerDifferentialFFI(uint128)` and selector `[46, 213, 219, 79]`"]
     #[derive(
         Clone,
         Debug,
@@ -2058,9 +2098,14 @@ pub mod themeliobridgetest_mod {
         ethers :: contract :: EthCall,
         ethers :: contract :: EthDisplay,
     )]
-    #[ethcall(name = "testHashNode", abi = "testHashNode()")]
-    pub struct TestHashNodeCall;
-    #[doc = "Container type for all input parameters for the `testSlice` function with signature `testSlice()` and selector `[226, 124, 91, 23]`"]
+    #[ethcall(
+        name = "testDecodeIntegerDifferentialFFI",
+        abi = "testDecodeIntegerDifferentialFFI(uint128)"
+    )]
+    pub struct TestDecodeIntegerDifferentialFFICall {
+        pub integer: u128,
+    }
+    #[doc = "Container type for all input parameters for the `testEd25519DifferentialFFI` function with signature `testEd25519DifferentialFFI(bytes)` and selector `[13, 189, 57, 39]`"]
     #[derive(
         Clone,
         Debug,
@@ -2070,9 +2115,14 @@ pub mod themeliobridgetest_mod {
         ethers :: contract :: EthCall,
         ethers :: contract :: EthDisplay,
     )]
-    #[ethcall(name = "testSlice", abi = "testSlice()")]
-    pub struct TestSliceCall;
-    #[doc = "Container type for all input parameters for the `testdecodeInteger` function with signature `testdecodeInteger()` and selector `[11, 44, 228, 121]`"]
+    #[ethcall(
+        name = "testEd25519DifferentialFFI",
+        abi = "testEd25519DifferentialFFI(bytes)"
+    )]
+    pub struct TestEd25519DifferentialFFICall {
+        pub message: ethers::core::types::Bytes,
+    }
+    #[doc = "Container type for all input parameters for the `testKeccakBigHashFFI` function with signature `testKeccakBigHashFFI()` and selector `[127, 82, 194, 113]`"]
     #[derive(
         Clone,
         Debug,
@@ -2082,8 +2132,27 @@ pub mod themeliobridgetest_mod {
         ethers :: contract :: EthCall,
         ethers :: contract :: EthDisplay,
     )]
-    #[ethcall(name = "testdecodeInteger", abi = "testdecodeInteger()")]
-    pub struct TestdecodeIntegerCall;
+    #[ethcall(name = "testKeccakBigHashFFI", abi = "testKeccakBigHashFFI()")]
+    pub struct TestKeccakBigHashFFICall;
+    #[doc = "Container type for all input parameters for the `testSliceDifferentialFFI` function with signature `testSliceDifferentialFFI(bytes,uint8,uint8)` and selector `[46, 105, 97, 63]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthCall,
+        ethers :: contract :: EthDisplay,
+    )]
+    #[ethcall(
+        name = "testSliceDifferentialFFI",
+        abi = "testSliceDifferentialFFI(bytes,uint8,uint8)"
+    )]
+    pub struct TestSliceDifferentialFFICall {
+        pub data: ethers::core::types::Bytes,
+        pub start: u8,
+        pub end: u8,
+    }
     #[doc = "Container type for all input parameters for the `tip` function with signature `tip(address,address,uint256)` and selector `[216, 37, 85, 241]`"]
     #[derive(
         Clone,
@@ -2243,7 +2312,7 @@ pub mod themeliobridgetest_mod {
     #[ethcall(name = "vm", abi = "vm()")]
     pub struct VmCall;
     #[derive(Debug, Clone, PartialEq, Eq, ethers :: contract :: EthAbiType)]
-    pub enum ThemelioBridgeTestCalls {
+    pub enum ThemelioBridgeTestFFICalls {
         IsScript(IsScriptCall),
         IsTest(IsTestCall),
         BalanceOf(BalanceOfCall),
@@ -2257,6 +2326,7 @@ pub mod themeliobridgetest_mod {
         DecodeHeaderHelper(DecodeHeaderHelperCall),
         DecodeStakeDocHelper(DecodeStakeDocHelperCall),
         DecodeTransactionHelper(DecodeTransactionHelperCall),
+        DenomToStringHelper(DenomToStringHelperCall),
         DeployCodeWithArgs(DeployCodeWithArgsCall),
         DeployCode(DeployCodeCall),
         Failed(FailedCall),
@@ -2282,10 +2352,11 @@ pub mod themeliobridgetest_mod {
         StartHoax0(StartHoax0Call),
         StartHoax2(StartHoax2Call),
         SupportsInterface(SupportsInterfaceCall),
-        TestEd25519(TestEd25519Call),
-        TestHashNode(TestHashNodeCall),
-        TestSlice(TestSliceCall),
-        TestdecodeInteger(TestdecodeIntegerCall),
+        TestBlake3DifferentialFFI(TestBlake3DifferentialFFICall),
+        TestDecodeIntegerDifferentialFFI(TestDecodeIntegerDifferentialFFICall),
+        TestEd25519DifferentialFFI(TestEd25519DifferentialFFICall),
+        TestKeccakBigHashFFI(TestKeccakBigHashFFICall),
+        TestSliceDifferentialFFI(TestSliceDifferentialFFICall),
         Tip(TipCall),
         UpgradeTo(UpgradeToCall),
         UpgradeToAndCall(UpgradeToAndCallCall),
@@ -2297,625 +2368,667 @@ pub mod themeliobridgetest_mod {
         VerifyTxHelper(VerifyTxHelperCall),
         Vm(VmCall),
     }
-    impl ethers::core::abi::AbiDecode for ThemelioBridgeTestCalls {
+    impl ethers::core::abi::AbiDecode for ThemelioBridgeTestFFICalls {
         fn decode(data: impl AsRef<[u8]>) -> Result<Self, ethers::core::abi::AbiError> {
             if let Ok(decoded) =
                 <IsScriptCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
-                return Ok(ThemelioBridgeTestCalls::IsScript(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::IsScript(decoded));
             }
             if let Ok(decoded) = <IsTestCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
-                return Ok(ThemelioBridgeTestCalls::IsTest(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::IsTest(decoded));
             }
             if let Ok(decoded) =
                 <BalanceOfCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
-                return Ok(ThemelioBridgeTestCalls::BalanceOf(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::BalanceOf(decoded));
             }
             if let Ok(decoded) =
                 <BalanceOfBatchCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
-                return Ok(ThemelioBridgeTestCalls::BalanceOfBatch(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::BalanceOfBatch(decoded));
             }
             if let Ok(decoded) = <BurnCall as ethers::core::abi::AbiDecode>::decode(data.as_ref()) {
-                return Ok(ThemelioBridgeTestCalls::Burn(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::Burn(decoded));
             }
             if let Ok(decoded) =
                 <BurnBatchCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
-                return Ok(ThemelioBridgeTestCalls::BurnBatch(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::BurnBatch(decoded));
             }
             if let Ok(decoded) =
                 <ComputeMerkleRootHelperCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
-                return Ok(ThemelioBridgeTestCalls::ComputeMerkleRootHelper(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::ComputeMerkleRootHelper(decoded));
             }
             if let Ok(decoded) =
                 <DealWithTokenCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
-                return Ok(ThemelioBridgeTestCalls::DealWithToken(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::DealWithToken(decoded));
             }
             if let Ok(decoded) =
                 <DealWithTokenAndAdjustCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
-                return Ok(ThemelioBridgeTestCalls::DealWithTokenAndAdjust(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::DealWithTokenAndAdjust(decoded));
             }
             if let Ok(decoded) = <DealCall as ethers::core::abi::AbiDecode>::decode(data.as_ref()) {
-                return Ok(ThemelioBridgeTestCalls::Deal(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::Deal(decoded));
             }
             if let Ok(decoded) =
                 <DecodeHeaderHelperCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
-                return Ok(ThemelioBridgeTestCalls::DecodeHeaderHelper(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::DecodeHeaderHelper(decoded));
             }
             if let Ok(decoded) =
                 <DecodeStakeDocHelperCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
-                return Ok(ThemelioBridgeTestCalls::DecodeStakeDocHelper(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::DecodeStakeDocHelper(decoded));
             }
             if let Ok(decoded) =
                 <DecodeTransactionHelperCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
-                return Ok(ThemelioBridgeTestCalls::DecodeTransactionHelper(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::DecodeTransactionHelper(decoded));
+            }
+            if let Ok(decoded) =
+                <DenomToStringHelperCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
+            {
+                return Ok(ThemelioBridgeTestFFICalls::DenomToStringHelper(decoded));
             }
             if let Ok(decoded) =
                 <DeployCodeWithArgsCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
-                return Ok(ThemelioBridgeTestCalls::DeployCodeWithArgs(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::DeployCodeWithArgs(decoded));
             }
             if let Ok(decoded) =
                 <DeployCodeCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
-                return Ok(ThemelioBridgeTestCalls::DeployCode(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::DeployCode(decoded));
             }
             if let Ok(decoded) = <FailedCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
-                return Ok(ThemelioBridgeTestCalls::Failed(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::Failed(decoded));
             }
             if let Ok(decoded) =
                 <HashDatablockHelperCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
-                return Ok(ThemelioBridgeTestCalls::HashDatablockHelper(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::HashDatablockHelper(decoded));
             }
             if let Ok(decoded) =
                 <HeaderLimboCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
-                return Ok(ThemelioBridgeTestCalls::HeaderLimbo(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::HeaderLimbo(decoded));
             }
             if let Ok(decoded) =
                 <HeadersCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
-                return Ok(ThemelioBridgeTestCalls::Headers(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::Headers(decoded));
             }
             if let Ok(decoded) = <Hoax0Call as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
-                return Ok(ThemelioBridgeTestCalls::Hoax0(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::Hoax0(decoded));
             }
             if let Ok(decoded) = <Hoax1Call as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
-                return Ok(ThemelioBridgeTestCalls::Hoax1(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::Hoax1(decoded));
             }
             if let Ok(decoded) = <Hoax3Call as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
-                return Ok(ThemelioBridgeTestCalls::Hoax3(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::Hoax3(decoded));
             }
             if let Ok(decoded) = <Hoax2Call as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
-                return Ok(ThemelioBridgeTestCalls::Hoax2(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::Hoax2(decoded));
             }
             if let Ok(decoded) =
                 <InitializeCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
-                return Ok(ThemelioBridgeTestCalls::Initialize(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::Initialize(decoded));
             }
             if let Ok(decoded) =
                 <IsApprovedForAllCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
-                return Ok(ThemelioBridgeTestCalls::IsApprovedForAll(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::IsApprovedForAll(decoded));
             }
             if let Ok(decoded) =
                 <MintHelperCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
-                return Ok(ThemelioBridgeTestCalls::MintHelper(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::MintHelper(decoded));
             }
             if let Ok(decoded) =
                 <ProxiableUUIDCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
-                return Ok(ThemelioBridgeTestCalls::ProxiableUUID(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::ProxiableUUID(decoded));
             }
             if let Ok(decoded) = <RewindCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
-                return Ok(ThemelioBridgeTestCalls::Rewind(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::Rewind(decoded));
             }
             if let Ok(decoded) =
                 <SafeBatchTransferFromCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
-                return Ok(ThemelioBridgeTestCalls::SafeBatchTransferFrom(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::SafeBatchTransferFrom(decoded));
             }
             if let Ok(decoded) =
                 <SafeTransferFromCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
-                return Ok(ThemelioBridgeTestCalls::SafeTransferFrom(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::SafeTransferFrom(decoded));
             }
             if let Ok(decoded) =
                 <SetApprovalForAllCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
-                return Ok(ThemelioBridgeTestCalls::SetApprovalForAll(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::SetApprovalForAll(decoded));
             }
             if let Ok(decoded) = <SkipCall as ethers::core::abi::AbiDecode>::decode(data.as_ref()) {
-                return Ok(ThemelioBridgeTestCalls::Skip(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::Skip(decoded));
             }
             if let Ok(decoded) = <SpendsCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
-                return Ok(ThemelioBridgeTestCalls::Spends(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::Spends(decoded));
             }
             if let Ok(decoded) =
                 <StartHoax1Call as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
-                return Ok(ThemelioBridgeTestCalls::StartHoax1(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::StartHoax1(decoded));
             }
             if let Ok(decoded) =
                 <StartHoax3Call as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
-                return Ok(ThemelioBridgeTestCalls::StartHoax3(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::StartHoax3(decoded));
             }
             if let Ok(decoded) =
                 <StartHoax0Call as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
-                return Ok(ThemelioBridgeTestCalls::StartHoax0(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::StartHoax0(decoded));
             }
             if let Ok(decoded) =
                 <StartHoax2Call as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
-                return Ok(ThemelioBridgeTestCalls::StartHoax2(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::StartHoax2(decoded));
             }
             if let Ok(decoded) =
                 <SupportsInterfaceCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
-                return Ok(ThemelioBridgeTestCalls::SupportsInterface(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::SupportsInterface(decoded));
             }
             if let Ok(decoded) =
-                <TestEd25519Call as ethers::core::abi::AbiDecode>::decode(data.as_ref())
+                <TestBlake3DifferentialFFICall as ethers::core::abi::AbiDecode>::decode(
+                    data.as_ref(),
+                )
             {
-                return Ok(ThemelioBridgeTestCalls::TestEd25519(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::TestBlake3DifferentialFFI(
+                    decoded,
+                ));
             }
             if let Ok(decoded) =
-                <TestHashNodeCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
+                <TestDecodeIntegerDifferentialFFICall as ethers::core::abi::AbiDecode>::decode(
+                    data.as_ref(),
+                )
             {
-                return Ok(ThemelioBridgeTestCalls::TestHashNode(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::TestDecodeIntegerDifferentialFFI(decoded));
             }
             if let Ok(decoded) =
-                <TestSliceCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
+                <TestEd25519DifferentialFFICall as ethers::core::abi::AbiDecode>::decode(
+                    data.as_ref(),
+                )
             {
-                return Ok(ThemelioBridgeTestCalls::TestSlice(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::TestEd25519DifferentialFFI(
+                    decoded,
+                ));
             }
             if let Ok(decoded) =
-                <TestdecodeIntegerCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
+                <TestKeccakBigHashFFICall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
-                return Ok(ThemelioBridgeTestCalls::TestdecodeInteger(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::TestKeccakBigHashFFI(decoded));
+            }
+            if let Ok(decoded) =
+                <TestSliceDifferentialFFICall as ethers::core::abi::AbiDecode>::decode(
+                    data.as_ref(),
+                )
+            {
+                return Ok(ThemelioBridgeTestFFICalls::TestSliceDifferentialFFI(
+                    decoded,
+                ));
             }
             if let Ok(decoded) = <TipCall as ethers::core::abi::AbiDecode>::decode(data.as_ref()) {
-                return Ok(ThemelioBridgeTestCalls::Tip(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::Tip(decoded));
             }
             if let Ok(decoded) =
                 <UpgradeToCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
-                return Ok(ThemelioBridgeTestCalls::UpgradeTo(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::UpgradeTo(decoded));
             }
             if let Ok(decoded) =
                 <UpgradeToAndCallCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
-                return Ok(ThemelioBridgeTestCalls::UpgradeToAndCall(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::UpgradeToAndCall(decoded));
             }
             if let Ok(decoded) = <UriCall as ethers::core::abi::AbiDecode>::decode(data.as_ref()) {
-                return Ok(ThemelioBridgeTestCalls::Uri(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::Uri(decoded));
             }
             if let Ok(decoded) =
                 <VerifyHeaderCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
-                return Ok(ThemelioBridgeTestCalls::VerifyHeader(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::VerifyHeader(decoded));
             }
             if let Ok(decoded) =
                 <VerifyHeaderHelperCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
-                return Ok(ThemelioBridgeTestCalls::VerifyHeaderHelper(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::VerifyHeaderHelper(decoded));
             }
             if let Ok(decoded) =
                 <VerifyStakesCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
-                return Ok(ThemelioBridgeTestCalls::VerifyStakes(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::VerifyStakes(decoded));
             }
             if let Ok(decoded) =
                 <VerifyTxCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
-                return Ok(ThemelioBridgeTestCalls::VerifyTx(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::VerifyTx(decoded));
             }
             if let Ok(decoded) =
                 <VerifyTxHelperCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
-                return Ok(ThemelioBridgeTestCalls::VerifyTxHelper(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::VerifyTxHelper(decoded));
             }
             if let Ok(decoded) = <VmCall as ethers::core::abi::AbiDecode>::decode(data.as_ref()) {
-                return Ok(ThemelioBridgeTestCalls::Vm(decoded));
+                return Ok(ThemelioBridgeTestFFICalls::Vm(decoded));
             }
             Err(ethers::core::abi::Error::InvalidData.into())
         }
     }
-    impl ethers::core::abi::AbiEncode for ThemelioBridgeTestCalls {
+    impl ethers::core::abi::AbiEncode for ThemelioBridgeTestFFICalls {
         fn encode(self) -> Vec<u8> {
             match self {
-                ThemelioBridgeTestCalls::IsScript(element) => element.encode(),
-                ThemelioBridgeTestCalls::IsTest(element) => element.encode(),
-                ThemelioBridgeTestCalls::BalanceOf(element) => element.encode(),
-                ThemelioBridgeTestCalls::BalanceOfBatch(element) => element.encode(),
-                ThemelioBridgeTestCalls::Burn(element) => element.encode(),
-                ThemelioBridgeTestCalls::BurnBatch(element) => element.encode(),
-                ThemelioBridgeTestCalls::ComputeMerkleRootHelper(element) => element.encode(),
-                ThemelioBridgeTestCalls::DealWithToken(element) => element.encode(),
-                ThemelioBridgeTestCalls::DealWithTokenAndAdjust(element) => element.encode(),
-                ThemelioBridgeTestCalls::Deal(element) => element.encode(),
-                ThemelioBridgeTestCalls::DecodeHeaderHelper(element) => element.encode(),
-                ThemelioBridgeTestCalls::DecodeStakeDocHelper(element) => element.encode(),
-                ThemelioBridgeTestCalls::DecodeTransactionHelper(element) => element.encode(),
-                ThemelioBridgeTestCalls::DeployCodeWithArgs(element) => element.encode(),
-                ThemelioBridgeTestCalls::DeployCode(element) => element.encode(),
-                ThemelioBridgeTestCalls::Failed(element) => element.encode(),
-                ThemelioBridgeTestCalls::HashDatablockHelper(element) => element.encode(),
-                ThemelioBridgeTestCalls::HeaderLimbo(element) => element.encode(),
-                ThemelioBridgeTestCalls::Headers(element) => element.encode(),
-                ThemelioBridgeTestCalls::Hoax0(element) => element.encode(),
-                ThemelioBridgeTestCalls::Hoax1(element) => element.encode(),
-                ThemelioBridgeTestCalls::Hoax3(element) => element.encode(),
-                ThemelioBridgeTestCalls::Hoax2(element) => element.encode(),
-                ThemelioBridgeTestCalls::Initialize(element) => element.encode(),
-                ThemelioBridgeTestCalls::IsApprovedForAll(element) => element.encode(),
-                ThemelioBridgeTestCalls::MintHelper(element) => element.encode(),
-                ThemelioBridgeTestCalls::ProxiableUUID(element) => element.encode(),
-                ThemelioBridgeTestCalls::Rewind(element) => element.encode(),
-                ThemelioBridgeTestCalls::SafeBatchTransferFrom(element) => element.encode(),
-                ThemelioBridgeTestCalls::SafeTransferFrom(element) => element.encode(),
-                ThemelioBridgeTestCalls::SetApprovalForAll(element) => element.encode(),
-                ThemelioBridgeTestCalls::Skip(element) => element.encode(),
-                ThemelioBridgeTestCalls::Spends(element) => element.encode(),
-                ThemelioBridgeTestCalls::StartHoax1(element) => element.encode(),
-                ThemelioBridgeTestCalls::StartHoax3(element) => element.encode(),
-                ThemelioBridgeTestCalls::StartHoax0(element) => element.encode(),
-                ThemelioBridgeTestCalls::StartHoax2(element) => element.encode(),
-                ThemelioBridgeTestCalls::SupportsInterface(element) => element.encode(),
-                ThemelioBridgeTestCalls::TestEd25519(element) => element.encode(),
-                ThemelioBridgeTestCalls::TestHashNode(element) => element.encode(),
-                ThemelioBridgeTestCalls::TestSlice(element) => element.encode(),
-                ThemelioBridgeTestCalls::TestdecodeInteger(element) => element.encode(),
-                ThemelioBridgeTestCalls::Tip(element) => element.encode(),
-                ThemelioBridgeTestCalls::UpgradeTo(element) => element.encode(),
-                ThemelioBridgeTestCalls::UpgradeToAndCall(element) => element.encode(),
-                ThemelioBridgeTestCalls::Uri(element) => element.encode(),
-                ThemelioBridgeTestCalls::VerifyHeader(element) => element.encode(),
-                ThemelioBridgeTestCalls::VerifyHeaderHelper(element) => element.encode(),
-                ThemelioBridgeTestCalls::VerifyStakes(element) => element.encode(),
-                ThemelioBridgeTestCalls::VerifyTx(element) => element.encode(),
-                ThemelioBridgeTestCalls::VerifyTxHelper(element) => element.encode(),
-                ThemelioBridgeTestCalls::Vm(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::IsScript(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::IsTest(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::BalanceOf(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::BalanceOfBatch(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::Burn(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::BurnBatch(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::ComputeMerkleRootHelper(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::DealWithToken(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::DealWithTokenAndAdjust(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::Deal(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::DecodeHeaderHelper(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::DecodeStakeDocHelper(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::DecodeTransactionHelper(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::DenomToStringHelper(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::DeployCodeWithArgs(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::DeployCode(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::Failed(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::HashDatablockHelper(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::HeaderLimbo(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::Headers(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::Hoax0(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::Hoax1(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::Hoax3(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::Hoax2(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::Initialize(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::IsApprovedForAll(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::MintHelper(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::ProxiableUUID(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::Rewind(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::SafeBatchTransferFrom(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::SafeTransferFrom(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::SetApprovalForAll(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::Skip(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::Spends(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::StartHoax1(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::StartHoax3(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::StartHoax0(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::StartHoax2(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::SupportsInterface(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::TestBlake3DifferentialFFI(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::TestDecodeIntegerDifferentialFFI(element) => {
+                    element.encode()
+                }
+                ThemelioBridgeTestFFICalls::TestEd25519DifferentialFFI(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::TestKeccakBigHashFFI(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::TestSliceDifferentialFFI(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::Tip(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::UpgradeTo(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::UpgradeToAndCall(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::Uri(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::VerifyHeader(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::VerifyHeaderHelper(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::VerifyStakes(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::VerifyTx(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::VerifyTxHelper(element) => element.encode(),
+                ThemelioBridgeTestFFICalls::Vm(element) => element.encode(),
             }
         }
     }
-    impl ::std::fmt::Display for ThemelioBridgeTestCalls {
+    impl ::std::fmt::Display for ThemelioBridgeTestFFICalls {
         fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
             match self {
-                ThemelioBridgeTestCalls::IsScript(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::IsTest(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::BalanceOf(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::BalanceOfBatch(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::Burn(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::BurnBatch(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::ComputeMerkleRootHelper(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::DealWithToken(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::DealWithTokenAndAdjust(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::Deal(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::DecodeHeaderHelper(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::DecodeStakeDocHelper(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::DecodeTransactionHelper(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::DeployCodeWithArgs(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::DeployCode(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::Failed(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::HashDatablockHelper(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::HeaderLimbo(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::Headers(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::Hoax0(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::Hoax1(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::Hoax3(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::Hoax2(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::Initialize(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::IsApprovedForAll(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::MintHelper(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::ProxiableUUID(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::Rewind(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::SafeBatchTransferFrom(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::SafeTransferFrom(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::SetApprovalForAll(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::Skip(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::Spends(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::StartHoax1(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::StartHoax3(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::StartHoax0(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::StartHoax2(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::SupportsInterface(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::TestEd25519(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::TestHashNode(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::TestSlice(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::TestdecodeInteger(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::Tip(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::UpgradeTo(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::UpgradeToAndCall(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::Uri(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::VerifyHeader(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::VerifyHeaderHelper(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::VerifyStakes(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::VerifyTx(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::VerifyTxHelper(element) => element.fmt(f),
-                ThemelioBridgeTestCalls::Vm(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::IsScript(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::IsTest(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::BalanceOf(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::BalanceOfBatch(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::Burn(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::BurnBatch(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::ComputeMerkleRootHelper(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::DealWithToken(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::DealWithTokenAndAdjust(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::Deal(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::DecodeHeaderHelper(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::DecodeStakeDocHelper(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::DecodeTransactionHelper(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::DenomToStringHelper(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::DeployCodeWithArgs(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::DeployCode(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::Failed(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::HashDatablockHelper(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::HeaderLimbo(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::Headers(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::Hoax0(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::Hoax1(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::Hoax3(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::Hoax2(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::Initialize(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::IsApprovedForAll(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::MintHelper(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::ProxiableUUID(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::Rewind(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::SafeBatchTransferFrom(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::SafeTransferFrom(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::SetApprovalForAll(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::Skip(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::Spends(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::StartHoax1(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::StartHoax3(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::StartHoax0(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::StartHoax2(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::SupportsInterface(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::TestBlake3DifferentialFFI(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::TestDecodeIntegerDifferentialFFI(element) => {
+                    element.fmt(f)
+                }
+                ThemelioBridgeTestFFICalls::TestEd25519DifferentialFFI(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::TestKeccakBigHashFFI(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::TestSliceDifferentialFFI(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::Tip(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::UpgradeTo(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::UpgradeToAndCall(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::Uri(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::VerifyHeader(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::VerifyHeaderHelper(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::VerifyStakes(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::VerifyTx(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::VerifyTxHelper(element) => element.fmt(f),
+                ThemelioBridgeTestFFICalls::Vm(element) => element.fmt(f),
             }
         }
     }
-    impl ::std::convert::From<IsScriptCall> for ThemelioBridgeTestCalls {
+    impl ::std::convert::From<IsScriptCall> for ThemelioBridgeTestFFICalls {
         fn from(var: IsScriptCall) -> Self {
-            ThemelioBridgeTestCalls::IsScript(var)
+            ThemelioBridgeTestFFICalls::IsScript(var)
         }
     }
-    impl ::std::convert::From<IsTestCall> for ThemelioBridgeTestCalls {
+    impl ::std::convert::From<IsTestCall> for ThemelioBridgeTestFFICalls {
         fn from(var: IsTestCall) -> Self {
-            ThemelioBridgeTestCalls::IsTest(var)
+            ThemelioBridgeTestFFICalls::IsTest(var)
         }
     }
-    impl ::std::convert::From<BalanceOfCall> for ThemelioBridgeTestCalls {
+    impl ::std::convert::From<BalanceOfCall> for ThemelioBridgeTestFFICalls {
         fn from(var: BalanceOfCall) -> Self {
-            ThemelioBridgeTestCalls::BalanceOf(var)
+            ThemelioBridgeTestFFICalls::BalanceOf(var)
         }
     }
-    impl ::std::convert::From<BalanceOfBatchCall> for ThemelioBridgeTestCalls {
+    impl ::std::convert::From<BalanceOfBatchCall> for ThemelioBridgeTestFFICalls {
         fn from(var: BalanceOfBatchCall) -> Self {
-            ThemelioBridgeTestCalls::BalanceOfBatch(var)
+            ThemelioBridgeTestFFICalls::BalanceOfBatch(var)
         }
     }
-    impl ::std::convert::From<BurnCall> for ThemelioBridgeTestCalls {
+    impl ::std::convert::From<BurnCall> for ThemelioBridgeTestFFICalls {
         fn from(var: BurnCall) -> Self {
-            ThemelioBridgeTestCalls::Burn(var)
+            ThemelioBridgeTestFFICalls::Burn(var)
         }
     }
-    impl ::std::convert::From<BurnBatchCall> for ThemelioBridgeTestCalls {
+    impl ::std::convert::From<BurnBatchCall> for ThemelioBridgeTestFFICalls {
         fn from(var: BurnBatchCall) -> Self {
-            ThemelioBridgeTestCalls::BurnBatch(var)
+            ThemelioBridgeTestFFICalls::BurnBatch(var)
         }
     }
-    impl ::std::convert::From<ComputeMerkleRootHelperCall> for ThemelioBridgeTestCalls {
+    impl ::std::convert::From<ComputeMerkleRootHelperCall> for ThemelioBridgeTestFFICalls {
         fn from(var: ComputeMerkleRootHelperCall) -> Self {
-            ThemelioBridgeTestCalls::ComputeMerkleRootHelper(var)
+            ThemelioBridgeTestFFICalls::ComputeMerkleRootHelper(var)
         }
     }
-    impl ::std::convert::From<DealWithTokenCall> for ThemelioBridgeTestCalls {
+    impl ::std::convert::From<DealWithTokenCall> for ThemelioBridgeTestFFICalls {
         fn from(var: DealWithTokenCall) -> Self {
-            ThemelioBridgeTestCalls::DealWithToken(var)
+            ThemelioBridgeTestFFICalls::DealWithToken(var)
         }
     }
-    impl ::std::convert::From<DealWithTokenAndAdjustCall> for ThemelioBridgeTestCalls {
+    impl ::std::convert::From<DealWithTokenAndAdjustCall> for ThemelioBridgeTestFFICalls {
         fn from(var: DealWithTokenAndAdjustCall) -> Self {
-            ThemelioBridgeTestCalls::DealWithTokenAndAdjust(var)
+            ThemelioBridgeTestFFICalls::DealWithTokenAndAdjust(var)
         }
     }
-    impl ::std::convert::From<DealCall> for ThemelioBridgeTestCalls {
+    impl ::std::convert::From<DealCall> for ThemelioBridgeTestFFICalls {
         fn from(var: DealCall) -> Self {
-            ThemelioBridgeTestCalls::Deal(var)
+            ThemelioBridgeTestFFICalls::Deal(var)
         }
     }
-    impl ::std::convert::From<DecodeHeaderHelperCall> for ThemelioBridgeTestCalls {
+    impl ::std::convert::From<DecodeHeaderHelperCall> for ThemelioBridgeTestFFICalls {
         fn from(var: DecodeHeaderHelperCall) -> Self {
-            ThemelioBridgeTestCalls::DecodeHeaderHelper(var)
+            ThemelioBridgeTestFFICalls::DecodeHeaderHelper(var)
         }
     }
-    impl ::std::convert::From<DecodeStakeDocHelperCall> for ThemelioBridgeTestCalls {
+    impl ::std::convert::From<DecodeStakeDocHelperCall> for ThemelioBridgeTestFFICalls {
         fn from(var: DecodeStakeDocHelperCall) -> Self {
-            ThemelioBridgeTestCalls::DecodeStakeDocHelper(var)
+            ThemelioBridgeTestFFICalls::DecodeStakeDocHelper(var)
         }
     }
-    impl ::std::convert::From<DecodeTransactionHelperCall> for ThemelioBridgeTestCalls {
+    impl ::std::convert::From<DecodeTransactionHelperCall> for ThemelioBridgeTestFFICalls {
         fn from(var: DecodeTransactionHelperCall) -> Self {
-            ThemelioBridgeTestCalls::DecodeTransactionHelper(var)
+            ThemelioBridgeTestFFICalls::DecodeTransactionHelper(var)
         }
     }
-    impl ::std::convert::From<DeployCodeWithArgsCall> for ThemelioBridgeTestCalls {
+    impl ::std::convert::From<DenomToStringHelperCall> for ThemelioBridgeTestFFICalls {
+        fn from(var: DenomToStringHelperCall) -> Self {
+            ThemelioBridgeTestFFICalls::DenomToStringHelper(var)
+        }
+    }
+    impl ::std::convert::From<DeployCodeWithArgsCall> for ThemelioBridgeTestFFICalls {
         fn from(var: DeployCodeWithArgsCall) -> Self {
-            ThemelioBridgeTestCalls::DeployCodeWithArgs(var)
+            ThemelioBridgeTestFFICalls::DeployCodeWithArgs(var)
         }
     }
-    impl ::std::convert::From<DeployCodeCall> for ThemelioBridgeTestCalls {
+    impl ::std::convert::From<DeployCodeCall> for ThemelioBridgeTestFFICalls {
         fn from(var: DeployCodeCall) -> Self {
-            ThemelioBridgeTestCalls::DeployCode(var)
+            ThemelioBridgeTestFFICalls::DeployCode(var)
         }
     }
-    impl ::std::convert::From<FailedCall> for ThemelioBridgeTestCalls {
+    impl ::std::convert::From<FailedCall> for ThemelioBridgeTestFFICalls {
         fn from(var: FailedCall) -> Self {
-            ThemelioBridgeTestCalls::Failed(var)
+            ThemelioBridgeTestFFICalls::Failed(var)
         }
     }
-    impl ::std::convert::From<HashDatablockHelperCall> for ThemelioBridgeTestCalls {
+    impl ::std::convert::From<HashDatablockHelperCall> for ThemelioBridgeTestFFICalls {
         fn from(var: HashDatablockHelperCall) -> Self {
-            ThemelioBridgeTestCalls::HashDatablockHelper(var)
+            ThemelioBridgeTestFFICalls::HashDatablockHelper(var)
         }
     }
-    impl ::std::convert::From<HeaderLimboCall> for ThemelioBridgeTestCalls {
+    impl ::std::convert::From<HeaderLimboCall> for ThemelioBridgeTestFFICalls {
         fn from(var: HeaderLimboCall) -> Self {
-            ThemelioBridgeTestCalls::HeaderLimbo(var)
+            ThemelioBridgeTestFFICalls::HeaderLimbo(var)
         }
     }
-    impl ::std::convert::From<HeadersCall> for ThemelioBridgeTestCalls {
+    impl ::std::convert::From<HeadersCall> for ThemelioBridgeTestFFICalls {
         fn from(var: HeadersCall) -> Self {
-            ThemelioBridgeTestCalls::Headers(var)
+            ThemelioBridgeTestFFICalls::Headers(var)
         }
     }
-    impl ::std::convert::From<Hoax0Call> for ThemelioBridgeTestCalls {
+    impl ::std::convert::From<Hoax0Call> for ThemelioBridgeTestFFICalls {
         fn from(var: Hoax0Call) -> Self {
-            ThemelioBridgeTestCalls::Hoax0(var)
+            ThemelioBridgeTestFFICalls::Hoax0(var)
         }
     }
-    impl ::std::convert::From<Hoax1Call> for ThemelioBridgeTestCalls {
+    impl ::std::convert::From<Hoax1Call> for ThemelioBridgeTestFFICalls {
         fn from(var: Hoax1Call) -> Self {
-            ThemelioBridgeTestCalls::Hoax1(var)
+            ThemelioBridgeTestFFICalls::Hoax1(var)
         }
     }
-    impl ::std::convert::From<Hoax3Call> for ThemelioBridgeTestCalls {
+    impl ::std::convert::From<Hoax3Call> for ThemelioBridgeTestFFICalls {
         fn from(var: Hoax3Call) -> Self {
-            ThemelioBridgeTestCalls::Hoax3(var)
+            ThemelioBridgeTestFFICalls::Hoax3(var)
         }
     }
-    impl ::std::convert::From<Hoax2Call> for ThemelioBridgeTestCalls {
+    impl ::std::convert::From<Hoax2Call> for ThemelioBridgeTestFFICalls {
         fn from(var: Hoax2Call) -> Self {
-            ThemelioBridgeTestCalls::Hoax2(var)
+            ThemelioBridgeTestFFICalls::Hoax2(var)
         }
     }
-    impl ::std::convert::From<InitializeCall> for ThemelioBridgeTestCalls {
+    impl ::std::convert::From<InitializeCall> for ThemelioBridgeTestFFICalls {
         fn from(var: InitializeCall) -> Self {
-            ThemelioBridgeTestCalls::Initialize(var)
+            ThemelioBridgeTestFFICalls::Initialize(var)
         }
     }
-    impl ::std::convert::From<IsApprovedForAllCall> for ThemelioBridgeTestCalls {
+    impl ::std::convert::From<IsApprovedForAllCall> for ThemelioBridgeTestFFICalls {
         fn from(var: IsApprovedForAllCall) -> Self {
-            ThemelioBridgeTestCalls::IsApprovedForAll(var)
+            ThemelioBridgeTestFFICalls::IsApprovedForAll(var)
         }
     }
-    impl ::std::convert::From<MintHelperCall> for ThemelioBridgeTestCalls {
+    impl ::std::convert::From<MintHelperCall> for ThemelioBridgeTestFFICalls {
         fn from(var: MintHelperCall) -> Self {
-            ThemelioBridgeTestCalls::MintHelper(var)
+            ThemelioBridgeTestFFICalls::MintHelper(var)
         }
     }
-    impl ::std::convert::From<ProxiableUUIDCall> for ThemelioBridgeTestCalls {
+    impl ::std::convert::From<ProxiableUUIDCall> for ThemelioBridgeTestFFICalls {
         fn from(var: ProxiableUUIDCall) -> Self {
-            ThemelioBridgeTestCalls::ProxiableUUID(var)
+            ThemelioBridgeTestFFICalls::ProxiableUUID(var)
         }
     }
-    impl ::std::convert::From<RewindCall> for ThemelioBridgeTestCalls {
+    impl ::std::convert::From<RewindCall> for ThemelioBridgeTestFFICalls {
         fn from(var: RewindCall) -> Self {
-            ThemelioBridgeTestCalls::Rewind(var)
+            ThemelioBridgeTestFFICalls::Rewind(var)
         }
     }
-    impl ::std::convert::From<SafeBatchTransferFromCall> for ThemelioBridgeTestCalls {
+    impl ::std::convert::From<SafeBatchTransferFromCall> for ThemelioBridgeTestFFICalls {
         fn from(var: SafeBatchTransferFromCall) -> Self {
-            ThemelioBridgeTestCalls::SafeBatchTransferFrom(var)
+            ThemelioBridgeTestFFICalls::SafeBatchTransferFrom(var)
         }
     }
-    impl ::std::convert::From<SafeTransferFromCall> for ThemelioBridgeTestCalls {
+    impl ::std::convert::From<SafeTransferFromCall> for ThemelioBridgeTestFFICalls {
         fn from(var: SafeTransferFromCall) -> Self {
-            ThemelioBridgeTestCalls::SafeTransferFrom(var)
+            ThemelioBridgeTestFFICalls::SafeTransferFrom(var)
         }
     }
-    impl ::std::convert::From<SetApprovalForAllCall> for ThemelioBridgeTestCalls {
+    impl ::std::convert::From<SetApprovalForAllCall> for ThemelioBridgeTestFFICalls {
         fn from(var: SetApprovalForAllCall) -> Self {
-            ThemelioBridgeTestCalls::SetApprovalForAll(var)
+            ThemelioBridgeTestFFICalls::SetApprovalForAll(var)
         }
     }
-    impl ::std::convert::From<SkipCall> for ThemelioBridgeTestCalls {
+    impl ::std::convert::From<SkipCall> for ThemelioBridgeTestFFICalls {
         fn from(var: SkipCall) -> Self {
-            ThemelioBridgeTestCalls::Skip(var)
+            ThemelioBridgeTestFFICalls::Skip(var)
         }
     }
-    impl ::std::convert::From<SpendsCall> for ThemelioBridgeTestCalls {
+    impl ::std::convert::From<SpendsCall> for ThemelioBridgeTestFFICalls {
         fn from(var: SpendsCall) -> Self {
-            ThemelioBridgeTestCalls::Spends(var)
+            ThemelioBridgeTestFFICalls::Spends(var)
         }
     }
-    impl ::std::convert::From<StartHoax1Call> for ThemelioBridgeTestCalls {
+    impl ::std::convert::From<StartHoax1Call> for ThemelioBridgeTestFFICalls {
         fn from(var: StartHoax1Call) -> Self {
-            ThemelioBridgeTestCalls::StartHoax1(var)
+            ThemelioBridgeTestFFICalls::StartHoax1(var)
         }
     }
-    impl ::std::convert::From<StartHoax3Call> for ThemelioBridgeTestCalls {
+    impl ::std::convert::From<StartHoax3Call> for ThemelioBridgeTestFFICalls {
         fn from(var: StartHoax3Call) -> Self {
-            ThemelioBridgeTestCalls::StartHoax3(var)
+            ThemelioBridgeTestFFICalls::StartHoax3(var)
         }
     }
-    impl ::std::convert::From<StartHoax0Call> for ThemelioBridgeTestCalls {
+    impl ::std::convert::From<StartHoax0Call> for ThemelioBridgeTestFFICalls {
         fn from(var: StartHoax0Call) -> Self {
-            ThemelioBridgeTestCalls::StartHoax0(var)
+            ThemelioBridgeTestFFICalls::StartHoax0(var)
         }
     }
-    impl ::std::convert::From<StartHoax2Call> for ThemelioBridgeTestCalls {
+    impl ::std::convert::From<StartHoax2Call> for ThemelioBridgeTestFFICalls {
         fn from(var: StartHoax2Call) -> Self {
-            ThemelioBridgeTestCalls::StartHoax2(var)
+            ThemelioBridgeTestFFICalls::StartHoax2(var)
         }
     }
-    impl ::std::convert::From<SupportsInterfaceCall> for ThemelioBridgeTestCalls {
+    impl ::std::convert::From<SupportsInterfaceCall> for ThemelioBridgeTestFFICalls {
         fn from(var: SupportsInterfaceCall) -> Self {
-            ThemelioBridgeTestCalls::SupportsInterface(var)
+            ThemelioBridgeTestFFICalls::SupportsInterface(var)
         }
     }
-    impl ::std::convert::From<TestEd25519Call> for ThemelioBridgeTestCalls {
-        fn from(var: TestEd25519Call) -> Self {
-            ThemelioBridgeTestCalls::TestEd25519(var)
+    impl ::std::convert::From<TestBlake3DifferentialFFICall> for ThemelioBridgeTestFFICalls {
+        fn from(var: TestBlake3DifferentialFFICall) -> Self {
+            ThemelioBridgeTestFFICalls::TestBlake3DifferentialFFI(var)
         }
     }
-    impl ::std::convert::From<TestHashNodeCall> for ThemelioBridgeTestCalls {
-        fn from(var: TestHashNodeCall) -> Self {
-            ThemelioBridgeTestCalls::TestHashNode(var)
+    impl ::std::convert::From<TestDecodeIntegerDifferentialFFICall> for ThemelioBridgeTestFFICalls {
+        fn from(var: TestDecodeIntegerDifferentialFFICall) -> Self {
+            ThemelioBridgeTestFFICalls::TestDecodeIntegerDifferentialFFI(var)
         }
     }
-    impl ::std::convert::From<TestSliceCall> for ThemelioBridgeTestCalls {
-        fn from(var: TestSliceCall) -> Self {
-            ThemelioBridgeTestCalls::TestSlice(var)
+    impl ::std::convert::From<TestEd25519DifferentialFFICall> for ThemelioBridgeTestFFICalls {
+        fn from(var: TestEd25519DifferentialFFICall) -> Self {
+            ThemelioBridgeTestFFICalls::TestEd25519DifferentialFFI(var)
         }
     }
-    impl ::std::convert::From<TestdecodeIntegerCall> for ThemelioBridgeTestCalls {
-        fn from(var: TestdecodeIntegerCall) -> Self {
-            ThemelioBridgeTestCalls::TestdecodeInteger(var)
+    impl ::std::convert::From<TestKeccakBigHashFFICall> for ThemelioBridgeTestFFICalls {
+        fn from(var: TestKeccakBigHashFFICall) -> Self {
+            ThemelioBridgeTestFFICalls::TestKeccakBigHashFFI(var)
         }
     }
-    impl ::std::convert::From<TipCall> for ThemelioBridgeTestCalls {
+    impl ::std::convert::From<TestSliceDifferentialFFICall> for ThemelioBridgeTestFFICalls {
+        fn from(var: TestSliceDifferentialFFICall) -> Self {
+            ThemelioBridgeTestFFICalls::TestSliceDifferentialFFI(var)
+        }
+    }
+    impl ::std::convert::From<TipCall> for ThemelioBridgeTestFFICalls {
         fn from(var: TipCall) -> Self {
-            ThemelioBridgeTestCalls::Tip(var)
+            ThemelioBridgeTestFFICalls::Tip(var)
         }
     }
-    impl ::std::convert::From<UpgradeToCall> for ThemelioBridgeTestCalls {
+    impl ::std::convert::From<UpgradeToCall> for ThemelioBridgeTestFFICalls {
         fn from(var: UpgradeToCall) -> Self {
-            ThemelioBridgeTestCalls::UpgradeTo(var)
+            ThemelioBridgeTestFFICalls::UpgradeTo(var)
         }
     }
-    impl ::std::convert::From<UpgradeToAndCallCall> for ThemelioBridgeTestCalls {
+    impl ::std::convert::From<UpgradeToAndCallCall> for ThemelioBridgeTestFFICalls {
         fn from(var: UpgradeToAndCallCall) -> Self {
-            ThemelioBridgeTestCalls::UpgradeToAndCall(var)
+            ThemelioBridgeTestFFICalls::UpgradeToAndCall(var)
         }
     }
-    impl ::std::convert::From<UriCall> for ThemelioBridgeTestCalls {
+    impl ::std::convert::From<UriCall> for ThemelioBridgeTestFFICalls {
         fn from(var: UriCall) -> Self {
-            ThemelioBridgeTestCalls::Uri(var)
+            ThemelioBridgeTestFFICalls::Uri(var)
         }
     }
-    impl ::std::convert::From<VerifyHeaderCall> for ThemelioBridgeTestCalls {
+    impl ::std::convert::From<VerifyHeaderCall> for ThemelioBridgeTestFFICalls {
         fn from(var: VerifyHeaderCall) -> Self {
-            ThemelioBridgeTestCalls::VerifyHeader(var)
+            ThemelioBridgeTestFFICalls::VerifyHeader(var)
         }
     }
-    impl ::std::convert::From<VerifyHeaderHelperCall> for ThemelioBridgeTestCalls {
+    impl ::std::convert::From<VerifyHeaderHelperCall> for ThemelioBridgeTestFFICalls {
         fn from(var: VerifyHeaderHelperCall) -> Self {
-            ThemelioBridgeTestCalls::VerifyHeaderHelper(var)
+            ThemelioBridgeTestFFICalls::VerifyHeaderHelper(var)
         }
     }
-    impl ::std::convert::From<VerifyStakesCall> for ThemelioBridgeTestCalls {
+    impl ::std::convert::From<VerifyStakesCall> for ThemelioBridgeTestFFICalls {
         fn from(var: VerifyStakesCall) -> Self {
-            ThemelioBridgeTestCalls::VerifyStakes(var)
+            ThemelioBridgeTestFFICalls::VerifyStakes(var)
         }
     }
-    impl ::std::convert::From<VerifyTxCall> for ThemelioBridgeTestCalls {
+    impl ::std::convert::From<VerifyTxCall> for ThemelioBridgeTestFFICalls {
         fn from(var: VerifyTxCall) -> Self {
-            ThemelioBridgeTestCalls::VerifyTx(var)
+            ThemelioBridgeTestFFICalls::VerifyTx(var)
         }
     }
-    impl ::std::convert::From<VerifyTxHelperCall> for ThemelioBridgeTestCalls {
+    impl ::std::convert::From<VerifyTxHelperCall> for ThemelioBridgeTestFFICalls {
         fn from(var: VerifyTxHelperCall) -> Self {
-            ThemelioBridgeTestCalls::VerifyTxHelper(var)
+            ThemelioBridgeTestFFICalls::VerifyTxHelper(var)
         }
     }
-    impl ::std::convert::From<VmCall> for ThemelioBridgeTestCalls {
+    impl ::std::convert::From<VmCall> for ThemelioBridgeTestFFICalls {
         fn from(var: VmCall) -> Self {
-            ThemelioBridgeTestCalls::Vm(var)
+            ThemelioBridgeTestFFICalls::Vm(var)
         }
     }
     #[doc = "Container type for all return fields from the `IS_SCRIPT` function with signature `IS_SCRIPT()` and selector `[248, 204, 191, 71]`"]
@@ -3000,7 +3113,7 @@ pub mod themeliobridgetest_mod {
         pub ethers::core::types::U256,
         pub ethers::core::types::U256,
     );
-    #[doc = "Container type for all return fields from the `decodeTransactionHelper` function with signature `decodeTransactionHelper(bytes)` and selector `[194, 224, 241, 216]`"]
+    #[doc = "Container type for all return fields from the `denomToStringHelper` function with signature `denomToStringHelper(uint256)` and selector `[3, 228, 125, 68]`"]
     #[derive(
         Clone,
         Debug,
@@ -3010,12 +3123,7 @@ pub mod themeliobridgetest_mod {
         ethers :: contract :: EthAbiType,
         ethers :: contract :: EthAbiCodec,
     )]
-    pub struct DecodeTransactionHelperReturn(
-        pub [u8; 32],
-        pub ethers::core::types::U256,
-        pub ethers::core::types::U256,
-        pub ethers::core::types::Address,
-    );
+    pub struct DenomToStringHelperReturn(pub String);
     #[doc = "Container type for all return fields from the `deployCode` function with signature `deployCode(string,bytes)` and selector `[41, 206, 157, 222]`"]
     #[derive(
         Clone,
