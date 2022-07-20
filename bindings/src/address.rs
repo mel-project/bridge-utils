@@ -23,26 +23,26 @@ pub mod address_mod {
         ethers::contract::Lazy::new(|| {
             "0x60808060405234601757603a9081601d823930815050f35b600080fdfe600080fdfea26469706673582212208f2bc5cc2da42d29406bcb2614f228f38696050764ed71b167c1da087e3a4af264736f6c634300080d0033" . parse () . expect ("invalid bytecode")
         });
-    pub struct Address<M>(ethers::contract::Contract<M>);
-    impl<M> Clone for Address<M> {
+    pub struct Address<M: Clone>(ethers::contract::Contract<M>);
+    impl<M: Clone> Clone for Address<M> {
         fn clone(&self) -> Self {
             Address(self.0.clone())
         }
     }
-    impl<M> std::ops::Deref for Address<M> {
+    impl<M: Clone> std::ops::Deref for Address<M> {
         type Target = ethers::contract::Contract<M>;
         fn deref(&self) -> &Self::Target {
             &self.0
         }
     }
-    impl<M: ethers::providers::Middleware> std::fmt::Debug for Address<M> {
+    impl<M: ethers::providers::Middleware + Clone> std::fmt::Debug for Address<M> {
         fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
             f.debug_tuple(stringify!(Address))
                 .field(&self.address())
                 .finish()
         }
     }
-    impl<M: ethers::providers::Middleware> Address<M> {
+    impl<M: ethers::providers::Middleware + Clone> Address<M> {
         #[doc = r" Creates a new contract instance with the specified `ethers`"]
         #[doc = r" client at the given `Address`. The contract derefs to a `ethers::Contract`"]
         #[doc = r" object"]
@@ -92,7 +92,7 @@ pub mod address_mod {
             Ok(deployer)
         }
     }
-    impl<M: ethers::providers::Middleware> From<ethers::contract::Contract<M>> for Address<M> {
+    impl<M: ethers::providers::Middleware + Clone> From<ethers::contract::Contract<M>> for Address<M> {
         fn from(contract: ethers::contract::Contract<M>) -> Self {
             Self(contract)
         }

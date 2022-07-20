@@ -20,26 +20,26 @@ pub mod themeliobridgescript_mod {
         ethers::contract::Lazy::new(|| {
             serde_json :: from_str ("[{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"IS_SCRIPT\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"run\",\"outputs\":[]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"vm\",\"outputs\":[{\"internalType\":\"contract Vm\",\"name\":\"\",\"type\":\"address\",\"components\":[]}]}]") . expect ("invalid abi")
         });
-    pub struct ThemelioBridgeScript<M>(ethers::contract::Contract<M>);
-    impl<M> Clone for ThemelioBridgeScript<M> {
+    pub struct ThemelioBridgeScript<M: Clone>(ethers::contract::Contract<M>);
+    impl<M: Clone> Clone for ThemelioBridgeScript<M> {
         fn clone(&self) -> Self {
             ThemelioBridgeScript(self.0.clone())
         }
     }
-    impl<M> std::ops::Deref for ThemelioBridgeScript<M> {
+    impl<M: Clone> std::ops::Deref for ThemelioBridgeScript<M> {
         type Target = ethers::contract::Contract<M>;
         fn deref(&self) -> &Self::Target {
             &self.0
         }
     }
-    impl<M: ethers::providers::Middleware> std::fmt::Debug for ThemelioBridgeScript<M> {
+    impl<M: ethers::providers::Middleware + Clone> std::fmt::Debug for ThemelioBridgeScript<M> {
         fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
             f.debug_tuple(stringify!(ThemelioBridgeScript))
                 .field(&self.address())
                 .finish()
         }
     }
-    impl<M: ethers::providers::Middleware> ThemelioBridgeScript<M> {
+    impl<M: ethers::providers::Middleware + Clone> ThemelioBridgeScript<M> {
         #[doc = r" Creates a new contract instance with the specified `ethers`"]
         #[doc = r" client at the given `Address`. The contract derefs to a `ethers::Contract`"]
         #[doc = r" object"]
@@ -75,7 +75,7 @@ pub mod themeliobridgescript_mod {
                 .expect("method not found (this should never happen)")
         }
     }
-    impl<M: ethers::providers::Middleware> From<ethers::contract::Contract<M>>
+    impl<M: ethers::providers::Middleware + Clone> From<ethers::contract::Contract<M>>
         for ThemelioBridgeScript<M>
     {
         fn from(contract: ethers::contract::Contract<M>) -> Self {

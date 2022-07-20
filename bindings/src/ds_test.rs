@@ -25,26 +25,26 @@ pub mod dstest_mod {
         ethers::contract::Lazy::new(|| {
             "0x6080806040523461002357600160ff19600054161760005561028090816100298239f35b600080fdfe6080604052600436101561001257600080fd5b6000803560e01c8063ba414fa6146100585763fa7626d4146100345750600080fd5b3461005557806003193601126100555760ff60209154166040519015158152f35b80fd5b5034610055578060031936011261005557602061007361017c565b6040519015158152f35b50634e487b7160e01b600052604160045260246000fd5b90601f8019910116810190811067ffffffffffffffff8211176100b657604052565b6100be61007d565b604052565b630667f9d760e41b81528151916000905b8382106100f95750908260049392116100ec57010190565b6000838383010152010190565b908060208092840101516004828601015201906100d4565b3d1561015a573d9067ffffffffffffffff821161014d575b60405191610141601f8201601f191660200184610094565b82523d6000602084013e565b61015561007d565b610129565b606090565b90816020910312610177575180151581036101775790565b600080fd5b6000805460081c60ff1615610198575460081c60ff1690565b90565b80737109709ecfa91a80626ff3989d68f67f5b1dd12d803b6101b957505090565b81925060405182816101f660208201906040820191737109709ecfa91a80626ff3989d68f67f5b1dd12d815260206519985a5b195960d21b910152565b03610209601f1991828101855284610094565b61022b604051918261021f6020820196876100c3565b03908101835282610094565b51925af15061019561023b610111565b6020808251830101910161015f56fea2646970667358221220ba53f1db6c9e074ce5b8ccaf12ff2fbdf621773ba58fac3634f4c0eea97092c864736f6c634300080d0033" . parse () . expect ("invalid bytecode")
         });
-    pub struct DSTest<M>(ethers::contract::Contract<M>);
-    impl<M> Clone for DSTest<M> {
+    pub struct DSTest<M: Clone>(ethers::contract::Contract<M>);
+    impl<M: Clone> Clone for DSTest<M> {
         fn clone(&self) -> Self {
             DSTest(self.0.clone())
         }
     }
-    impl<M> std::ops::Deref for DSTest<M> {
+    impl<M: Clone> std::ops::Deref for DSTest<M> {
         type Target = ethers::contract::Contract<M>;
         fn deref(&self) -> &Self::Target {
             &self.0
         }
     }
-    impl<M: ethers::providers::Middleware> std::fmt::Debug for DSTest<M> {
+    impl<M: ethers::providers::Middleware + Clone> std::fmt::Debug for DSTest<M> {
         fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
             f.debug_tuple(stringify!(DSTest))
                 .field(&self.address())
                 .finish()
         }
     }
-    impl<M: ethers::providers::Middleware> DSTest<M> {
+    impl<M: ethers::providers::Middleware + Clone> DSTest<M> {
         #[doc = r" Creates a new contract instance with the specified `ethers`"]
         #[doc = r" client at the given `Address`. The contract derefs to a `ethers::Contract`"]
         #[doc = r" object"]
@@ -192,7 +192,7 @@ pub mod dstest_mod {
             self.0.event_with_filter(Default::default())
         }
     }
-    impl<M: ethers::providers::Middleware> From<ethers::contract::Contract<M>> for DSTest<M> {
+    impl<M: ethers::providers::Middleware + Clone> From<ethers::contract::Contract<M>> for DSTest<M> {
         fn from(contract: ethers::contract::Contract<M>) -> Self {
             Self(contract)
         }

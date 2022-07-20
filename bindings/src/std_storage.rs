@@ -25,26 +25,26 @@ pub mod stdstorage_mod {
         ethers::contract::Lazy::new(|| {
             "0x6080806040523461001a576102319081610020823930815050f35b600080fdfe6080604052600436101561001257600080fd5b6000803560e01c6353584939146100295750600080fd5b60403660031901126100ea5767ffffffffffffffff6004358181116100e657366023820112156100e6578060040135908282116100d9575b60405192601f8301601f19908116603f01168401908111848210176100cc575b60405281835236602483830101116100c857926020826100b4949360246100c4970183860137830101526024359061013f565b6040519081529081906020820190565b0390f35b8380fd5b6100d46100ed565b610081565b6100e16100ed565b610061565b8280fd5b80fd5b50634e487b7160e01b600052604160045260246000fd5b50634e487b7160e01b600052601160045260246000fd5b806000190460081181151516610132575b60031b90565b61013a610104565b61012c565b8051919291600091602091828111156101ef57509293919290805b84925b81841061016c57505050505090565b909192939594841987116101e2575b8487019082518210156101cc57908201840151600191906001600160f81b0319166101a58761011b565b1c179460001981146101bf575b019291909593949561015d565b6101c7610104565b6101b2565b634e487b7160e01b600052603260045260246000fd5b6101ea610104565b61017b565b9492939491909161015a56fea2646970667358221220e9698b3932b3bce8e4c9d641c3e9a48436cc1cedfdd3289a5fd5c6a1c67bf26c64736f6c634300080d0033" . parse () . expect ("invalid bytecode")
         });
-    pub struct stdStorage<M>(ethers::contract::Contract<M>);
-    impl<M> Clone for stdStorage<M> {
+    pub struct stdStorage<M: Clone>(ethers::contract::Contract<M>);
+    impl<M: Clone> Clone for stdStorage<M> {
         fn clone(&self) -> Self {
             stdStorage(self.0.clone())
         }
     }
-    impl<M> std::ops::Deref for stdStorage<M> {
+    impl<M: Clone> std::ops::Deref for stdStorage<M> {
         type Target = ethers::contract::Contract<M>;
         fn deref(&self) -> &Self::Target {
             &self.0
         }
     }
-    impl<M: ethers::providers::Middleware> std::fmt::Debug for stdStorage<M> {
+    impl<M: ethers::providers::Middleware + Clone> std::fmt::Debug for stdStorage<M> {
         fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
             f.debug_tuple(stringify!(stdStorage))
                 .field(&self.address())
                 .finish()
         }
     }
-    impl<M: ethers::providers::Middleware> stdStorage<M> {
+    impl<M: ethers::providers::Middleware + Clone> stdStorage<M> {
         #[doc = r" Creates a new contract instance with the specified `ethers`"]
         #[doc = r" client at the given `Address`. The contract derefs to a `ethers::Contract`"]
         #[doc = r" object"]
@@ -118,7 +118,7 @@ pub mod stdstorage_mod {
             self.0.event_with_filter(Default::default())
         }
     }
-    impl<M: ethers::providers::Middleware> From<ethers::contract::Contract<M>> for stdStorage<M> {
+    impl<M: ethers::providers::Middleware + Clone> From<ethers::contract::Contract<M>> for stdStorage<M> {
         fn from(contract: ethers::contract::Contract<M>) -> Self {
             Self(contract)
         }

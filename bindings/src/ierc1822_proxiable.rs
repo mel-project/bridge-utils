@@ -20,26 +20,26 @@ pub mod ierc1822proxiable_mod {
         ethers::contract::Lazy::new(|| {
             serde_json :: from_str ("[{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"proxiableUUID\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\",\"components\":[]}]}]") . expect ("invalid abi")
         });
-    pub struct IERC1822Proxiable<M>(ethers::contract::Contract<M>);
-    impl<M> Clone for IERC1822Proxiable<M> {
+    pub struct IERC1822Proxiable<M: Clone>(ethers::contract::Contract<M>);
+    impl<M: Clone> Clone for IERC1822Proxiable<M> {
         fn clone(&self) -> Self {
             IERC1822Proxiable(self.0.clone())
         }
     }
-    impl<M> std::ops::Deref for IERC1822Proxiable<M> {
+    impl<M: Clone> std::ops::Deref for IERC1822Proxiable<M> {
         type Target = ethers::contract::Contract<M>;
         fn deref(&self) -> &Self::Target {
             &self.0
         }
     }
-    impl<M: ethers::providers::Middleware> std::fmt::Debug for IERC1822Proxiable<M> {
+    impl<M: ethers::providers::Middleware + Clone> std::fmt::Debug for IERC1822Proxiable<M> {
         fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
             f.debug_tuple(stringify!(IERC1822Proxiable))
                 .field(&self.address())
                 .finish()
         }
     }
-    impl<M: ethers::providers::Middleware> IERC1822Proxiable<M> {
+    impl<M: ethers::providers::Middleware + Clone> IERC1822Proxiable<M> {
         #[doc = r" Creates a new contract instance with the specified `ethers`"]
         #[doc = r" client at the given `Address`. The contract derefs to a `ethers::Contract`"]
         #[doc = r" object"]
@@ -57,7 +57,7 @@ pub mod ierc1822proxiable_mod {
                 .expect("method not found (this should never happen)")
         }
     }
-    impl<M: ethers::providers::Middleware> From<ethers::contract::Contract<M>>
+    impl<M: ethers::providers::Middleware + Clone> From<ethers::contract::Contract<M>>
         for IERC1822Proxiable<M>
     {
         fn from(contract: ethers::contract::Contract<M>) -> Self {
