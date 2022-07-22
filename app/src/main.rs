@@ -1,9 +1,17 @@
-use std::convert::TryFrom;
-use std::{env, io};
-use std::ops::{Range, Deref};
-use std::sync::Arc;
+use std::{
+    convert::TryFrom,
+    env,
+    fs,
+    io,
+    ops::{Range, Deref},
+    path::Path,
+    sync::Arc,
+};
 
-use bindings::themelio_bridge::ThemelioBridge;
+use bindings::{
+    themelio_bridge::ThemelioBridge,
+    themelio_bridge_proxy::ThemelioBridgeProxy,
+};
 use blake3;
 use clap::Parser;
 use ed25519_compact::{
@@ -13,16 +21,26 @@ use ed25519_compact::{
     Noise
 };
 use ethers::prelude::{
+    CompilerInput,
+    ContractFactory,
     Http,
     LocalWallet, 
     Middleware,
-    SignerMiddleware
+    artifacts::{Optimizer, Settings, Source, Sources},
+    remappings::Remapping,
+    SignerMiddleware,
+    k256::ecdsa::SigningKey,
+    Solc,
+    Wallet,
 };
-use ethers::providers::Provider;
-use ethers::signers::Signer;
+use ethers::{
+    providers::Provider,
+    signers::Signer,
+};
 use ethers::types::{
     Address as EthersAddress,
     Bytes,
+    H160,
     U256
 };
 use eyre::Result;
@@ -58,7 +76,6 @@ const GAS_LIMIT: u32 = 29_000_000;
 struct Config {
     pub wallet: LocalWallet,
     pub rpc: String,
-    pub bridge_proxy_address: String,
 }
 
 impl Config {
@@ -73,14 +90,10 @@ impl Config {
         let rpc: String = env::var("RPC_URL")
             .expect("Unable to parse RPC_URL.");
 
-        let bridge_proxy_address = env::var("BRIDGE_PROXY_ADDRESS")
-            .expect("Unable to parse BRIDGE_PROXY_ADDRESS.");
-
         Ok(
             Config {
                 wallet,
-                rpc,
-                bridge_proxy_address
+                rpc
             }
         )
     }
@@ -338,8 +351,89 @@ fn create_stakers(num: u32, message: &[u8]) -> (Vec<[u8; 32]>, Vec<U256>, Vec<[u
     (public_keys, staked_syms, signatures)
 }
 
-// TESTS
-async fn setup_bridge(address: &str) -> ThemelioBridge<SignerMiddleware<Provider<Http>, LocalWallet>> {
+async fn setup_bridge() -> H160 {
+    let mut source_ancestors = Path::new(&env!("CARGO_MANIFEST_DIR"))
+        .ancestors();
+
+    source_ancestors.next();
+    
+    let source = source_ancestors
+        .next()
+        .expect("Error accessing path.");
+
+    let themelio_bridge_source = source
+        .join("contracts/src/ThemelioBridge.sol");
+
+    let remappings = vec!(
+        Remapping {
+            name: String::from("blake3-sol/"),
+            path: source
+                    .join("contracts/lib/blake3-sol/src/")
+                    .to_str()
+                    .unwrap()
+                    .to_string()
+        },
+        Remapping {
+            name: String::from("ed25519-sol/"),
+            path: source
+                    .join("contracts/lib/ed25519-sol/src/")
+                    .to_str()
+                    .unwrap()
+                    .to_string()
+        },
+        Remapping {
+            name: String::from("openzeppelin-contracts-upgradeable/contracts/token/ERC1155/"),
+            path: source
+                    .join("contracts/lib/openzeppelin-contracts-upgradeable/contracts/token/ERC1155/")
+                    .to_str()
+                    .unwrap()
+                    .to_string()
+        },
+        Remapping {
+            name: String::from("openzeppelin-contracts-upgradeable/contracts/proxy/utils/"),
+            path: source
+                    .join("contracts/lib/openzeppelin-contracts-upgradeable/contracts/proxy/utils/")
+                    .to_str()
+                    .unwrap()
+                    .to_string()
+        },
+    );
+
+    let optimizer = Optimizer{
+        enabled: Some(true),
+        runs: Some(100),
+        details: None
+    };
+
+    let mut settings = Settings::default()
+        .with_via_ir();
+
+    settings.optimizer = optimizer;
+
+    settings.remappings = remappings;
+
+    let compiler_input = CompilerInput {
+        language: "Solidity".to_string(),
+        sources: Sources::from([(
+            "contracts/ThemelioBridge.sol".into(),
+            Source {
+                content: fs::read_to_string(themelio_bridge_source)
+                    .expect("Unable to read file.")
+            },
+        )]),
+        settings,
+    };
+
+    let solc = Solc::default();
+
+    let compiled = solc.compile_exact(&compiler_input)
+        .expect("Could not compile contracts.");
+
+    let (abi, bytecode, _runtime_bytecode) = compiled
+        .find("ThemelioBridge")
+        .expect("Could not find contract.")
+        .into_parts_or_default();
+
     let config = Config::new()
         .expect("Error initializing configuration.");
 
@@ -360,92 +454,154 @@ async fn setup_bridge(address: &str) -> ThemelioBridge<SignerMiddleware<Provider
     let client = SignerMiddleware::new(provider.clone(), wallet);
     let client = Arc::new(client);
 
-    let address = address.parse::<EthersAddress>()
-        .expect("Unable to parse address.");
+    let factory = ContractFactory::new(abi, bytecode, client.clone());
 
-    let bridge = ThemelioBridge::new(address, client.clone());
-
-    bridge
+    let bridge = factory
+        .deploy(())
+        .expect("Unable to deploy bridge.")
+        .send()
+        .await
+        .expect("Error awaiting bridge contract creation.");
+    
+    bridge.address()
 }
 
-async fn test_e2e(address: &str, num_stakers: u32, merkle_tree_height: u32) -> Result<()> {
-    let bridge = setup_bridge(address).await;
+async fn setup_bridge_proxy() -> ThemelioBridge<SignerMiddleware<Provider<Http>, Wallet<SigningKey>>> {
+    let bridge_address = setup_bridge()
+        .await;
 
-    // create a random block header
-    let modifier: u128 = rand::thread_rng().gen();
-    let mut header: Header = random_header(modifier);
+    let source = Path::new(&env!("CARGO_MANIFEST_DIR"))
+        .join("contracts/src/ThemelioBridgeProxy.sol");
+    let compiled = Solc::default().compile_source(source)
+        .expect("Could not compile contracts.");
+    let (abi, bytecode, _runtime_bytecode) = compiled
+        .find("ThemelioBridgeProxy")
+        .expect("Could not find contract.")
+        .into_parts_or_default();
 
-    let block_height = U256::from(header.height.0);
+    let config = Config::new()
+        .expect("Error initializing configuration.");
 
-    let header_epoch = header.height.epoch();
-    let header_epoch = U256::from(header_epoch);
+    let provider = Provider::<Http>::try_from(config.rpc)
+        .expect("Provider unable to be initialized.");
 
-    // create random transactions with ethereum addresses in additional_data of first output
-    let num_datablocks = rand::thread_rng().gen_range(2u32.pow(merkle_tree_height - 1)..2u32.pow(merkle_tree_height));
-    let datablocks = create_datablocks(num_datablocks);
+    let wallet: LocalWallet = config.wallet;
 
-    // create a merkle tree and get the root, replace transactions_hash with it
-    // create merkle proof for a random tx to verify
-    let leaves: Vec<[u8; 32]> = datablocks
-        .iter()
-        .map(|x| *blake3::keyed_hash(blake3::hash(DATA_BLOCK_HASH_KEY).as_bytes(), &stdcode::serialize(&x).unwrap()).as_bytes())
-        .collect();
+    let chain_id = provider
+        .get_chainid()
+        .await
+        .unwrap()
+        .as_u64();
 
-    let merkle_tree: MerkleTree<Blake3Algorithm> = MerkleTree::<Blake3Algorithm>::from_leaves(&leaves);
+    let wallet = wallet
+        .with_chain_id(chain_id);
 
-    let index: usize = rand::thread_rng().gen_range(0..num_datablocks).try_into().unwrap();
-    let index_u256 = U256::from(index);
+    let client = SignerMiddleware::new(provider.clone(), wallet);
+    let client = Arc::new(client);
 
-    let tx_to_prove: &Transaction = datablocks.get(index).ok_or("Unable to get tx datablock to prove.").unwrap();
+    let factory = ContractFactory::new(abi, bytecode, client.clone());
 
-    let mel_amount: u128 = tx_to_prove.outputs[0].value.into();
-    let mel_amount = U256::from(mel_amount);
+    let bridge_proxy = factory
+        .deploy((bridge_address))
+        .expect("Unable to deploy bridge.")
+        .send()
+        .await
+        .expect("Error awaiting bridge contract creation.");
+    
+    
+    let bridge_proxy_address = bridge_proxy.address();
 
-    let serialized_tx = stdcode::serialize(&tx_to_prove).expect("Unable to serialize tx.");
-    let serialized_tx_bytes = Bytes::from(serialized_tx);
+    let wrapped_bridge_proxy = ThemelioBridge::new(bridge_proxy_address, client.clone());
 
-    let merkle_proof: MerkleProof<Blake3Algorithm> = merkle_tree.proof(&vec![index]);
-    let merkle_proof_vec: Vec<[u8; 32]> = merkle_proof.proof_hashes().to_vec();
+    wrapped_bridge_proxy
 
-    let merkle_root: [u8; 32] = merkle_tree.root().ok_or("Unable to get merkle root.").expect("Fill in a reason");
+}
 
-    // replace the random 'transactions_hash' from 'header' with the root of our merkle tree
-    header.transactions_hash = HashVal(merkle_root);
+async fn test_e2e(num_stakers: u32, merkle_tree_height: u32) -> Result<()> {
+    let wrapped_bridge_proxy = setup_bridge_proxy().await;
 
-    // create random staker keypairs, serialize header and sign with each sk, store in vecs
-    let serialized_header = stdcode::serialize(&header).expect("Unable to serialize header.");
-    let serialized_header_bytes = Bytes::from(serialized_header.clone());
+    let receipt = wrapped_bridge_proxy
+        .uri(U256::from(0))
+        .call().await
+        .expect("Error awaiting uri().");
 
-    let stakers_info = create_stakers(num_stakers, &serialized_header);
+    println!("{}", receipt);
 
-    let stakers: Vec<[u8; 32]> = stakers_info.0;
-    let staker_syms: Vec<U256> = stakers_info.1;
-    let signatures: Vec<[u8; 32]> = stakers_info.2;
+    // // create a random block header
+    // let modifier: u128 = rand::thread_rng().gen();
+    // let mut header: Header = random_header(modifier);
 
-    // send tx to relayStakers()
-    // let call = bridge.verify_stakes(Bytes::from(stakers.clone()));
-    // let pending_tx = call.send().await?;
-    // let receipt = pending_tx.await?;
+    // let block_height = U256::from(header.height.0);
 
-    // println!("\n*** relayStakers() receipt ***\n{:#?}\n********************\n", receipt.unwrap());
+    // let header_epoch = header.height.epoch();
+    // let header_epoch = U256::from(header_epoch);
 
-    // send tx to relayHeader
-    // let call = bridge
-    //     .verify_header(serialized_header_bytes.clone(), stakers.clone(), signatures.clone())
+    // // create random transactions with ethereum addresses in additional_data of first output
+    // let num_datablocks = rand::thread_rng().gen_range(2u32.pow(merkle_tree_height - 1)..2u32.pow(merkle_tree_height));
+    // let datablocks = create_datablocks(num_datablocks);
+
+    // // create a merkle tree and get the root, replace transactions_hash with it
+    // // create merkle proof for a random tx to verify
+    // let leaves: Vec<[u8; 32]> = datablocks
+    //     .iter()
+    //     .map(|x| *blake3::keyed_hash(blake3::hash(DATA_BLOCK_HASH_KEY).as_bytes(), &stdcode::serialize(&x).unwrap()).as_bytes())
+    //     .collect();
+
+    // let merkle_tree: MerkleTree<Blake3Algorithm> = MerkleTree::<Blake3Algorithm>::from_leaves(&leaves);
+
+    // let index: usize = rand::thread_rng().gen_range(0..num_datablocks).try_into().unwrap();
+    // let index_u256 = U256::from(index);
+
+    // let tx_to_prove: &Transaction = datablocks.get(index).ok_or("Unable to get tx datablock to prove.").unwrap();
+
+    // let mel_amount: u128 = tx_to_prove.outputs[0].value.into();
+    // let mel_amount = U256::from(mel_amount);
+
+    // let serialized_tx = stdcode::serialize(&tx_to_prove).expect("Unable to serialize tx.");
+    // let serialized_tx_bytes = Bytes::from(serialized_tx);
+
+    // let merkle_proof: MerkleProof<Blake3Algorithm> = merkle_tree.proof(&vec![index]);
+    // let merkle_proof_vec: Vec<[u8; 32]> = merkle_proof.proof_hashes().to_vec();
+
+    // let merkle_root: [u8; 32] = merkle_tree.root().ok_or("Unable to get merkle root.").expect("Fill in a reason");
+
+    // // replace the random 'transactions_hash' from 'header' with the root of our merkle tree
+    // header.transactions_hash = HashVal(merkle_root);
+
+    // // create random staker keypairs, serialize header and sign with each sk, store in vecs
+    // let serialized_header = stdcode::serialize(&header).expect("Unable to serialize header.");
+    // let serialized_header_bytes = Bytes::from(serialized_header.clone());
+
+    // let stakers_info = create_stakers(num_stakers, &serialized_header);
+
+    // let stakers: Vec<[u8; 32]> = stakers_info.0;
+    // let staker_syms: Vec<U256> = stakers_info.1;
+    // let signatures: Vec<[u8; 32]> = stakers_info.2;
+
+    // // send tx to relayStakers()
+    // // let call = bridge.verify_stakes(Bytes::from(stakers.clone()));
+    // // let pending_tx = call.send().await?;
+    // // let receipt = pending_tx.await?;
+
+    // // println!("\n*** relayStakers() receipt ***\n{:#?}\n********************\n", receipt.unwrap());
+
+    // // send tx to relayHeader
+    // // let call = bridge
+    // //     .verify_header(serialized_header_bytes.clone(), stakers.clone(), signatures.clone())
+    // //     .gas(GAS_LIMIT);
+    // // let pending_tx = call.send().await?;
+    // // let receipt = pending_tx.await?;
+
+    // // println!("\n***** relayHeader() receipt *****\n{:#?}\n********************\n", receipt.unwrap());
+
+    // // send tx to verifyTx()
+    // let call = bridge_proxy
+    //     .verify_tx(serialized_tx_bytes.clone(), index_u256, block_height, merkle_proof_vec.clone())
     //     .gas(GAS_LIMIT);
     // let pending_tx = call.send().await?;
     // let receipt = pending_tx.await?;
 
-    // println!("\n***** relayHeader() receipt *****\n{:#?}\n********************\n", receipt.unwrap());
-
-    // send tx to verifyTx()
-    let call = bridge
-        .verify_tx(serialized_tx_bytes.clone(), index_u256, block_height, merkle_proof_vec.clone())
-        .gas(GAS_LIMIT);
-    let pending_tx = call.send().await?;
-    let receipt = pending_tx.await?;
-
-    println!("\n***** verifyTx() receipt *****\n{:#?}\n********************\n", receipt.unwrap());
+    // println!("\n***** verifyTx() receipt *****\n{:#?}\n********************\n", receipt.unwrap());
 
     // send tx to burn()
     // let call = bridge.burn(mel_amount, *b"00000000000000000000000000000000").gas(GAS_LIMIT);
@@ -464,11 +620,6 @@ async fn main() -> Result<()> {
     if args.initial_conditions {
 
     } else {
-        let config = Config::new()
-            .expect("Unable to initialize config.");
-
-        let address = config.bridge_proxy_address;
-
         let mut num_stakers = String::new();
         let mut merkle_tree_height = String::new();
 
@@ -492,7 +643,7 @@ async fn main() -> Result<()> {
             .parse()
             .expect("Error parsing Merkle tree height.");
 
-        test_e2e(&address, num_stakers, merkle_tree_height)
+        test_e2e(num_stakers, merkle_tree_height)
             .await
             .expect("Error awaiting end-to-end test.");
     }
