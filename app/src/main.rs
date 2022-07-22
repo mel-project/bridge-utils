@@ -14,6 +14,7 @@ use bindings::{
 };
 use blake3;
 use clap::Parser;
+use dotenv::dotenv;
 use ed25519_compact::{
     KeyPair,
     Signature,
@@ -36,6 +37,7 @@ use ethers::prelude::{
 use ethers::{
     providers::Provider,
     signers::Signer,
+    abi::{Token, Tokenize},
 };
 use ethers::types::{
     Address as EthersAddress,
@@ -80,6 +82,8 @@ struct Config {
 
 impl Config {
     pub fn new() -> Result<Config, &'static str> {
+        dotenv().ok();
+
         let secret_key = env::var("SECRET_KEY")
             .expect("Missing SECRET_KEY env variable.");
 
@@ -424,9 +428,7 @@ async fn setup_bridge() -> H160 {
         settings,
     };
 
-    let solc = Solc::default();
-
-    let compiled = solc.compile_exact(&compiler_input)
+    let compiled = Solc::default().compile_exact(&compiler_input)
         .expect("Could not compile contracts.");
 
     let (abi, bytecode, _runtime_bytecode) = compiled
@@ -470,10 +472,57 @@ async fn setup_bridge_proxy() -> ThemelioBridge<SignerMiddleware<Provider<Http>,
     let bridge_address = setup_bridge()
         .await;
 
-    let source = Path::new(&env!("CARGO_MANIFEST_DIR"))
+    let mut source_ancestors = Path::new(&env!("CARGO_MANIFEST_DIR"))
+        .ancestors();
+
+    source_ancestors.next();
+    
+    let source = source_ancestors
+        .next()
+        .expect("Error accessing path.");
+
+    let themelio_bridge_proxy_source = source
         .join("contracts/src/ThemelioBridgeProxy.sol");
-    let compiled = Solc::default().compile_source(source)
+
+    let remappings = vec!(
+        Remapping {
+            name: String::from("openzeppelin-contracts/contracts/proxy/ERC1967/"),
+            path: source
+                    .join("contracts/lib/openzeppelin-contracts/contracts/proxy/ERC1967/")
+                    .to_str()
+                    .unwrap()
+                    .to_string()
+        },
+    );
+
+    let optimizer = Optimizer{
+        enabled: Some(true),
+        runs: Some(100),
+        details: None
+    };
+
+    let mut settings = Settings::default()
+        .with_via_ir();
+
+    settings.optimizer = optimizer;
+
+    settings.remappings = remappings;
+
+    let compiler_input = CompilerInput {
+        language: "Solidity".to_string(),
+        sources: Sources::from([(
+            "contracts/ThemelioBridgeProxy.sol".into(),
+            Source {
+                content: fs::read_to_string(themelio_bridge_proxy_source)
+                    .expect("Unable to read file.")
+            },
+        )]),
+        settings,
+    };
+
+    let compiled = Solc::default().compile_exact(&compiler_input)
         .expect("Could not compile contracts.");
+
     let (abi, bytecode, _runtime_bytecode) = compiled
         .find("ThemelioBridgeProxy")
         .expect("Could not find contract.")
@@ -482,10 +531,10 @@ async fn setup_bridge_proxy() -> ThemelioBridge<SignerMiddleware<Provider<Http>,
     let config = Config::new()
         .expect("Error initializing configuration.");
 
+    let wallet: LocalWallet = config.wallet;
+
     let provider = Provider::<Http>::try_from(config.rpc)
         .expect("Provider unable to be initialized.");
-
-    let wallet: LocalWallet = config.wallet;
 
     let chain_id = provider
         .get_chainid()
@@ -501,8 +550,26 @@ async fn setup_bridge_proxy() -> ThemelioBridge<SignerMiddleware<Provider<Http>,
 
     let factory = ContractFactory::new(abi, bytecode, client.clone());
 
+    let mut func_selector = "09f10a3c".as_bytes().to_vec();
+    let mut genesis_height = [0; 32].to_vec();
+    let mut genesis_transactions_hash = [0; 32].to_vec();
+    let mut genesis_stakes_hash = [0; 32].to_vec();
+
+    let mut initialization_data: Vec<u8> = vec!();
+    initialization_data.append(&mut func_selector);
+    initialization_data.append(&mut genesis_height);
+    initialization_data.append(&mut genesis_transactions_hash);
+    initialization_data.append(&mut genesis_stakes_hash);
+
+    let mut constructor_data: Vec<Token> = vec!();
+    constructor_data.push(Token::Address(bridge_address));
+    constructor_data.push(Token::Bytes(initialization_data));
+
+    println!("{:?}", constructor_data.clone());
+    println!("{:?}", constructor_data.clone().into_tokens());
+
     let bridge_proxy = factory
-        .deploy((bridge_address))
+        .deploy(constructor_data)
         .expect("Unable to deploy bridge.")
         .send()
         .await

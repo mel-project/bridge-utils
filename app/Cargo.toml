@@ -10,6 +10,7 @@ edition = "2021"
 bindings = { path = "../bindings" }
 blake3 = "1.2.0"
 clap = { version = "3.1.15", features = ["derive"] }
+dotenv = "0.15.0"
 ed25519-compact = "1.0.11"
 ethers = { git = "https://github.com/gakonst/ethers-rs", default-features = false }
 eyre = "0.6.6"
