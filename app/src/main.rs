@@ -561,16 +561,14 @@ async fn setup_bridge_proxy() -> ThemelioBridge<SignerMiddleware<Provider<Http>,
     initialization_data.append(&mut genesis_transactions_hash);
     initialization_data.append(&mut genesis_stakes_hash);
 
-    let mut constructor_data: Vec<Token> = vec!();
-    constructor_data.push(Token::Address(bridge_address));
-    constructor_data.push(Token::Bytes(initialization_data));
-
-    println!("{:?}", constructor_data.clone());
-    println!("{:?}", constructor_data.clone().into_tokens());
+    let constructor_data = (
+        Token::Address(bridge_address),
+        Token::Bytes(initialization_data)
+    );
 
     let bridge_proxy = factory
         .deploy(constructor_data)
-        .expect("Unable to deploy bridge.")
+        .expect("Unable to deploy bridge proxy.")
         .send()
         .await
         .expect("Error awaiting bridge contract creation.");
