@@ -399,16 +399,14 @@ async fn link_libraries(
             let blake3_source = source
                 .join("contracts/lib/blake3-sol/src/Blake3Sol.sol");
 
-            let optimizer = Optimizer{
+            let mut settings = Settings::default()
+                .with_via_ir();
+        
+            settings.optimizer = Optimizer{
                 enabled: Some(true),
                 runs: Some(100),
                 details: None
             };
-
-            let mut settings = Settings::default()
-                .with_via_ir();
-        
-            settings.optimizer = optimizer;
 
             let compiler_input = CompilerInput {
                 language: "Solidity".to_string(),
@@ -429,8 +427,6 @@ async fn link_libraries(
             let compiled = compiled
                 .find("Blake3Sol")
                 .expect("Could not find contract.");
-
-            println!("!!! compiled !!! {:?}", compiled);
 
             let (abi, bytecode, _runtime_bytecode) = compiled
                 .into_parts_or_default();
@@ -456,7 +452,7 @@ async fn link_libraries(
         )
         .resolve();
 
-    let ed25519_address = match env::var("ED25519_ADDRESS") {
+        let ed25519_address = match env::var("ED25519_ADDRESS") {
         Ok(val) => val.parse::<EthersAddress>()?,
         Err(_) => {
             let mut source_ancestors = Path::new(&env!("CARGO_MANIFEST_DIR"))
@@ -470,22 +466,20 @@ async fn link_libraries(
 
             let ed25519_source = source
                 .join("contracts/lib/ed25519-sol/src/Ed25519.sol");
-            
-            let optimizer = Optimizer{
-                enabled: Some(true),
-                runs: Some(100),
-                details: None
-            };
 
             let mut settings = Settings::default()
                 .with_via_ir();
-        
-            settings.optimizer = optimizer;
+
+            settings.optimizer = Optimizer{
+                enabled: Some(true),
+                runs: Some(10),
+                details: None
+            };
 
             let compiler_input = CompilerInput {
                 language: "Solidity".to_string(),
                 sources: Sources::from([(
-                    "contracts/Ed25519.sol".into(),
+                    "contracts/lib/ed25519-sol/src/Ed25519.sol".into(),
                     Source {
                         content: fs::read_to_string(ed25519_source)
                             .expect("Unable to read file.")
@@ -496,13 +490,11 @@ async fn link_libraries(
 
             let compiled = Solc::default()
                 .compile_exact(&compiler_input)
-                .expect("Could not compile contracts.");
+                .expect("Could not compile Ed25519 contract.");
 
             let compiled = compiled
                 .find("Ed25519")
-                .expect("Could not find contract.");
-
-            println!("!!! compiled !!! {:?}", compiled);
+                .expect("Could not find Ed25519 contract.");
 
             let (abi, bytecode, _runtime_bytecode) = compiled
                 .into_parts_or_default();
@@ -514,7 +506,7 @@ async fn link_libraries(
                 .expect("Unable to deploy Ed25519 library.")
                 .send()
                 .await
-                .expect("Error awaiting bridge contract creation.");
+                .expect("Error awaiting Ed25519 library creation.");
 
             ed25519.address()
         },
@@ -579,16 +571,14 @@ async fn setup_bridge() -> H160 {
         },
     );
 
-    let optimizer = Optimizer{
+    let mut settings = Settings::default()
+        .with_via_ir();
+
+    settings.optimizer = Optimizer{
         enabled: Some(true),
         runs: Some(100),
         details: None
     };
-
-    let mut settings = Settings::default()
-        .with_via_ir();
-
-    settings.optimizer = optimizer;
 
     settings.remappings = remappings;
 
@@ -608,7 +598,7 @@ async fn setup_bridge() -> H160 {
         .compile_exact(&compiler_input)
         .expect("Could not compile contracts.");
 
-    let mut compiled = compiled
+    let compiled = compiled
         .find("ThemelioBridge")
         .expect("Could not find contract.");
 
@@ -616,9 +606,7 @@ async fn setup_bridge() -> H160 {
 
     link_libraries(&mut obj)
         .await
-        .expect("Error linking.");
-
-    println!("!!! compiled !!! {:?}", compiled);
+        .expect("Error linking libraries.");
 
     let (abi, bytecode, _runtime_bytecode) = compiled
         .into_parts_or_default();
@@ -682,16 +670,14 @@ async fn setup_bridge_proxy() -> ThemelioBridge<SignerMiddleware<Provider<Http>,
         },
     );
 
-    let optimizer = Optimizer{
+    let mut settings = Settings::default()
+        .with_via_ir();
+
+    settings.optimizer = Optimizer{
         enabled: Some(true),
         runs: Some(100),
         details: None
     };
-
-    let mut settings = Settings::default()
-        .with_via_ir();
-
-    settings.optimizer = optimizer;
 
     settings.remappings = remappings;
 
