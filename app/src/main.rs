@@ -27,7 +27,13 @@ use ethers::prelude::{
     Http,
     LocalWallet, 
     Middleware,
-    artifacts::{Optimizer, Settings, Source, Sources},
+    artifacts::{
+        BytecodeObject,
+        Optimizer,
+        Settings,
+        Source,
+        Sources
+    },
     remappings::Remapping,
     SignerMiddleware,
     k256::ecdsa::SigningKey,
@@ -355,6 +361,176 @@ fn create_stakers(num: u32, message: &[u8]) -> (Vec<[u8; 32]>, Vec<U256>, Vec<[u
     (public_keys, staked_syms, signatures)
 }
 
+async fn link_libraries(
+    bytecode: &mut BytecodeObject,
+) -> Result<()> {
+    let config = Config::new()
+        .expect("Error initializing configuration.");
+
+    let provider = Provider::<Http>::try_from(config.rpc)
+        .expect("Provider unable to be initialized.");
+
+    let wallet: LocalWallet = config.wallet;
+
+    let chain_id = provider
+        .get_chainid()
+        .await
+        .unwrap()
+        .as_u64();
+
+    let wallet = wallet
+        .with_chain_id(chain_id);
+
+    let client = SignerMiddleware::new(provider.clone(), wallet);
+    let client = Arc::new(client);
+
+    let blake3_address = match env::var("BLAKE3_ADDRESS") {
+        Ok(val) => val.parse::<EthersAddress>()?,
+        Err(_) => {
+            let mut source_ancestors = Path::new(&env!("CARGO_MANIFEST_DIR"))
+                .ancestors();
+
+            source_ancestors.next();
+
+            let source = source_ancestors
+                .next()
+                .expect("Error accessing path.");
+
+            let blake3_source = source
+                .join("contracts/lib/blake3-sol/src/Blake3Sol.sol");
+
+            let optimizer = Optimizer{
+                enabled: Some(true),
+                runs: Some(100),
+                details: None
+            };
+
+            let mut settings = Settings::default()
+                .with_via_ir();
+        
+            settings.optimizer = optimizer;
+
+            let compiler_input = CompilerInput {
+                language: "Solidity".to_string(),
+                sources: Sources::from([(
+                    "contracts/Blake3Sol.sol".into(),
+                    Source {
+                        content: fs::read_to_string(blake3_source)
+                            .expect("Unable to read file.")
+                    },
+                )]),
+                settings: settings,
+            };
+
+            let compiled = Solc::default()
+                .compile_exact(&compiler_input)
+                .expect("Could not compile contracts.");
+
+            let compiled = compiled
+                .find("Blake3Sol")
+                .expect("Could not find contract.");
+
+            println!("!!! compiled !!! {:?}", compiled);
+
+            let (abi, bytecode, _runtime_bytecode) = compiled
+                .into_parts_or_default();
+
+            let factory = ContractFactory::new(abi, bytecode, client.clone());
+
+            let blake3 = factory
+                .deploy(())
+                .expect("Unable to deploy bridge.")
+                .send()
+                .await
+                .expect("Error awaiting bridge contract creation.");
+
+            blake3.address()
+        },
+    };
+
+    bytecode
+        .link(
+            "Blake3Sol.sol",
+            "Blake3Sol",
+            blake3_address
+        )
+        .resolve();
+
+    let ed25519_address = match env::var("ED25519_ADDRESS") {
+        Ok(val) => val.parse::<EthersAddress>()?,
+        Err(_) => {
+            let mut source_ancestors = Path::new(&env!("CARGO_MANIFEST_DIR"))
+                .ancestors();
+
+            source_ancestors.next();
+
+            let source = source_ancestors
+                .next()
+                .expect("Error accessing path.");
+
+            let ed25519_source = source
+                .join("contracts/lib/ed25519-sol/src/Ed25519.sol");
+            
+            let optimizer = Optimizer{
+                enabled: Some(true),
+                runs: Some(100),
+                details: None
+            };
+
+            let mut settings = Settings::default()
+                .with_via_ir();
+        
+            settings.optimizer = optimizer;
+
+            let compiler_input = CompilerInput {
+                language: "Solidity".to_string(),
+                sources: Sources::from([(
+                    "contracts/Ed25519.sol".into(),
+                    Source {
+                        content: fs::read_to_string(ed25519_source)
+                            .expect("Unable to read file.")
+                    },
+                )]),
+                settings,
+            };
+
+            let compiled = Solc::default()
+                .compile_exact(&compiler_input)
+                .expect("Could not compile contracts.");
+
+            let compiled = compiled
+                .find("Ed25519")
+                .expect("Could not find contract.");
+
+            println!("!!! compiled !!! {:?}", compiled);
+
+            let (abi, bytecode, _runtime_bytecode) = compiled
+                .into_parts_or_default();
+
+            let factory = ContractFactory::new(abi, bytecode, client.clone());
+
+            let ed25519 = factory
+                .deploy(())
+                .expect("Unable to deploy Ed25519 library.")
+                .send()
+                .await
+                .expect("Error awaiting bridge contract creation.");
+
+            ed25519.address()
+        },
+    };
+
+    bytecode
+        .link(
+            "Ed25519.sol",
+            "Ed25519",
+            ed25519_address
+        )
+        .resolve();
+
+    Ok(())
+}
+
 async fn setup_bridge() -> H160 {
     let mut source_ancestors = Path::new(&env!("CARGO_MANIFEST_DIR"))
         .ancestors();
@@ -428,12 +604,23 @@ async fn setup_bridge() -> H160 {
         settings,
     };
 
-    let compiled = Solc::default().compile_exact(&compiler_input)
+    let compiled = Solc::default()
+        .compile_exact(&compiler_input)
         .expect("Could not compile contracts.");
 
-    let (abi, bytecode, _runtime_bytecode) = compiled
+    let mut compiled = compiled
         .find("ThemelioBridge")
-        .expect("Could not find contract.")
+        .expect("Could not find contract.");
+
+    let mut obj = compiled.bin.unwrap().clone();
+
+    link_libraries(&mut obj)
+        .await
+        .expect("Error linking.");
+
+    println!("!!! compiled !!! {:?}", compiled);
+
+    let (abi, bytecode, _runtime_bytecode) = compiled
         .into_parts_or_default();
 
     let config = Config::new()
