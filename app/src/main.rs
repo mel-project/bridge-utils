@@ -237,9 +237,8 @@ fn random_coin_id() -> CoinID {
 }
 
 fn random_coindata() -> CoinData {
-    let additional_data_size: u32 = rand::thread_rng().gen_range(0..32);
-    let additional_data_range = 0..additional_data_size;
-    let additional_data: Vec<u8> = additional_data_range
+    let additional_data: Vec<u8> = (0..20)
+        .into_par_iter()
         .map(|_| {
             rand::thread_rng().gen::<u8>()
         })
@@ -248,8 +247,19 @@ fn random_coindata() -> CoinData {
     CoinData {
         covhash: ThemelioAddress(HashVal::random()),
         value: CoinValue(rand::thread_rng().gen()),
-        denom: Denom::Mel,
+        denom: random_denom(),
         additional_data
+    }
+}
+
+fn random_denom() -> Denom {
+    let denom_int = rand::thread_rng().gen_range(0..4);
+
+    match denom_int {
+        0 => Denom::Mel,
+        1 => Denom::Sym,
+        2 => Denom::Erg,
+        _ => Denom::Custom(TxHash(HashVal::random()))
     }
 }
 
@@ -258,7 +268,7 @@ fn random_transaction() -> Transaction {
 
     let num_inputs: u32 = rand::thread_rng().gen_range(1..limit);
     let inputs = (0..num_inputs)
-        .into_iter()
+        .into_par_iter()
         .map(|_| {
             random_coin_id()
         })
@@ -266,7 +276,7 @@ fn random_transaction() -> Transaction {
 
     let num_outputs: u32 = rand::thread_rng().gen_range(1..limit);
     let outputs = (0..num_outputs)
-        .into_iter()
+        .into_par_iter()
         .map(|_| {
             random_coindata()
         })
@@ -274,7 +284,7 @@ fn random_transaction() -> Transaction {
 
     let num_covenants: u32 = rand::thread_rng().gen_range(1..limit);
     let covenants = (0..num_covenants)
-        .into_iter()
+        .into_par_iter()
         .map(|_| {
             let size = rand::thread_rng().gen_range(0..limit);
             let range = 0..size;
@@ -291,7 +301,7 @@ fn random_transaction() -> Transaction {
 
     let num_sigs: u32 = rand::thread_rng().gen_range(1..limit);
     let sigs = (0..num_sigs)
-        .into_iter()
+        .into_par_iter()
         .map(|_| {
             let size = rand::thread_rng().gen_range(0..limit);
             let range = 0..size;
@@ -362,8 +372,17 @@ fn create_stakers(num: u32, message: &[u8]) -> (Vec<[u8; 32]>, Vec<U256>, Vec<[u
 }
 
 async fn link_libraries(
-    bytecode: &mut BytecodeObject,
+    mut bytecode: &mut BytecodeObject,
 ) -> Result<()> {
+    let mut source_ancestors = Path::new(&env!("CARGO_MANIFEST_DIR"))
+        .ancestors();
+
+    source_ancestors.next();
+
+    let source = source_ancestors
+        .next()
+        .expect("Error accessing path.");
+
     let config = Config::new()
         .expect("Error initializing configuration.");
 
@@ -387,15 +406,6 @@ async fn link_libraries(
     let blake3_address = match env::var("BLAKE3_ADDRESS") {
         Ok(val) => val.parse::<EthersAddress>()?,
         Err(_) => {
-            let mut source_ancestors = Path::new(&env!("CARGO_MANIFEST_DIR"))
-                .ancestors();
-
-            source_ancestors.next();
-
-            let source = source_ancestors
-                .next()
-                .expect("Error accessing path.");
-
             let blake3_source = source
                 .join("contracts/lib/blake3-sol/src/Blake3Sol.sol");
 
@@ -446,24 +456,15 @@ async fn link_libraries(
 
     bytecode
         .link(
-            "Blake3Sol.sol",
+            "/home/marco/dev/bridge-utils/contracts/lib/blake3-sol/src/Blake3Sol.sol",
             "Blake3Sol",
             blake3_address
         )
         .resolve();
 
-        let ed25519_address = match env::var("ED25519_ADDRESS") {
+    let ed25519_address = match env::var("ED25519_ADDRESS") {
         Ok(val) => val.parse::<EthersAddress>()?,
         Err(_) => {
-            let mut source_ancestors = Path::new(&env!("CARGO_MANIFEST_DIR"))
-                .ancestors();
-
-            source_ancestors.next();
-
-            let source = source_ancestors
-                .next()
-                .expect("Error accessing path.");
-
             let ed25519_source = source
                 .join("contracts/lib/ed25519-sol/src/Ed25519.sol");
 
@@ -514,7 +515,7 @@ async fn link_libraries(
 
     bytecode
         .link(
-            "Ed25519.sol",
+            "/home/marco/dev/bridge-utils/contracts/lib/ed25519-sol/src/Ed25519.sol",
             "Ed25519",
             ed25519_address
         )
@@ -602,11 +603,13 @@ async fn setup_bridge() -> H160 {
         .find("ThemelioBridge")
         .expect("Could not find contract.");
 
-    let mut obj = compiled.bin.unwrap().clone();
+    let mut bytecode = compiled.bin.unwrap().clone();
 
-    link_libraries(&mut obj)
+    link_libraries(&mut bytecode)
         .await
         .expect("Error linking libraries.");
+
+    println!("bytes {:?}", bytecode);
 
     let (abi, bytecode, _runtime_bytecode) = compiled
         .into_parts_or_default();
@@ -632,6 +635,7 @@ async fn setup_bridge() -> H160 {
     let client = Arc::new(client);
 
     let factory = ContractFactory::new(abi, bytecode, client.clone());
+    println!("{:?}", factory);
 
     let bridge = factory
         .deploy(())
