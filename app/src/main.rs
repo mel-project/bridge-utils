@@ -372,7 +372,7 @@ fn create_stakers(num: u32, message: &[u8]) -> (Vec<[u8; 32]>, Vec<U256>, Vec<[u
 }
 
 async fn link_libraries(
-    mut bytecode: &mut BytecodeObject,
+    bytecode: &mut BytecodeObject,
 ) -> Result<()> {
     let mut source_ancestors = Path::new(&env!("CARGO_MANIFEST_DIR"))
         .ancestors();
@@ -609,9 +609,7 @@ async fn setup_bridge() -> H160 {
         .await
         .expect("Error linking libraries.");
 
-    println!("bytes {:?}", bytecode);
-
-    let (abi, bytecode, _runtime_bytecode) = compiled
+    let (abi, _bytecode, _runtime_bytecode) = compiled
         .into_parts_or_default();
 
     let config = Config::new()
@@ -634,8 +632,7 @@ async fn setup_bridge() -> H160 {
     let client = SignerMiddleware::new(provider.clone(), wallet);
     let client = Arc::new(client);
 
-    let factory = ContractFactory::new(abi, bytecode, client.clone());
-    println!("{:?}", factory);
+    let factory = ContractFactory::new(abi, bytecode.into_bytes().unwrap(), client.clone());
 
     let bridge = factory
         .deploy(())
@@ -648,8 +645,10 @@ async fn setup_bridge() -> H160 {
 }
 
 async fn setup_bridge_proxy() -> ThemelioBridge<SignerMiddleware<Provider<Http>, Wallet<SigningKey>>> {
-    let bridge_address = setup_bridge()
-        .await;
+    let bridge_address = match env::var("BRIDGE_ADDRESS") {
+        Ok(val) => val.parse::<EthersAddress>().expect("Error parsing bridge address."),
+        Err(_) => setup_bridge().await
+    };
 
     let mut source_ancestors = Path::new(&env!("CARGO_MANIFEST_DIR"))
         .ancestors();
@@ -727,7 +726,7 @@ async fn setup_bridge_proxy() -> ThemelioBridge<SignerMiddleware<Provider<Http>,
 
     let factory = ContractFactory::new(abi, bytecode, client.clone());
 
-    let mut func_selector = "09f10a3c".as_bytes().to_vec();
+    let mut func_selector = hex::decode("09f10a3c").unwrap().to_vec();
     let mut genesis_height = [0; 32].to_vec();
     let mut genesis_transactions_hash = [0; 32].to_vec();
     let mut genesis_stakes_hash = [0; 32].to_vec();
@@ -748,7 +747,7 @@ async fn setup_bridge_proxy() -> ThemelioBridge<SignerMiddleware<Provider<Http>,
         .expect("Unable to deploy bridge proxy.")
         .send()
         .await
-        .expect("Error awaiting bridge contract creation.");
+        .expect("Error awaiting bridge proxy contract creation.");
     
     
     let bridge_proxy_address = bridge_proxy.address();
