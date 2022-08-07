@@ -1,6 +1,6 @@
-pub use themeliobridgeproxy_mod::*;
+pub use themelio_bridge_proxy::*;
 #[allow(clippy::too_many_arguments, non_camel_case_types)]
-pub mod themeliobridgeproxy_mod {
+pub mod themelio_bridge_proxy {
     #![allow(clippy::enum_variant_names)]
     #![allow(dead_code)]
     #![allow(clippy::type_complexity)]
@@ -81,7 +81,7 @@ pub mod themeliobridgeproxy_mod {
         pub fn deploy<T: ethers::core::abi::Tokenize>(
             client: ::std::sync::Arc<M>,
             constructor_args: T,
-        ) -> Result<
+        ) -> ::std::result::Result<
             ethers::contract::builders::ContractDeployer<M, Self>,
             ethers::contract::ContractError<M>,
         > {
@@ -171,7 +171,9 @@ pub mod themeliobridgeproxy_mod {
         UpgradedFilter(UpgradedFilter),
     }
     impl ethers::contract::EthLogDecode for ThemelioBridgeProxyEvents {
-        fn decode_log(log: &ethers::core::abi::RawLog) -> Result<Self, ethers::core::abi::Error>
+        fn decode_log(
+            log: &ethers::core::abi::RawLog,
+        ) -> ::std::result::Result<Self, ethers::core::abi::Error>
         where
             Self: Sized,
         {

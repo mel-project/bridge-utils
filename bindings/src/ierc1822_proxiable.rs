@@ -1,6 +1,6 @@
-pub use ierc1822proxiable_mod::*;
+pub use ierc1822_proxiable::*;
 #[allow(clippy::too_many_arguments, non_camel_case_types)]
-pub mod ierc1822proxiable_mod {
+pub mod ierc1822_proxiable {
     #![allow(clippy::enum_variant_names)]
     #![allow(dead_code)]
     #![allow(clippy::type_complexity)]

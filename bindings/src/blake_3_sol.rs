@@ -1,6 +1,6 @@
-pub use blake3sol_mod::*;
+pub use blake_3_sol::*;
 #[allow(clippy::too_many_arguments, non_camel_case_types)]
-pub mod blake3sol_mod {
+pub mod blake_3_sol {
     #![allow(clippy::enum_variant_names)]
     #![allow(dead_code)]
     #![allow(clippy::type_complexity)]
@@ -80,7 +80,7 @@ pub mod blake3sol_mod {
         pub fn deploy<T: ethers::core::abi::Tokenize>(
             client: ::std::sync::Arc<M>,
             constructor_args: T,
-        ) -> Result<
+        ) -> ::std::result::Result<
             ethers::contract::builders::ContractDeployer<M, Self>,
             ethers::contract::ContractError<M>,
         > {
@@ -226,7 +226,9 @@ pub mod blake3sol_mod {
         UpdateHasher(UpdateHasherCall),
     }
     impl ethers::core::abi::AbiDecode for Blake3SolCalls {
-        fn decode(data: impl AsRef<[u8]>) -> Result<Self, ethers::core::abi::AbiError> {
+        fn decode(
+            data: impl AsRef<[u8]>,
+        ) -> ::std::result::Result<Self, ethers::core::abi::AbiError> {
             if let Ok(decoded) =
                 <FinalizeCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
@@ -317,194 +319,46 @@ pub mod blake3sol_mod {
     #[derive(
         Clone,
         Debug,
-        //Default,
+        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthAbiType,
         ethers :: contract :: EthAbiCodec,
     )]
-    pub struct NewDeriveKeyReturn(
-        pub  (
-            (
-                [u32; 8],
-                u64,
-                ethers::core::types::Bytes,
-                ethers::core::types::U256,
-                ethers::core::types::U256,
-                u32,
-            ),
-            [u32; 8],
-            [[u32; 8]; 54],
-            u8,
-            u32,
-        ),
-    );
-
-    impl Default for NewDeriveKeyReturn {
-        fn default() -> NewDeriveKeyReturn {
-            NewDeriveKeyReturn(
-                (
-                    (
-                        [0; 8],
-                        Default::default(),
-                        Default::default(),
-                        Default::default(),
-                        Default::default(),
-                        Default::default(),
-                    ),
-                    [0; 8],
-                    [[0; 8]; 54],
-                    Default::default(),
-                    Default::default(),
-                )
-            )
-        }
-    }
-
+    pub struct NewDeriveKeyReturn(pub Hasher);
     #[doc = "Container type for all return fields from the `new_hasher` function with signature `new_hasher()` and selector `[13, 5, 109, 155]`"]
     #[derive(
         Clone,
         Debug,
-        //Default,
+        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthAbiType,
         ethers :: contract :: EthAbiCodec,
     )]
-    pub struct NewHasherReturn(
-        pub  (
-            (
-                [u32; 8],
-                u64,
-                ethers::core::types::Bytes,
-                ethers::core::types::U256,
-                ethers::core::types::U256,
-                u32,
-            ),
-            [u32; 8],
-            [[u32; 8]; 54],
-            u8,
-            u32,
-        ),
-    );
-
-    impl Default for NewHasherReturn {
-        fn default() -> NewHasherReturn {
-            NewHasherReturn(
-                (
-                    (
-                        [0; 8],
-                        Default::default(),
-                        Default::default(),
-                        Default::default(),
-                        Default::default(),
-                        Default::default(),
-                    ),
-                    [0; 8],
-                    [[0; 8]; 54],
-                    Default::default(),
-                    Default::default(),
-                )
-            )
-        }
-    }
-
+    pub struct NewHasherReturn(pub Hasher);
     #[doc = "Container type for all return fields from the `new_keyed` function with signature `new_keyed(bytes)` and selector `[197, 29, 44, 215]`"]
     #[derive(
         Clone,
         Debug,
-        //Default,
+        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthAbiType,
         ethers :: contract :: EthAbiCodec,
     )]
-    pub struct NewKeyedReturn(
-        pub  (
-            (
-                [u32; 8],
-                u64,
-                ethers::core::types::Bytes,
-                ethers::core::types::U256,
-                ethers::core::types::U256,
-                u32,
-            ),
-            [u32; 8],
-            [[u32; 8]; 54],
-            u8,
-            u32,
-        ),
-    );
-
-    impl Default for NewKeyedReturn {
-        fn default() -> NewKeyedReturn {
-            NewKeyedReturn(
-                (
-                    (
-                        [0; 8],
-                        Default::default(),
-                        Default::default(),
-                        Default::default(),
-                        Default::default(),
-                        Default::default(),
-                    ),
-                    [0; 8],
-                    [[0; 8]; 54],
-                    Default::default(),
-                    Default::default(),
-                )
-            )
-        }
-    }
-
+    pub struct NewKeyedReturn(pub Hasher);
     #[doc = "Container type for all return fields from the `update_hasher` function with signature `update_hasher(((uint32[8],uint64,bytes,uint256,uint256,uint32),uint32[8],uint32[8][54],uint8,uint32),bytes)` and selector `[178, 3, 47, 116]`"]
     #[derive(
         Clone,
         Debug,
-        //Default,
+        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthAbiType,
         ethers :: contract :: EthAbiCodec,
     )]
-    pub struct UpdateHasherReturn(
-        pub  (
-            (
-                [u32; 8],
-                u64,
-                ethers::core::types::Bytes,
-                ethers::core::types::U256,
-                ethers::core::types::U256,
-                u32,
-            ),
-            [u32; 8],
-            [[u32; 8]; 54],
-            u8,
-            u32,
-        ),
-    );
-
-    impl Default for UpdateHasherReturn {
-        fn default() -> UpdateHasherReturn {
-            UpdateHasherReturn (
-                (
-                    (
-                        [0; 8],
-                        Default::default(),
-                        Default::default(),
-                        Default::default(),
-                        Default::default(),
-                        Default::default(),
-                    ),
-                    [0; 8],
-                    [[0; 8]; 54],
-                    Default::default(),
-                    Default::default(),
-                )
-            )
-        }
-    }
-
+    pub struct UpdateHasherReturn(pub Hasher);
     #[doc = "`ChunkState(uint32[8],uint64,bytes,uint256,uint256,uint32)`"]
     #[derive(
         Clone,

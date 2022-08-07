@@ -1,6 +1,6 @@
-pub use ierc1155receiverupgradeable_mod::*;
+pub use ierc1155_receiver_upgradeable::*;
 #[allow(clippy::too_many_arguments, non_camel_case_types)]
-pub mod ierc1155receiverupgradeable_mod {
+pub mod ierc1155_receiver_upgradeable {
     #![allow(clippy::enum_variant_names)]
     #![allow(dead_code)]
     #![allow(clippy::type_complexity)]
@@ -160,7 +160,9 @@ pub mod ierc1155receiverupgradeable_mod {
         SupportsInterface(SupportsInterfaceCall),
     }
     impl ethers::core::abi::AbiDecode for IERC1155ReceiverUpgradeableCalls {
-        fn decode(data: impl AsRef<[u8]>) -> Result<Self, ethers::core::abi::AbiError> {
+        fn decode(
+            data: impl AsRef<[u8]>,
+        ) -> ::std::result::Result<Self, ethers::core::abi::AbiError> {
             if let Ok(decoded) =
                 <OnERC1155BatchReceivedCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {

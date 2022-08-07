@@ -1,6 +1,6 @@
-pub use erc1155upgradeable_mod::*;
+pub use erc1155_upgradeable::*;
 #[allow(clippy::too_many_arguments, non_camel_case_types)]
-pub mod erc1155upgradeable_mod {
+pub mod erc1155_upgradeable {
     #![allow(clippy::enum_variant_names)]
     #![allow(dead_code)]
     #![allow(clippy::type_complexity)]
@@ -81,7 +81,7 @@ pub mod erc1155upgradeable_mod {
         pub fn deploy<T: ethers::core::abi::Tokenize>(
             client: ::std::sync::Arc<M>,
             constructor_args: T,
-        ) -> Result<
+        ) -> ::std::result::Result<
             ethers::contract::builders::ContractDeployer<M, Self>,
             ethers::contract::ContractError<M>,
         > {
@@ -319,7 +319,9 @@ pub mod erc1155upgradeable_mod {
         UriFilter(UriFilter),
     }
     impl ethers::contract::EthLogDecode for ERC1155UpgradeableEvents {
-        fn decode_log(log: &ethers::core::abi::RawLog) -> Result<Self, ethers::core::abi::Error>
+        fn decode_log(
+            log: &ethers::core::abi::RawLog,
+        ) -> ::std::result::Result<Self, ethers::core::abi::Error>
         where
             Self: Sized,
         {
@@ -492,7 +494,9 @@ pub mod erc1155upgradeable_mod {
         Uri(UriCall),
     }
     impl ethers::core::abi::AbiDecode for ERC1155UpgradeableCalls {
-        fn decode(data: impl AsRef<[u8]>) -> Result<Self, ethers::core::abi::AbiError> {
+        fn decode(
+            data: impl AsRef<[u8]>,
+        ) -> ::std::result::Result<Self, ethers::core::abi::AbiError> {
             if let Ok(decoded) =
                 <BalanceOfCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {

@@ -1,6 +1,6 @@
-pub use console2_mod::*;
+pub use console_2::*;
 #[allow(clippy::too_many_arguments, non_camel_case_types)]
-pub mod console2_mod {
+pub mod console_2 {
     #![allow(clippy::enum_variant_names)]
     #![allow(dead_code)]
     #![allow(clippy::type_complexity)]
@@ -17,13 +17,15 @@ pub mod console2_mod {
     #[doc = "console2 was auto-generated with ethers-rs Abigen. More information at: https://github.com/gakonst/ethers-rs"]
     use std::sync::Arc;
     pub static CONSOLE2_ABI: ethers::contract::Lazy<ethers::core::abi::Abi> =
-        ethers::contract::Lazy::new(|| serde_json::from_str("[]").expect("invalid abi"));
+        ethers::contract::Lazy::new(|| {
+            serde_json::from_str("[]").expect("invalid abi")
+        });
     #[doc = r" Bytecode of the #name contract"]
     pub static CONSOLE2_BYTECODE: ethers::contract::Lazy<ethers::core::types::Bytes> =
         ethers::contract::Lazy::new(|| {
             "0x60808060405234601757603a9081601d823930815050f35b600080fdfe600080fdfea2646970667358221220002e805fb1f554ecd354447e1e4a5b9ecba6ca8ac9cd0f2a2eda84deaea958b664736f6c634300080d0033" . parse () . expect ("invalid bytecode")
         });
-    pub struct console2<M: Clone>(ethers::contract::Contract<M>);
+    pub struct console2<M>(ethers::contract::Contract<M>);
     impl<M: Clone> Clone for console2<M> {
         fn clone(&self) -> Self {
             console2(self.0.clone())
@@ -78,7 +80,7 @@ pub mod console2_mod {
         pub fn deploy<T: ethers::core::abi::Tokenize>(
             client: ::std::sync::Arc<M>,
             constructor_args: T,
-        ) -> Result<
+        ) -> ::std::result::Result<
             ethers::contract::builders::ContractDeployer<M, Self>,
             ethers::contract::ContractError<M>,
         > {

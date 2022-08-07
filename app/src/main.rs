@@ -3,47 +3,32 @@ use std::{
     env,
     fs,
     io,
-    ops::{Range, Deref},
+    ops::Range,
     path::Path,
     sync::Arc,
 };
-
-use bindings::{
-    themelio_bridge::ThemelioBridge,
-    themelio_bridge_proxy::ThemelioBridgeProxy,
-};
-use blake3;
+use bindings::themelio_bridge::ThemelioBridge;
 use clap::Parser;
 use dotenv::dotenv;
-use ed25519_compact::{
-    KeyPair,
-    Signature,
-    Seed, 
-    Noise
+use ethers::prelude::*;
+use ethers::prelude::k256::ecdsa::SigningKey;
+use ethers::utils::*;
+use ethers_solc::artifacts::{
+    BytecodeObject,
+    Optimizer,
+    Settings,
+    Source,
+    Sources,
 };
-use ethers::prelude::{
+use ethers_solc::{
     CompilerInput,
-    ContractFactory,
-    Http,
-    LocalWallet, 
-    Middleware,
-    artifacts::{
-        BytecodeObject,
-        Optimizer,
-        Settings,
-        Source,
-        Sources
-    },
     remappings::Remapping,
-    SignerMiddleware,
-    k256::ecdsa::SigningKey,
     Solc,
-    Wallet,
 };
 use ethers::{
     providers::Provider,
     signers::Signer,
-    abi::{Token, Tokenize},
+    abi::Token,
 };
 use ethers::types::{
     Address as EthersAddress,
@@ -57,26 +42,28 @@ use rayon::iter::{
     IntoParallelIterator,
     ParallelIterator
 };
-use rs_merkle::{
-    MerkleTree,
-    MerkleProof,
-    Hasher
-};
+use novasmt::dense::DenseMerkleTree;
 use themelio_structs::{
     Address as ThemelioAddress,
     BlockHeight,
     CoinData,
     CoinID,
+    CoinValue,
     Denom,
     Header,
     NetID,
-    CoinValue,
+    StakeDoc,
     Transaction,
     TxKind,
-    TxHash
+    TxHash, STAKE_EPOCH
 };
-use tmelcrypt::HashVal;
+use tmelcrypt::{
+    ed25519_keygen,
+    Ed25519PK,
+    HashVal,
+};
 
+const BRIDGE_COVHASH: ThemelioAddress = ThemelioAddress(HashVal([0; 32]));
 const DATA_BLOCK_HASH_KEY: &[u8; 13] = b"smt_datablock";
 const NODE_HASH_KEY: &[u8; 8] = b"smt_node";
 const GAS_LIMIT: u32 = 29_000_000;
@@ -116,17 +103,6 @@ struct Args {
     initial_conditions: bool,
 }
 
-#[derive(Clone)]
-pub struct Blake3Algorithm {}
-
-impl Hasher for Blake3Algorithm {
-    type Hash = [u8; 32];
-
-    fn hash(data: &[u8]) -> [u8; 32] {
-        *blake3::keyed_hash(blake3::hash(NODE_HASH_KEY).as_bytes(), data).as_bytes()
-    }
-}
-
 fn random_header(modifier: u128) -> Header {
     if modifier == 0 {
         Header {
@@ -142,7 +118,7 @@ fn random_header(modifier: u128) -> Header {
             pools_hash: HashVal::random(),
             stakes_hash: HashVal::random(),
         }
-    } else if modifier == u8::MAX.into() {
+    } else if modifier == <u8 as Into<u128>>::into(u8::MAX) {
         Header {
             network: NetID::Mainnet,
             previous: HashVal::random(),
@@ -156,7 +132,7 @@ fn random_header(modifier: u128) -> Header {
             pools_hash: HashVal::random(),
             stakes_hash: HashVal::random(),
         }
-    } else if modifier == u16::MAX.into() {
+    } else if modifier == <u16 as Into<u128>>::into(u16::MAX) {
         Header {
             network: NetID::Mainnet,
             previous: HashVal::random(),
@@ -170,7 +146,7 @@ fn random_header(modifier: u128) -> Header {
             pools_hash: HashVal::random(),
             stakes_hash: HashVal::random(),
         }
-    } else if modifier == u32::MAX.into() {
+    } else if modifier == <u32 as Into<u128>>::into(u32::MAX) {
         Header {
             network: NetID::Mainnet,
             previous: HashVal::random(),
@@ -184,7 +160,7 @@ fn random_header(modifier: u128) -> Header {
             pools_hash: HashVal::random(),
             stakes_hash: HashVal::random(),
         }
-    } else if modifier == u64::MAX.into() {
+    } else if modifier == <u64 as Into<u128>>::into(u64::MAX) {
         Header {
             network: NetID::Mainnet,
             previous: HashVal::random(),
@@ -263,6 +239,26 @@ fn random_denom() -> Denom {
     }
 }
 
+fn random_stakedoc(epoch: u64) -> StakeDoc {
+    let e_start: u64;
+    if epoch == 0 {
+        e_start = 0;
+    } else {
+        e_start = rand::thread_rng()
+            .gen_range(0..epoch);
+    }
+
+    let e_post_end: u64 = rand::thread_rng()
+        .gen_range(epoch + 1..u64::MAX);
+
+    StakeDoc {
+        pubkey: ed25519_keygen().0,
+        e_start,
+        e_post_end,
+        syms_staked: CoinValue(rand::thread_rng().gen_range(0..u32::MAX as u128)),
+    }
+}
+
 fn random_transaction() -> Transaction {
     let limit: u32 = 32;
 
@@ -338,37 +334,35 @@ fn create_datablocks(num: u32) -> Vec<Transaction> {
         .collect::<Vec<Transaction>>()
 }
 
-fn random_staker(message: &[u8]) -> ([u8; 32], U256, [u8; 64]) {
-    let keypair: KeyPair = KeyPair::from_seed(Seed::default());
-    
-    let syms_staked: u32 = rand::thread_rng().gen_range(0..1024);
-    let syms_staked: U256 = U256::from(syms_staked);
+fn create_stakes_and_sign_header(num_stakedocs: u32, epoch: u64, header: &[u8]) -> (Vec<u8>, Vec<[u8; 32]>) {
+    let mut epoch_syms = CoinValue(0);
+    let mut next_epoch_syms = CoinValue(0);
+    let mut stakes: Vec<u8> = vec!();
+    let mut signatures: Vec<[u8; 32]> = vec!();
 
-    let signature: Signature = keypair.sk.sign(message, Some(Noise::generate()));
+    for _ in 0..num_stakedocs {
+        let mut stakedoc = random_stakedoc(epoch);
+        let keypair = ed25519_keygen();
+        stakedoc.pubkey = Ed25519PK::from_bytes(&keypair.0.0).unwrap();
 
-    (*keypair.pk, syms_staked, *signature.deref())
-}
+        signatures.push(keypair.1.sign(header).as_slice().try_into().unwrap());
 
-fn create_stakers(num: u32, message: &[u8]) -> (Vec<[u8; 32]>, Vec<U256>, Vec<[u8; 32]>) {
-    let mut public_keys: Vec<[u8; 32]> = vec![];
-    let mut staked_syms: Vec<U256> = vec![];
-    let mut signatures: Vec<[u8; 32]> = vec![];
+        epoch_syms += stakedoc.syms_staked;
 
-    for _i in 0..num {
-        let staker = random_staker(message);
-        let mut signature_slice: [u8; 32] = [0; 32];
+        if stakedoc.e_start <= epoch + 1 && stakedoc.e_post_end > epoch + 1 {
+            next_epoch_syms += stakedoc.syms_staked;
+        }
 
-        public_keys.push(staker.0);
-        staked_syms.push(staker.1);
+        let mut stakedoc_vec = stdcode::serialize(&stakedoc).unwrap();
 
-        signature_slice.copy_from_slice(&staker.2[0..32]);
-        signatures.push(signature_slice);
-
-        signature_slice.copy_from_slice(&staker.2[32..64]);
-        signatures.push(signature_slice);
+        stakes.append(&mut stakedoc_vec);
     }
 
-    (public_keys, staked_syms, signatures)
+    let mut stakes_structured = stdcode::serialize(&epoch_syms).unwrap();
+    stakes_structured.append(&mut stdcode::serialize(&next_epoch_syms).unwrap());
+    stakes_structured.append(&mut stakes);
+
+    (stakes, signatures)
 }
 
 async fn link_libraries(
@@ -644,7 +638,11 @@ async fn setup_bridge() -> H160 {
     bridge.address()
 }
 
-async fn setup_bridge_proxy() -> ThemelioBridge<SignerMiddleware<Provider<Http>, Wallet<SigningKey>>> {
+async fn setup_bridge_proxy(
+    genesis_height: u64,
+    genesis_stakes_hash: Vec<u8>,
+    genesis_transactions_hash: Vec<u8>
+) -> ThemelioBridge<SignerMiddleware<Provider<Http>, Wallet<SigningKey>>> {
     let bridge_address = match env::var("BRIDGE_ADDRESS") {
         Ok(val) => val.parse::<EthersAddress>().expect("Error parsing bridge address."),
         Err(_) => setup_bridge().await
@@ -727,15 +725,18 @@ async fn setup_bridge_proxy() -> ThemelioBridge<SignerMiddleware<Provider<Http>,
     let factory = ContractFactory::new(abi, bytecode, client.clone());
 
     let mut func_selector = hex::decode("09f10a3c").unwrap().to_vec();
-    let mut genesis_height = [0; 32].to_vec();
-    let mut genesis_transactions_hash = [0; 32].to_vec();
-    let mut genesis_stakes_hash = [0; 32].to_vec();
+    let mut genesis_height = hex::encode(stdcode::serialize(&genesis_height).unwrap());
+    genesis_height = format!("{:0>64}", genesis_height);
+    let mut genesis_height = hex::decode(genesis_height).unwrap();
+
+    let mut genesis_stakes_hash = genesis_stakes_hash.to_vec();
+    let mut genesis_transactions_hash = genesis_transactions_hash.to_vec();
 
     let mut initialization_data: Vec<u8> = vec!();
     initialization_data.append(&mut func_selector);
     initialization_data.append(&mut genesis_height);
-    initialization_data.append(&mut genesis_transactions_hash);
     initialization_data.append(&mut genesis_stakes_hash);
+    initialization_data.append(&mut genesis_transactions_hash);
 
     let constructor_data = (
         Token::Address(bridge_address),
@@ -755,101 +756,125 @@ async fn setup_bridge_proxy() -> ThemelioBridge<SignerMiddleware<Provider<Http>,
     let wrapped_bridge_proxy = ThemelioBridge::new(bridge_proxy_address, client.clone());
 
     wrapped_bridge_proxy
-
 }
 
-async fn test_e2e(num_stakers: u32, merkle_tree_height: u32) -> Result<()> {
-    let wrapped_bridge_proxy = setup_bridge_proxy().await;
+async fn test_e2e(num_stakedocs: u32, num_transactions: u32) -> Result<()> {
+    let config = Config::new().unwrap();
 
-    let receipt = wrapped_bridge_proxy
-        .uri(U256::from(0))
-        .call().await
-        .expect("Error awaiting uri().");
+    let cross_epoch: bool = rand::thread_rng().gen();
+    let modifier: u128 = rand::thread_rng().gen();
+    let mut genesis_header = random_header(modifier);
+    let mut header: Header = random_header(modifier);
 
-    println!("{}", receipt);
+    if cross_epoch {
+        genesis_header.height = BlockHeight(rand::thread_rng().gen_range(0..u64::MAX / STAKE_EPOCH) - 1);
+        header.height = genesis_header.height + BlockHeight(rand::thread_rng().gen_range(1..STAKE_EPOCH));
+    } else {
+        genesis_header.height = BlockHeight(rand::thread_rng().gen_range(0..u64::MAX / STAKE_EPOCH));
+        header.height = genesis_header.height + BlockHeight(rand::thread_rng().gen_range(1..STAKE_EPOCH - (genesis_header.height.0 - genesis_header.height.epoch() * STAKE_EPOCH)))
+    }
 
-    // // create a random block header
-    // let modifier: u128 = rand::thread_rng().gen();
-    // let mut header: Header = random_header(modifier);
+    let genesis_header_epoch = genesis_header.height.epoch();
 
-    // let block_height = U256::from(header.height.0);
+    // create random transactions with ethereum addresses in additional_data of first output
+    let mut datablocks = create_datablocks(num_transactions);
 
-    // let header_epoch = header.height.epoch();
-    // let header_epoch = U256::from(header_epoch);
+    let index: usize = rand::thread_rng()
+        .gen_range(0..num_transactions)
+        .try_into()
+        .expect("Error converting to usize.");
 
-    // // create random transactions with ethereum addresses in additional_data of first output
-    // let num_datablocks = rand::thread_rng().gen_range(2u32.pow(merkle_tree_height - 1)..2u32.pow(merkle_tree_height));
-    // let datablocks = create_datablocks(num_datablocks);
+    datablocks[index].outputs[0].covhash = BRIDGE_COVHASH;
 
-    // // create a merkle tree and get the root, replace transactions_hash with it
-    // // create merkle proof for a random tx to verify
-    // let leaves: Vec<[u8; 32]> = datablocks
-    //     .iter()
-    //     .map(|x| *blake3::keyed_hash(blake3::hash(DATA_BLOCK_HASH_KEY).as_bytes(), &stdcode::serialize(&x).unwrap()).as_bytes())
-    //     .collect();
+    let tx_to_prove = datablocks
+        .get(index)
+        .ok_or("Unable to get tx datablock to prove.")
+        .expect("Error getting tx to prove.");
 
-    // let merkle_tree: MerkleTree<Blake3Algorithm> = MerkleTree::<Blake3Algorithm>::from_leaves(&leaves);
+    let denom = tx_to_prove
+        .outputs[0]
+        .denom;
+    let denom: HashVal  = match denom {
+        Denom::Mel => HashVal([0; 32]),
+        Denom::Sym => HashVal([0 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]),
+        Denom::Erg => HashVal([0 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2]),
+        Denom::Custom(tx_hash) => tx_hash.0,
+        _ => HashVal::random()
+    };
 
-    // let index: usize = rand::thread_rng().gen_range(0..num_datablocks).try_into().unwrap();
-    // let index_u256 = U256::from(index);
+    let value: u128 = tx_to_prove
+        .outputs[0]
+        .value
+        .into();
 
-    // let tx_to_prove: &Transaction = datablocks.get(index).ok_or("Unable to get tx datablock to prove.").unwrap();
+    let serialized_tx = stdcode::serialize(&tx_to_prove)
+        .expect("Unable to serialize tx.");
+    let serialized_tx = Bytes::from(serialized_tx);
 
-    // let mel_amount: u128 = tx_to_prove.outputs[0].value.into();
-    // let mel_amount = U256::from(mel_amount);
+    let datablocks_serded = datablocks
+        .iter()
+        .map(|tx| {
+            stdcode::serialize(&tx).unwrap().clone()
+        })
+        .collect::<Vec<_>>();
 
-    // let serialized_tx = stdcode::serialize(&tx_to_prove).expect("Unable to serialize tx.");
-    // let serialized_tx_bytes = Bytes::from(serialized_tx);
+    let tree = DenseMerkleTree::new(&datablocks_serded);
 
-    // let merkle_proof: MerkleProof<Blake3Algorithm> = merkle_tree.proof(&vec![index]);
-    // let merkle_proof_vec: Vec<[u8; 32]> = merkle_proof.proof_hashes().to_vec();
+    let proof = tree.proof(index);
 
-    // let merkle_root: [u8; 32] = merkle_tree.root().ok_or("Unable to get merkle root.").expect("Fill in a reason");
+    let root = tree.root_hash();
 
-    // // replace the random 'transactions_hash' from 'header' with the root of our merkle tree
-    // header.transactions_hash = HashVal(merkle_root);
+    // replace the random 'transactions_hash' from 'header' with the root of our merkle tree
+    header.transactions_hash = HashVal(root);
 
-    // // create random staker keypairs, serialize header and sign with each sk, store in vecs
-    // let serialized_header = stdcode::serialize(&header).expect("Unable to serialize header.");
-    // let serialized_header_bytes = Bytes::from(serialized_header.clone());
+    // create random staker keypairs, serialize header and sign with each sk, store in vecs
+    let serialized_header = stdcode::serialize(&header).expect("Unable to serialize header.");
+    let serialized_header_bytes = Bytes::from(serialized_header.clone());
 
-    // let stakers_info = create_stakers(num_stakers, &serialized_header);
+    let stakes: Vec<u8>;
+    let signatures: Vec<[u8; 32]>;
+    (stakes, signatures) = create_stakes_and_sign_header(num_stakedocs, genesis_header_epoch, &serialized_header);
+    let stakes = Bytes::from(stakes);
 
-    // let stakers: Vec<[u8; 32]> = stakers_info.0;
-    // let staker_syms: Vec<U256> = stakers_info.1;
-    // let signatures: Vec<[u8; 32]> = stakers_info.2;
+    let stakes_hash = blake3::keyed_hash(
+        blake3::hash(DATA_BLOCK_HASH_KEY).as_bytes(),
+        &hex::decode(&stakes).unwrap()
+    );
 
-    // // send tx to relayStakers()
-    // // let call = bridge.verify_stakes(Bytes::from(stakers.clone()));
-    // // let pending_tx = call.send().await?;
-    // // let receipt = pending_tx.await?;
+    let wrapped_bridge_proxy = setup_bridge_proxy(genesis_header.height.0, stakes_hash.as_bytes().to_vec(), vec!(0 as u8; 32)).await;
 
-    // // println!("\n*** relayStakers() receipt ***\n{:#?}\n********************\n", receipt.unwrap());
+    // send tx to verifyStakes()
+    let call = wrapped_bridge_proxy.verify_stakes(stakes.clone());
+    let pending_tx = call.send().await?;
+    let receipt = pending_tx.await?;
 
-    // // send tx to relayHeader
-    // // let call = bridge
-    // //     .verify_header(serialized_header_bytes.clone(), stakers.clone(), signatures.clone())
-    // //     .gas(GAS_LIMIT);
-    // // let pending_tx = call.send().await?;
-    // // let receipt = pending_tx.await?;
+    println!("\n*** verifyStakers() receipt ***\n{:#?}\n********************\n", receipt.unwrap());
 
-    // // println!("\n***** relayHeader() receipt *****\n{:#?}\n********************\n", receipt.unwrap());
+    // send tx to verifyHeader
+    let call = wrapped_bridge_proxy
+        .verify_header(U256::from(genesis_header.height.0), serialized_header_bytes, stakes.clone(), signatures)
+        .gas(GAS_LIMIT);
+    let pending_tx = call.send().await?;
+    let receipt = pending_tx.await?;
 
-    // // send tx to verifyTx()
-    // let call = bridge_proxy
-    //     .verify_tx(serialized_tx_bytes.clone(), index_u256, block_height, merkle_proof_vec.clone())
-    //     .gas(GAS_LIMIT);
-    // let pending_tx = call.send().await?;
-    // let receipt = pending_tx.await?;
+    println!("\n***** verifyHeader() receipt *****\n{:#?}\n********************\n", receipt.unwrap());
 
-    // println!("\n***** verifyTx() receipt *****\n{:#?}\n********************\n", receipt.unwrap());
+    // send tx to verifyTx()
+    let call = wrapped_bridge_proxy
+        .verify_tx(serialized_tx, U256::from(index), U256::from(header.height.0), proof)
+        .gas(GAS_LIMIT);
+    let pending_tx = call.send().await?;
+    let receipt = pending_tx.await?;
+
+    println!("\n***** verifyTx() receipt *****\n{:#?}\n********************\n", receipt.unwrap());
 
     // send tx to burn()
-    // let call = bridge.burn(mel_amount, *b"00000000000000000000000000000000").gas(GAS_LIMIT);
-    // let pending_tx = call.send().await?;
-    // let receipt = pending_tx.await?;
+    let call = wrapped_bridge_proxy.burn(config.wallet.address(), U256::from(denom.0), U256::from(value), *b"00000000000000000000000000000000")
+        .gas(GAS_LIMIT);
+    let pending_tx = call.send().await?;
+    let receipt = pending_tx.await?;
 
-    // println!("\n***** burn() receipt *****\n{:#?}\n********************\n", receipt.unwrap());
+    println!("\n***** burn() receipt *****\n{:#?}\n********************\n", receipt.unwrap());
 
     Ok(())
 }

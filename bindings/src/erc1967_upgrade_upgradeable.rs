@@ -1,6 +1,6 @@
-pub use erc1967upgradeupgradeable_mod::*;
+pub use erc1967_upgrade_upgradeable::*;
 #[allow(clippy::too_many_arguments, non_camel_case_types)]
-pub mod erc1967upgradeupgradeable_mod {
+pub mod erc1967_upgrade_upgradeable {
     #![allow(clippy::enum_variant_names)]
     #![allow(dead_code)]
     #![allow(clippy::type_complexity)]
@@ -20,7 +20,7 @@ pub mod erc1967upgradeupgradeable_mod {
         ethers::contract::Lazy::new(|| {
             serde_json :: from_str ("[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"previousAdmin\",\"type\":\"address\",\"components\":[],\"indexed\":false},{\"internalType\":\"address\",\"name\":\"newAdmin\",\"type\":\"address\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"AdminChanged\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"beacon\",\"type\":\"address\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"BeaconUpgraded\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"uint8\",\"name\":\"version\",\"type\":\"uint8\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"Initialized\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"implementation\",\"type\":\"address\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"Upgraded\",\"outputs\":[],\"anonymous\":false}]") . expect ("invalid abi")
         });
-    pub struct ERC1967UpgradeUpgradeable<M: Clone>(ethers::contract::Contract<M>);
+    pub struct ERC1967UpgradeUpgradeable<M>(ethers::contract::Contract<M>);
     impl<M: Clone> Clone for ERC1967UpgradeUpgradeable<M> {
         fn clone(&self) -> Self {
             ERC1967UpgradeUpgradeable(self.0.clone())
@@ -153,7 +153,9 @@ pub mod erc1967upgradeupgradeable_mod {
         UpgradedFilter(UpgradedFilter),
     }
     impl ethers::contract::EthLogDecode for ERC1967UpgradeUpgradeableEvents {
-        fn decode_log(log: &ethers::core::abi::RawLog) -> Result<Self, ethers::core::abi::Error>
+        fn decode_log(
+            log: &ethers::core::abi::RawLog,
+        ) -> ::std::result::Result<Self, ethers::core::abi::Error>
         where
             Self: Sized,
         {

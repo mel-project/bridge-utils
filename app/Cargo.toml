@@ -11,14 +11,14 @@ bindings = { path = "../bindings" }
 blake3 = "1.2.0"
 clap = { version = "3.1.15", features = ["derive"] }
 dotenv = "0.15.0"
-ed25519-compact = "1.0.11"
 ethers = { git = "https://github.com/gakonst/ethers-rs", default-features = false }
+ethers-solc = { git = "https://github.com/gakonst/ethers-rs" }
 eyre = "0.6.6"
 hex = "0.4.3"
 hex-literal = "0.3.1"
+novasmt = "0.2.17"
 rand = "0.8.4"
 rayon = "1.5.1"
-rs_merkle = "1.1.0"
 serde_json = "1.0.78"
 stdcode = "0.1.2"
 themelio-stf = "0.9.7"

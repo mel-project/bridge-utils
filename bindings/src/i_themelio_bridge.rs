@@ -1,6 +1,6 @@
-pub use ithemeliobridge_mod::*;
+pub use i_themelio_bridge::*;
 #[allow(clippy::too_many_arguments, non_camel_case_types)]
-pub mod ithemeliobridge_mod {
+pub mod i_themelio_bridge {
     #![allow(clippy::enum_variant_names)]
     #![allow(dead_code)]
     #![allow(clippy::type_complexity)]
@@ -574,7 +574,9 @@ pub mod ithemeliobridge_mod {
         UpgradedFilter(UpgradedFilter),
     }
     impl ethers::contract::EthLogDecode for IThemelioBridgeEvents {
-        fn decode_log(log: &ethers::core::abi::RawLog) -> Result<Self, ethers::core::abi::Error>
+        fn decode_log(
+            log: &ethers::core::abi::RawLog,
+        ) -> ::std::result::Result<Self, ethers::core::abi::Error>
         where
             Self: Sized,
         {
@@ -973,7 +975,9 @@ pub mod ithemeliobridge_mod {
         VerifyTx(VerifyTxCall),
     }
     impl ethers::core::abi::AbiDecode for IThemelioBridgeCalls {
-        fn decode(data: impl AsRef<[u8]>) -> Result<Self, ethers::core::abi::AbiError> {
+        fn decode(
+            data: impl AsRef<[u8]>,
+        ) -> ::std::result::Result<Self, ethers::core::abi::AbiError> {
             if let Ok(decoded) =
                 <BalanceOfCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {

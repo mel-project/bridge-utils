@@ -1,6 +1,6 @@
-pub use contextupgradeable_mod::*;
+pub use context_upgradeable::*;
 #[allow(clippy::too_many_arguments, non_camel_case_types)]
-pub mod contextupgradeable_mod {
+pub mod context_upgradeable {
     #![allow(clippy::enum_variant_names)]
     #![allow(dead_code)]
     #![allow(clippy::type_complexity)]
@@ -20,7 +20,7 @@ pub mod contextupgradeable_mod {
         ethers::contract::Lazy::new(|| {
             serde_json :: from_str ("[{\"inputs\":[{\"internalType\":\"uint8\",\"name\":\"version\",\"type\":\"uint8\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"Initialized\",\"outputs\":[],\"anonymous\":false}]") . expect ("invalid abi")
         });
-    pub struct ContextUpgradeable<M: Clone>(ethers::contract::Contract<M>);
+    pub struct ContextUpgradeable<M>(ethers::contract::Contract<M>);
     impl<M: Clone> Clone for ContextUpgradeable<M> {
         fn clone(&self) -> Self {
             ContextUpgradeable(self.0.clone())

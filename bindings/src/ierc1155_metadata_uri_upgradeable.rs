@@ -1,6 +1,6 @@
-pub use ierc1155metadatauriupgradeable_mod::*;
+pub use ierc1155_metadata_uri_upgradeable::*;
 #[allow(clippy::too_many_arguments, non_camel_case_types)]
-pub mod ierc1155metadatauriupgradeable_mod {
+pub mod ierc1155_metadata_uri_upgradeable {
     #![allow(clippy::enum_variant_names)]
     #![allow(dead_code)]
     #![allow(clippy::type_complexity)]
@@ -261,7 +261,9 @@ pub mod ierc1155metadatauriupgradeable_mod {
         UriFilter(UriFilter),
     }
     impl ethers::contract::EthLogDecode for IERC1155MetadataURIUpgradeableEvents {
-        fn decode_log(log: &ethers::core::abi::RawLog) -> Result<Self, ethers::core::abi::Error>
+        fn decode_log(
+            log: &ethers::core::abi::RawLog,
+        ) -> ::std::result::Result<Self, ethers::core::abi::Error>
         where
             Self: Sized,
         {
@@ -444,7 +446,9 @@ pub mod ierc1155metadatauriupgradeable_mod {
         Uri(UriCall),
     }
     impl ethers::core::abi::AbiDecode for IERC1155MetadataURIUpgradeableCalls {
-        fn decode(data: impl AsRef<[u8]>) -> Result<Self, ethers::core::abi::AbiError> {
+        fn decode(
+            data: impl AsRef<[u8]>,
+        ) -> ::std::result::Result<Self, ethers::core::abi::AbiError> {
             if let Ok(decoded) =
                 <BalanceOfCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {

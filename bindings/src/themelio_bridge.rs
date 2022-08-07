@@ -1,6 +1,6 @@
-pub use themeliobridge_mod::*;
+pub use themelio_bridge::*;
 #[allow(clippy::too_many_arguments, non_camel_case_types)]
-pub mod themeliobridge_mod {
+pub mod themelio_bridge {
     #![allow(clippy::enum_variant_names)]
     #![allow(dead_code)]
     #![allow(clippy::type_complexity)]
@@ -18,7 +18,7 @@ pub mod themeliobridge_mod {
     use std::sync::Arc;
     pub static THEMELIOBRIDGE_ABI: ethers::contract::Lazy<ethers::core::abi::Abi> =
         ethers::contract::Lazy::new(|| {
-            serde_json :: from_str ("[{\"inputs\":[],\"type\":\"error\",\"name\":\"ERC1155NotOwnerOrApproved\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"height\",\"type\":\"uint256\",\"components\":[]}],\"type\":\"error\",\"name\":\"HeaderAlreadyVerified\",\"outputs\":[]},{\"inputs\":[],\"type\":\"error\",\"name\":\"HeaderNotVerified\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"covhash\",\"type\":\"bytes32\",\"components\":[]}],\"type\":\"error\",\"name\":\"InvalidCovhash\",\"outputs\":[]},{\"inputs\":[],\"type\":\"error\",\"name\":\"InvalidStakes\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"verifierHeight\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"headerHeight\",\"type\":\"uint256\",\"components\":[]}],\"type\":\"error\",\"name\":\"InvalidVerifier\",\"outputs\":[]},{\"inputs\":[],\"type\":\"error\",\"name\":\"MalformedData\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"height\",\"type\":\"uint256\",\"components\":[]}],\"type\":\"error\",\"name\":\"MissingHeader\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"height\",\"type\":\"uint256\",\"components\":[]}],\"type\":\"error\",\"name\":\"MissingVerifier\",\"outputs\":[]},{\"inputs\":[],\"type\":\"error\",\"name\":\"NotOwner\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"start\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"end\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"dataLength\",\"type\":\"uint256\",\"components\":[]}],\"type\":\"error\",\"name\":\"OutOfBoundsSlice\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"txHash\",\"type\":\"bytes32\",\"components\":[]}],\"type\":\"error\",\"name\":\"TxAlreadyVerified\",\"outputs\":[]},{\"inputs\":[],\"type\":\"error\",\"name\":\"TxNotVerified\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"previousAdmin\",\"type\":\"address\",\"components\":[],\"indexed\":false},{\"internalType\":\"address\",\"name\":\"newAdmin\",\"type\":\"address\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"AdminChanged\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"bool\",\"name\":\"approved\",\"type\":\"bool\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"ApprovalForAll\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"beacon\",\"type\":\"address\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"BeaconUpgraded\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"height\",\"type\":\"uint256\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"HeaderVerified\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"uint8\",\"name\":\"version\",\"type\":\"uint8\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"Initialized\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"keccakStakesHash\",\"type\":\"bytes32\",\"components\":[],\"indexed\":false},{\"internalType\":\"bytes32\",\"name\":\"blake3StakesHash\",\"type\":\"bytes32\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"StakesVerified\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"themelioRecipient\",\"type\":\"bytes32\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"TokensBurned\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"TokensMinted\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"uint256[]\",\"name\":\"ids\",\"type\":\"uint256[]\",\"components\":[],\"indexed\":false},{\"internalType\":\"uint256[]\",\"name\":\"values\",\"type\":\"uint256[]\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"TransferBatch\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\",\"components\":[],\"indexed\":false},{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"TransferSingle\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"tx_hash\",\"type\":\"bytes32\",\"components\":[],\"indexed\":true},{\"internalType\":\"uint256\",\"name\":\"height\",\"type\":\"uint256\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"TxVerified\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"value\",\"type\":\"string\",\"components\":[],\"indexed\":false},{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"URI\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"implementation\",\"type\":\"address\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"Upgraded\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"balanceOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"accounts\",\"type\":\"address[]\",\"components\":[]},{\"internalType\":\"uint256[]\",\"name\":\"ids\",\"type\":\"uint256[]\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"balanceOfBatch\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account_\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"id_\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"value_\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"bytes32\",\"name\":\"themelioRecipient_\",\"type\":\"bytes32\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"burn\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account_\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256[]\",\"name\":\"ids_\",\"type\":\"uint256[]\",\"components\":[]},{\"internalType\":\"uint256[]\",\"name\":\"values_\",\"type\":\"uint256[]\",\"components\":[]},{\"internalType\":\"bytes32\",\"name\":\"themelioRecipient_\",\"type\":\"bytes32\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"burnBatch\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"headerLimbo\",\"outputs\":[{\"internalType\":\"uint128\",\"name\":\"votes\",\"type\":\"uint128\",\"components\":[]},{\"internalType\":\"uint64\",\"name\":\"bytesVerified\",\"type\":\"uint64\",\"components\":[]},{\"internalType\":\"uint64\",\"name\":\"stakeDocIndex\",\"type\":\"uint64\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"headers\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"transactionsHash\",\"type\":\"bytes32\",\"components\":[]},{\"internalType\":\"bytes32\",\"name\":\"stakesHash\",\"type\":\"bytes32\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"blockHeight_\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"bytes32\",\"name\":\"transactionsHash_\",\"type\":\"bytes32\",\"components\":[]},{\"internalType\":\"bytes32\",\"name\":\"stakesHash_\",\"type\":\"bytes32\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"initialize\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"isApprovedForAll\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"proxiableUUID\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256[]\",\"name\":\"ids\",\"type\":\"uint256[]\",\"components\":[]},{\"internalType\":\"uint256[]\",\"name\":\"amounts\",\"type\":\"uint256[]\",\"components\":[]},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"safeBatchTransferFrom\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"safeTransferFrom\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"bool\",\"name\":\"approved\",\"type\":\"bool\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"setApprovalForAll\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"spends\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"interfaceId\",\"type\":\"bytes4\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"supportsInterface\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newImplementation\",\"type\":\"address\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"upgradeTo\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newImplementation\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\",\"components\":[]}],\"stateMutability\":\"payable\",\"type\":\"function\",\"name\":\"upgradeToAndCall\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"uri\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"verifierHeight_\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"bytes\",\"name\":\"header_\",\"type\":\"bytes\",\"components\":[]},{\"internalType\":\"bytes\",\"name\":\"stakes_\",\"type\":\"bytes\",\"components\":[]},{\"internalType\":\"bytes32[]\",\"name\":\"signatures_\",\"type\":\"bytes32[]\",\"components\":[]},{\"internalType\":\"bool\",\"name\":\"firstTime_\",\"type\":\"bool\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"verifyHeader\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"stakes_\",\"type\":\"bytes\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"verifyStakes\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"transaction_\",\"type\":\"bytes\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"txIndex_\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"blockHeight_\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"bytes32[]\",\"name\":\"proof_\",\"type\":\"bytes32[]\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"verifyTx\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]}]") . expect ("invalid abi")
+            serde_json :: from_str ("[{\"inputs\":[],\"type\":\"error\",\"name\":\"ERC1155NotOwnerOrApproved\",\"outputs\":[]},{\"inputs\":[],\"type\":\"error\",\"name\":\"HeaderNotVerified\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"covhash\",\"type\":\"bytes32\",\"components\":[]}],\"type\":\"error\",\"name\":\"InvalidCovhash\",\"outputs\":[]},{\"inputs\":[],\"type\":\"error\",\"name\":\"InvalidStakes\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"verifierHeight\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"headerHeight\",\"type\":\"uint256\",\"components\":[]}],\"type\":\"error\",\"name\":\"InvalidVerifier\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"height\",\"type\":\"uint256\",\"components\":[]}],\"type\":\"error\",\"name\":\"MissingHeader\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"keccakStakesHash\",\"type\":\"bytes32\",\"components\":[]}],\"type\":\"error\",\"name\":\"MissingStakes\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"height\",\"type\":\"uint256\",\"components\":[]}],\"type\":\"error\",\"name\":\"MissingVerifier\",\"outputs\":[]},{\"inputs\":[],\"type\":\"error\",\"name\":\"NotOwner\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"txHash\",\"type\":\"bytes32\",\"components\":[]}],\"type\":\"error\",\"name\":\"TxAlreadyVerified\",\"outputs\":[]},{\"inputs\":[],\"type\":\"error\",\"name\":\"TxNotVerified\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"previousAdmin\",\"type\":\"address\",\"components\":[],\"indexed\":false},{\"internalType\":\"address\",\"name\":\"newAdmin\",\"type\":\"address\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"AdminChanged\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"bool\",\"name\":\"approved\",\"type\":\"bool\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"ApprovalForAll\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"beacon\",\"type\":\"address\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"BeaconUpgraded\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"height\",\"type\":\"uint256\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"HeaderVerified\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"uint8\",\"name\":\"version\",\"type\":\"uint8\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"Initialized\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"stakesHash\",\"type\":\"bytes32\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"StakesVerified\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"themelioRecipient\",\"type\":\"bytes32\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"TokensBurned\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"uint256[]\",\"name\":\"ids\",\"type\":\"uint256[]\",\"components\":[],\"indexed\":false},{\"internalType\":\"uint256[]\",\"name\":\"values\",\"type\":\"uint256[]\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"TransferBatch\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\",\"components\":[],\"indexed\":false},{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"TransferSingle\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"height\",\"type\":\"uint256\",\"components\":[],\"indexed\":true},{\"internalType\":\"bytes32\",\"name\":\"txHash\",\"type\":\"bytes32\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"TxVerified\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"value\",\"type\":\"string\",\"components\":[],\"indexed\":false},{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"URI\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"implementation\",\"type\":\"address\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"Upgraded\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"balanceOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"accounts\",\"type\":\"address[]\",\"components\":[]},{\"internalType\":\"uint256[]\",\"name\":\"ids\",\"type\":\"uint256[]\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"balanceOfBatch\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account_\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"id_\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"value_\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"bytes32\",\"name\":\"themelioRecipient_\",\"type\":\"bytes32\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"burn\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account_\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256[]\",\"name\":\"ids_\",\"type\":\"uint256[]\",\"components\":[]},{\"internalType\":\"uint256[]\",\"name\":\"values_\",\"type\":\"uint256[]\",\"components\":[]},{\"internalType\":\"bytes32\",\"name\":\"themelioRecipient_\",\"type\":\"bytes32\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"burnBatch\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"headerLimbo\",\"outputs\":[{\"internalType\":\"uint128\",\"name\":\"votes\",\"type\":\"uint128\",\"components\":[]},{\"internalType\":\"uint64\",\"name\":\"bytesVerified\",\"type\":\"uint64\",\"components\":[]},{\"internalType\":\"uint64\",\"name\":\"stakeDocIndex\",\"type\":\"uint64\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"headers\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"transactionsHash\",\"type\":\"bytes32\",\"components\":[]},{\"internalType\":\"bytes32\",\"name\":\"stakesHash\",\"type\":\"bytes32\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"blockHeight_\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"bytes32\",\"name\":\"transactionsHash_\",\"type\":\"bytes32\",\"components\":[]},{\"internalType\":\"bytes32\",\"name\":\"stakesHash_\",\"type\":\"bytes32\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"initialize\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"isApprovedForAll\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"proxiableUUID\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256[]\",\"name\":\"ids\",\"type\":\"uint256[]\",\"components\":[]},{\"internalType\":\"uint256[]\",\"name\":\"amounts\",\"type\":\"uint256[]\",\"components\":[]},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"safeBatchTransferFrom\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"safeTransferFrom\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"bool\",\"name\":\"approved\",\"type\":\"bool\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"setApprovalForAll\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"spends\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"stakesHashes\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"interfaceId\",\"type\":\"bytes4\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"supportsInterface\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newImplementation\",\"type\":\"address\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"upgradeTo\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newImplementation\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\",\"components\":[]}],\"stateMutability\":\"payable\",\"type\":\"function\",\"name\":\"upgradeToAndCall\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"uri\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"verifierHeight_\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"bytes\",\"name\":\"header_\",\"type\":\"bytes\",\"components\":[]},{\"internalType\":\"bytes\",\"name\":\"stakes_\",\"type\":\"bytes\",\"components\":[]},{\"internalType\":\"bytes32[]\",\"name\":\"signatures_\",\"type\":\"bytes32[]\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"verifyHeader\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"stakes_\",\"type\":\"bytes\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"verifyStakes\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"transaction_\",\"type\":\"bytes\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"txIndex_\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"blockHeight_\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"bytes32[]\",\"name\":\"proof_\",\"type\":\"bytes32[]\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"verifyTx\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]}]") . expect ("invalid abi")
         });
     pub struct ThemelioBridge<M: Clone>(ethers::contract::Contract<M>);
     impl<M: Clone> Clone for ThemelioBridge<M> {
@@ -191,6 +191,15 @@ pub mod themeliobridge_mod {
                 .method_hash([253, 54, 125, 240], p0)
                 .expect("method not found (this should never happen)")
         }
+        #[doc = "Calls the contract's `stakesHashes` (0x7d5dc7c8) function"]
+        pub fn stakes_hashes(
+            &self,
+            p0: [u8; 32],
+        ) -> ethers::contract::builders::ContractCall<M, [u8; 32]> {
+            self.0
+                .method_hash([125, 93, 199, 200], p0)
+                .expect("method not found (this should never happen)")
+        }
         #[doc = "Calls the contract's `supportsInterface` (0x01ffc9a7) function"]
         pub fn supports_interface(
             &self,
@@ -228,19 +237,18 @@ pub mod themeliobridge_mod {
                 .method_hash([14, 137, 52, 28], p0)
                 .expect("method not found (this should never happen)")
         }
-        #[doc = "Calls the contract's `verifyHeader` (0x703cfbf0) function"]
+        #[doc = "Calls the contract's `verifyHeader` (0x2216bcbc) function"]
         pub fn verify_header(
             &self,
             verifier_height: ethers::core::types::U256,
             header: ethers::core::types::Bytes,
             stakes: ethers::core::types::Bytes,
             signatures: ::std::vec::Vec<[u8; 32]>,
-            first_time: bool,
         ) -> ethers::contract::builders::ContractCall<M, bool> {
             self.0
                 .method_hash(
-                    [112, 60, 251, 240],
-                    (verifier_height, header, stakes, signatures, first_time),
+                    [34, 22, 188, 188],
+                    (verifier_height, header, stakes, signatures),
                 )
                 .expect("method not found (this should never happen)")
         }
@@ -310,12 +318,6 @@ pub mod themeliobridge_mod {
         ) -> ethers::contract::builders::Event<M, TokensBurnedFilter> {
             self.0.event()
         }
-        #[doc = "Gets the contract's `TokensMinted` event"]
-        pub fn tokens_minted_filter(
-            &self,
-        ) -> ethers::contract::builders::Event<M, TokensMintedFilter> {
-            self.0.event()
-        }
         #[doc = "Gets the contract's `TransferBatch` event"]
         pub fn transfer_batch_filter(
             &self,
@@ -348,6 +350,317 @@ pub mod themeliobridge_mod {
     impl<M: ethers::providers::Middleware + Clone> From<ethers::contract::Contract<M>> for ThemelioBridge<M> {
         fn from(contract: ethers::contract::Contract<M>) -> Self {
             Self(contract)
+        }
+    }
+    #[doc = "Custom Error type `ERC1155NotOwnerOrApproved` with signature `ERC1155NotOwnerOrApproved()` and selector `[113, 83, 231, 120]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers::contract::EthError,
+        ethers :: contract :: EthDisplay,
+    )]
+    #[etherror(
+        name = "ERC1155NotOwnerOrApproved",
+        abi = "ERC1155NotOwnerOrApproved()"
+    )]
+    pub struct ERC1155NotOwnerOrApproved;
+    #[doc = "Custom Error type `HeaderNotVerified` with signature `HeaderNotVerified()` and selector `[253, 77, 150, 208]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthError,
+        ethers :: contract :: EthDisplay,
+    )]
+    #[etherror(name = "HeaderNotVerified", abi = "HeaderNotVerified()")]
+    pub struct HeaderNotVerified;
+    #[doc = "Custom Error type `InvalidCovhash` with signature `InvalidCovhash(bytes32)` and selector `[38, 201, 161, 233]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthError,
+        ethers :: contract :: EthDisplay,
+    )]
+    #[etherror(name = "InvalidCovhash", abi = "InvalidCovhash(bytes32)")]
+    pub struct InvalidCovhash {
+        pub covhash: [u8; 32],
+    }
+    #[doc = "Custom Error type `InvalidStakes` with signature `InvalidStakes()` and selector `[13, 215, 149, 86]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthError,
+        ethers :: contract :: EthDisplay,
+    )]
+    #[etherror(name = "InvalidStakes", abi = "InvalidStakes()")]
+    pub struct InvalidStakes;
+    #[doc = "Custom Error type `InvalidVerifier` with signature `InvalidVerifier(uint256,uint256)` and selector `[245, 43, 196, 92]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthError,
+        ethers :: contract :: EthDisplay,
+    )]
+    #[etherror(name = "InvalidVerifier", abi = "InvalidVerifier(uint256,uint256)")]
+    pub struct InvalidVerifier {
+        pub verifier_height: ethers::core::types::U256,
+        pub header_height: ethers::core::types::U256,
+    }
+    #[doc = "Custom Error type `MissingHeader` with signature `MissingHeader(uint256)` and selector `[110, 18, 12, 58]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthError,
+        ethers :: contract :: EthDisplay,
+    )]
+    #[etherror(name = "MissingHeader", abi = "MissingHeader(uint256)")]
+    pub struct MissingHeader {
+        pub height: ethers::core::types::U256,
+    }
+    #[doc = "Custom Error type `MissingStakes` with signature `MissingStakes(bytes32)` and selector `[148, 8, 121, 51]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthError,
+        ethers :: contract :: EthDisplay,
+    )]
+    #[etherror(name = "MissingStakes", abi = "MissingStakes(bytes32)")]
+    pub struct MissingStakes {
+        pub keccak_stakes_hash: [u8; 32],
+    }
+    #[doc = "Custom Error type `MissingVerifier` with signature `MissingVerifier(uint256)` and selector `[155, 197, 202, 249]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthError,
+        ethers :: contract :: EthDisplay,
+    )]
+    #[etherror(name = "MissingVerifier", abi = "MissingVerifier(uint256)")]
+    pub struct MissingVerifier {
+        pub height: ethers::core::types::U256,
+    }
+    #[doc = "Custom Error type `NotOwner` with signature `NotOwner()` and selector `[48, 205, 116, 113]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthError,
+        ethers :: contract :: EthDisplay,
+    )]
+    #[etherror(name = "NotOwner", abi = "NotOwner()")]
+    pub struct NotOwner;
+    #[doc = "Custom Error type `TxAlreadyVerified` with signature `TxAlreadyVerified(bytes32)` and selector `[64, 35, 3, 156]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthError,
+        ethers :: contract :: EthDisplay,
+    )]
+    #[etherror(name = "TxAlreadyVerified", abi = "TxAlreadyVerified(bytes32)")]
+    pub struct TxAlreadyVerified {
+        pub tx_hash: [u8; 32],
+    }
+    #[doc = "Custom Error type `TxNotVerified` with signature `TxNotVerified()` and selector `[98, 5, 151, 202]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthError,
+        ethers :: contract :: EthDisplay,
+    )]
+    #[etherror(name = "TxNotVerified", abi = "TxNotVerified()")]
+    pub struct TxNotVerified;
+    #[derive(Debug, Clone, PartialEq, Eq, ethers :: contract :: EthAbiType)]
+    pub enum ThemelioBridgeErrors {
+        ERC1155NotOwnerOrApproved(ERC1155NotOwnerOrApproved),
+        HeaderNotVerified(HeaderNotVerified),
+        InvalidCovhash(InvalidCovhash),
+        InvalidStakes(InvalidStakes),
+        InvalidVerifier(InvalidVerifier),
+        MissingHeader(MissingHeader),
+        MissingStakes(MissingStakes),
+        MissingVerifier(MissingVerifier),
+        NotOwner(NotOwner),
+        TxAlreadyVerified(TxAlreadyVerified),
+        TxNotVerified(TxNotVerified),
+    }
+    impl ethers::core::abi::AbiDecode for ThemelioBridgeErrors {
+        fn decode(
+            data: impl AsRef<[u8]>,
+        ) -> ::std::result::Result<Self, ethers::core::abi::AbiError> {
+            if let Ok(decoded) =
+                <ERC1155NotOwnerOrApproved as ethers::core::abi::AbiDecode>::decode(data.as_ref())
+            {
+                return Ok(ThemelioBridgeErrors::ERC1155NotOwnerOrApproved(decoded));
+            }
+            if let Ok(decoded) =
+                <HeaderNotVerified as ethers::core::abi::AbiDecode>::decode(data.as_ref())
+            {
+                return Ok(ThemelioBridgeErrors::HeaderNotVerified(decoded));
+            }
+            if let Ok(decoded) =
+                <InvalidCovhash as ethers::core::abi::AbiDecode>::decode(data.as_ref())
+            {
+                return Ok(ThemelioBridgeErrors::InvalidCovhash(decoded));
+            }
+            if let Ok(decoded) =
+                <InvalidStakes as ethers::core::abi::AbiDecode>::decode(data.as_ref())
+            {
+                return Ok(ThemelioBridgeErrors::InvalidStakes(decoded));
+            }
+            if let Ok(decoded) =
+                <InvalidVerifier as ethers::core::abi::AbiDecode>::decode(data.as_ref())
+            {
+                return Ok(ThemelioBridgeErrors::InvalidVerifier(decoded));
+            }
+            if let Ok(decoded) =
+                <MissingHeader as ethers::core::abi::AbiDecode>::decode(data.as_ref())
+            {
+                return Ok(ThemelioBridgeErrors::MissingHeader(decoded));
+            }
+            if let Ok(decoded) =
+                <MissingStakes as ethers::core::abi::AbiDecode>::decode(data.as_ref())
+            {
+                return Ok(ThemelioBridgeErrors::MissingStakes(decoded));
+            }
+            if let Ok(decoded) =
+                <MissingVerifier as ethers::core::abi::AbiDecode>::decode(data.as_ref())
+            {
+                return Ok(ThemelioBridgeErrors::MissingVerifier(decoded));
+            }
+            if let Ok(decoded) = <NotOwner as ethers::core::abi::AbiDecode>::decode(data.as_ref()) {
+                return Ok(ThemelioBridgeErrors::NotOwner(decoded));
+            }
+            if let Ok(decoded) =
+                <TxAlreadyVerified as ethers::core::abi::AbiDecode>::decode(data.as_ref())
+            {
+                return Ok(ThemelioBridgeErrors::TxAlreadyVerified(decoded));
+            }
+            if let Ok(decoded) =
+                <TxNotVerified as ethers::core::abi::AbiDecode>::decode(data.as_ref())
+            {
+                return Ok(ThemelioBridgeErrors::TxNotVerified(decoded));
+            }
+            Err(ethers::core::abi::Error::InvalidData.into())
+        }
+    }
+    impl ethers::core::abi::AbiEncode for ThemelioBridgeErrors {
+        fn encode(self) -> Vec<u8> {
+            match self {
+                ThemelioBridgeErrors::ERC1155NotOwnerOrApproved(element) => element.encode(),
+                ThemelioBridgeErrors::HeaderNotVerified(element) => element.encode(),
+                ThemelioBridgeErrors::InvalidCovhash(element) => element.encode(),
+                ThemelioBridgeErrors::InvalidStakes(element) => element.encode(),
+                ThemelioBridgeErrors::InvalidVerifier(element) => element.encode(),
+                ThemelioBridgeErrors::MissingHeader(element) => element.encode(),
+                ThemelioBridgeErrors::MissingStakes(element) => element.encode(),
+                ThemelioBridgeErrors::MissingVerifier(element) => element.encode(),
+                ThemelioBridgeErrors::NotOwner(element) => element.encode(),
+                ThemelioBridgeErrors::TxAlreadyVerified(element) => element.encode(),
+                ThemelioBridgeErrors::TxNotVerified(element) => element.encode(),
+            }
+        }
+    }
+    impl ::std::fmt::Display for ThemelioBridgeErrors {
+        fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+            match self {
+                ThemelioBridgeErrors::ERC1155NotOwnerOrApproved(element) => element.fmt(f),
+                ThemelioBridgeErrors::HeaderNotVerified(element) => element.fmt(f),
+                ThemelioBridgeErrors::InvalidCovhash(element) => element.fmt(f),
+                ThemelioBridgeErrors::InvalidStakes(element) => element.fmt(f),
+                ThemelioBridgeErrors::InvalidVerifier(element) => element.fmt(f),
+                ThemelioBridgeErrors::MissingHeader(element) => element.fmt(f),
+                ThemelioBridgeErrors::MissingStakes(element) => element.fmt(f),
+                ThemelioBridgeErrors::MissingVerifier(element) => element.fmt(f),
+                ThemelioBridgeErrors::NotOwner(element) => element.fmt(f),
+                ThemelioBridgeErrors::TxAlreadyVerified(element) => element.fmt(f),
+                ThemelioBridgeErrors::TxNotVerified(element) => element.fmt(f),
+            }
+        }
+    }
+    impl ::std::convert::From<ERC1155NotOwnerOrApproved> for ThemelioBridgeErrors {
+        fn from(var: ERC1155NotOwnerOrApproved) -> Self {
+            ThemelioBridgeErrors::ERC1155NotOwnerOrApproved(var)
+        }
+    }
+    impl ::std::convert::From<HeaderNotVerified> for ThemelioBridgeErrors {
+        fn from(var: HeaderNotVerified) -> Self {
+            ThemelioBridgeErrors::HeaderNotVerified(var)
+        }
+    }
+    impl ::std::convert::From<InvalidCovhash> for ThemelioBridgeErrors {
+        fn from(var: InvalidCovhash) -> Self {
+            ThemelioBridgeErrors::InvalidCovhash(var)
+        }
+    }
+    impl ::std::convert::From<InvalidStakes> for ThemelioBridgeErrors {
+        fn from(var: InvalidStakes) -> Self {
+            ThemelioBridgeErrors::InvalidStakes(var)
+        }
+    }
+    impl ::std::convert::From<InvalidVerifier> for ThemelioBridgeErrors {
+        fn from(var: InvalidVerifier) -> Self {
+            ThemelioBridgeErrors::InvalidVerifier(var)
+        }
+    }
+    impl ::std::convert::From<MissingHeader> for ThemelioBridgeErrors {
+        fn from(var: MissingHeader) -> Self {
+            ThemelioBridgeErrors::MissingHeader(var)
+        }
+    }
+    impl ::std::convert::From<MissingStakes> for ThemelioBridgeErrors {
+        fn from(var: MissingStakes) -> Self {
+            ThemelioBridgeErrors::MissingStakes(var)
+        }
+    }
+    impl ::std::convert::From<MissingVerifier> for ThemelioBridgeErrors {
+        fn from(var: MissingVerifier) -> Self {
+            ThemelioBridgeErrors::MissingVerifier(var)
+        }
+    }
+    impl ::std::convert::From<NotOwner> for ThemelioBridgeErrors {
+        fn from(var: NotOwner) -> Self {
+            ThemelioBridgeErrors::NotOwner(var)
+        }
+    }
+    impl ::std::convert::From<TxAlreadyVerified> for ThemelioBridgeErrors {
+        fn from(var: TxAlreadyVerified) -> Self {
+            ThemelioBridgeErrors::TxAlreadyVerified(var)
+        }
+    }
+    impl ::std::convert::From<TxNotVerified> for ThemelioBridgeErrors {
+        fn from(var: TxNotVerified) -> Self {
+            ThemelioBridgeErrors::TxNotVerified(var)
         }
     }
     #[derive(
@@ -431,10 +744,9 @@ pub mod themeliobridge_mod {
         ethers :: contract :: EthEvent,
         ethers :: contract :: EthDisplay,
     )]
-    #[ethevent(name = "StakesVerified", abi = "StakesVerified(bytes32,bytes32)")]
+    #[ethevent(name = "StakesVerified", abi = "StakesVerified(bytes32)")]
     pub struct StakesVerifiedFilter {
-        pub keccak_stakes_hash: [u8; 32],
-        pub blake_3_stakes_hash: [u8; 32],
+        pub stakes_hash: [u8; 32],
     }
     #[derive(
         Clone,
@@ -449,22 +761,6 @@ pub mod themeliobridge_mod {
     pub struct TokensBurnedFilter {
         #[ethevent(indexed)]
         pub themelio_recipient: [u8; 32],
-    }
-    #[derive(
-        Clone,
-        Debug,
-        Default,
-        Eq,
-        PartialEq,
-        ethers :: contract :: EthEvent,
-        ethers :: contract :: EthDisplay,
-    )]
-    #[ethevent(name = "TokensMinted", abi = "TokensMinted(address,uint256)")]
-    pub struct TokensMintedFilter {
-        #[ethevent(indexed)]
-        pub account: ethers::core::types::Address,
-        #[ethevent(indexed)]
-        pub value: ethers::core::types::U256,
     }
     #[derive(
         Clone,
@@ -521,12 +817,12 @@ pub mod themeliobridge_mod {
         ethers :: contract :: EthEvent,
         ethers :: contract :: EthDisplay,
     )]
-    #[ethevent(name = "TxVerified", abi = "TxVerified(bytes32,uint256)")]
+    #[ethevent(name = "TxVerified", abi = "TxVerified(uint256,bytes32)")]
     pub struct TxVerifiedFilter {
         #[ethevent(indexed)]
-        pub tx_hash: [u8; 32],
-        #[ethevent(indexed)]
         pub height: ethers::core::types::U256,
+        #[ethevent(indexed)]
+        pub tx_hash: [u8; 32],
     }
     #[derive(
         Clone,
@@ -566,7 +862,6 @@ pub mod themeliobridge_mod {
         InitializedFilter(InitializedFilter),
         StakesVerifiedFilter(StakesVerifiedFilter),
         TokensBurnedFilter(TokensBurnedFilter),
-        TokensMintedFilter(TokensMintedFilter),
         TransferBatchFilter(TransferBatchFilter),
         TransferSingleFilter(TransferSingleFilter),
         TxVerifiedFilter(TxVerifiedFilter),
@@ -574,7 +869,9 @@ pub mod themeliobridge_mod {
         UpgradedFilter(UpgradedFilter),
     }
     impl ethers::contract::EthLogDecode for ThemelioBridgeEvents {
-        fn decode_log(log: &ethers::core::abi::RawLog) -> Result<Self, ethers::core::abi::Error>
+        fn decode_log(
+            log: &ethers::core::abi::RawLog,
+        ) -> ::std::result::Result<Self, ethers::core::abi::Error>
         where
             Self: Sized,
         {
@@ -598,9 +895,6 @@ pub mod themeliobridge_mod {
             }
             if let Ok(decoded) = TokensBurnedFilter::decode_log(log) {
                 return Ok(ThemelioBridgeEvents::TokensBurnedFilter(decoded));
-            }
-            if let Ok(decoded) = TokensMintedFilter::decode_log(log) {
-                return Ok(ThemelioBridgeEvents::TokensMintedFilter(decoded));
             }
             if let Ok(decoded) = TransferBatchFilter::decode_log(log) {
                 return Ok(ThemelioBridgeEvents::TransferBatchFilter(decoded));
@@ -630,7 +924,6 @@ pub mod themeliobridge_mod {
                 ThemelioBridgeEvents::InitializedFilter(element) => element.fmt(f),
                 ThemelioBridgeEvents::StakesVerifiedFilter(element) => element.fmt(f),
                 ThemelioBridgeEvents::TokensBurnedFilter(element) => element.fmt(f),
-                ThemelioBridgeEvents::TokensMintedFilter(element) => element.fmt(f),
                 ThemelioBridgeEvents::TransferBatchFilter(element) => element.fmt(f),
                 ThemelioBridgeEvents::TransferSingleFilter(element) => element.fmt(f),
                 ThemelioBridgeEvents::TxVerifiedFilter(element) => element.fmt(f),
@@ -842,6 +1135,18 @@ pub mod themeliobridge_mod {
     )]
     #[ethcall(name = "spends", abi = "spends(bytes32)")]
     pub struct SpendsCall(pub [u8; 32]);
+    #[doc = "Container type for all input parameters for the `stakesHashes` function with signature `stakesHashes(bytes32)` and selector `[125, 93, 199, 200]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthCall,
+        ethers :: contract :: EthDisplay,
+    )]
+    #[ethcall(name = "stakesHashes", abi = "stakesHashes(bytes32)")]
+    pub struct StakesHashesCall(pub [u8; 32]);
     #[doc = "Container type for all input parameters for the `supportsInterface` function with signature `supportsInterface(bytes4)` and selector `[1, 255, 201, 167]`"]
     #[derive(
         Clone,
@@ -897,7 +1202,7 @@ pub mod themeliobridge_mod {
     )]
     #[ethcall(name = "uri", abi = "uri(uint256)")]
     pub struct UriCall(pub ethers::core::types::U256);
-    #[doc = "Container type for all input parameters for the `verifyHeader` function with signature `verifyHeader(uint256,bytes,bytes,bytes32[],bool)` and selector `[112, 60, 251, 240]`"]
+    #[doc = "Container type for all input parameters for the `verifyHeader` function with signature `verifyHeader(uint256,bytes,bytes,bytes32[])` and selector `[34, 22, 188, 188]`"]
     #[derive(
         Clone,
         Debug,
@@ -909,14 +1214,13 @@ pub mod themeliobridge_mod {
     )]
     #[ethcall(
         name = "verifyHeader",
-        abi = "verifyHeader(uint256,bytes,bytes,bytes32[],bool)"
+        abi = "verifyHeader(uint256,bytes,bytes,bytes32[])"
     )]
     pub struct VerifyHeaderCall {
         pub verifier_height: ethers::core::types::U256,
         pub header: ethers::core::types::Bytes,
         pub stakes: ethers::core::types::Bytes,
         pub signatures: ::std::vec::Vec<[u8; 32]>,
-        pub first_time: bool,
     }
     #[doc = "Container type for all input parameters for the `verifyStakes` function with signature `verifyStakes(bytes)` and selector `[108, 15, 217, 76]`"]
     #[derive(
@@ -964,6 +1268,7 @@ pub mod themeliobridge_mod {
         SafeTransferFrom(SafeTransferFromCall),
         SetApprovalForAll(SetApprovalForAllCall),
         Spends(SpendsCall),
+        StakesHashes(StakesHashesCall),
         SupportsInterface(SupportsInterfaceCall),
         UpgradeTo(UpgradeToCall),
         UpgradeToAndCall(UpgradeToAndCallCall),
@@ -973,7 +1278,9 @@ pub mod themeliobridge_mod {
         VerifyTx(VerifyTxCall),
     }
     impl ethers::core::abi::AbiDecode for ThemelioBridgeCalls {
-        fn decode(data: impl AsRef<[u8]>) -> Result<Self, ethers::core::abi::AbiError> {
+        fn decode(
+            data: impl AsRef<[u8]>,
+        ) -> ::std::result::Result<Self, ethers::core::abi::AbiError> {
             if let Ok(decoded) =
                 <BalanceOfCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
@@ -1037,6 +1344,11 @@ pub mod themeliobridge_mod {
                 return Ok(ThemelioBridgeCalls::Spends(decoded));
             }
             if let Ok(decoded) =
+                <StakesHashesCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
+            {
+                return Ok(ThemelioBridgeCalls::StakesHashes(decoded));
+            }
+            if let Ok(decoded) =
                 <SupportsInterfaceCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
                 return Ok(ThemelioBridgeCalls::SupportsInterface(decoded));
@@ -1088,6 +1400,7 @@ pub mod themeliobridge_mod {
                 ThemelioBridgeCalls::SafeTransferFrom(element) => element.encode(),
                 ThemelioBridgeCalls::SetApprovalForAll(element) => element.encode(),
                 ThemelioBridgeCalls::Spends(element) => element.encode(),
+                ThemelioBridgeCalls::StakesHashes(element) => element.encode(),
                 ThemelioBridgeCalls::SupportsInterface(element) => element.encode(),
                 ThemelioBridgeCalls::UpgradeTo(element) => element.encode(),
                 ThemelioBridgeCalls::UpgradeToAndCall(element) => element.encode(),
@@ -1114,6 +1427,7 @@ pub mod themeliobridge_mod {
                 ThemelioBridgeCalls::SafeTransferFrom(element) => element.fmt(f),
                 ThemelioBridgeCalls::SetApprovalForAll(element) => element.fmt(f),
                 ThemelioBridgeCalls::Spends(element) => element.fmt(f),
+                ThemelioBridgeCalls::StakesHashes(element) => element.fmt(f),
                 ThemelioBridgeCalls::SupportsInterface(element) => element.fmt(f),
                 ThemelioBridgeCalls::UpgradeTo(element) => element.fmt(f),
                 ThemelioBridgeCalls::UpgradeToAndCall(element) => element.fmt(f),
@@ -1187,6 +1501,11 @@ pub mod themeliobridge_mod {
     impl ::std::convert::From<SpendsCall> for ThemelioBridgeCalls {
         fn from(var: SpendsCall) -> Self {
             ThemelioBridgeCalls::Spends(var)
+        }
+    }
+    impl ::std::convert::From<StakesHashesCall> for ThemelioBridgeCalls {
+        fn from(var: StakesHashesCall) -> Self {
+            ThemelioBridgeCalls::StakesHashes(var)
         }
     }
     impl ::std::convert::From<SupportsInterfaceCall> for ThemelioBridgeCalls {
@@ -1308,6 +1627,17 @@ pub mod themeliobridge_mod {
         ethers :: contract :: EthAbiCodec,
     )]
     pub struct SpendsReturn(pub bool);
+    #[doc = "Container type for all return fields from the `stakesHashes` function with signature `stakesHashes(bytes32)` and selector `[125, 93, 199, 200]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthAbiType,
+        ethers :: contract :: EthAbiCodec,
+    )]
+    pub struct StakesHashesReturn(pub [u8; 32]);
     #[doc = "Container type for all return fields from the `supportsInterface` function with signature `supportsInterface(bytes4)` and selector `[1, 255, 201, 167]`"]
     #[derive(
         Clone,
@@ -1330,7 +1660,7 @@ pub mod themeliobridge_mod {
         ethers :: contract :: EthAbiCodec,
     )]
     pub struct UriReturn(pub String);
-    #[doc = "Container type for all return fields from the `verifyHeader` function with signature `verifyHeader(uint256,bytes,bytes,bytes32[],bool)` and selector `[112, 60, 251, 240]`"]
+    #[doc = "Container type for all return fields from the `verifyHeader` function with signature `verifyHeader(uint256,bytes,bytes,bytes32[])` and selector `[34, 22, 188, 188]`"]
     #[derive(
         Clone,
         Debug,

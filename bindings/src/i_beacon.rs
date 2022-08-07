@@ -1,6 +1,6 @@
-pub use ibeacon_mod::*;
+pub use i_beacon::*;
 #[allow(clippy::too_many_arguments, non_camel_case_types)]
-pub mod ibeacon_mod {
+pub mod i_beacon {
     #![allow(clippy::enum_variant_names)]
     #![allow(dead_code)]
     #![allow(clippy::type_complexity)]

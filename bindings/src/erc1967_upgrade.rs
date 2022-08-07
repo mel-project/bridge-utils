@@ -1,6 +1,6 @@
-pub use erc1967upgrade_mod::*;
+pub use erc1967_upgrade::*;
 #[allow(clippy::too_many_arguments, non_camel_case_types)]
-pub mod erc1967upgrade_mod {
+pub mod erc1967_upgrade {
     #![allow(clippy::enum_variant_names)]
     #![allow(dead_code)]
     #![allow(clippy::type_complexity)]
@@ -125,7 +125,9 @@ pub mod erc1967upgrade_mod {
         UpgradedFilter(UpgradedFilter),
     }
     impl ethers::contract::EthLogDecode for ERC1967UpgradeEvents {
-        fn decode_log(log: &ethers::core::abi::RawLog) -> Result<Self, ethers::core::abi::Error>
+        fn decode_log(
+            log: &ethers::core::abi::RawLog,
+        ) -> ::std::result::Result<Self, ethers::core::abi::Error>
         where
             Self: Sized,
         {

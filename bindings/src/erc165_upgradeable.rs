@@ -1,6 +1,6 @@
-pub use erc165upgradeable_mod::*;
+pub use erc165_upgradeable::*;
 #[allow(clippy::too_many_arguments, non_camel_case_types)]
-pub mod erc165upgradeable_mod {
+pub mod erc165_upgradeable {
     #![allow(clippy::enum_variant_names)]
     #![allow(dead_code)]
     #![allow(clippy::type_complexity)]
@@ -20,7 +20,7 @@ pub mod erc165upgradeable_mod {
         ethers::contract::Lazy::new(|| {
             serde_json :: from_str ("[{\"inputs\":[{\"internalType\":\"uint8\",\"name\":\"version\",\"type\":\"uint8\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"Initialized\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"interfaceId\",\"type\":\"bytes4\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"supportsInterface\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]}]") . expect ("invalid abi")
         });
-    pub struct ERC165Upgradeable<M: Clone>(ethers::contract::Contract<M>);
+    pub struct ERC165Upgradeable<M>(ethers::contract::Contract<M>);
     impl<M: Clone> Clone for ERC165Upgradeable<M> {
         fn clone(&self) -> Self {
             ERC165Upgradeable(self.0.clone())

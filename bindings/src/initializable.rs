@@ -1,6 +1,6 @@
-pub use initializable_mod::*;
+pub use initializable::*;
 #[allow(clippy::too_many_arguments, non_camel_case_types)]
-pub mod initializable_mod {
+pub mod initializable {
     #![allow(clippy::enum_variant_names)]
     #![allow(dead_code)]
     #![allow(clippy::type_complexity)]

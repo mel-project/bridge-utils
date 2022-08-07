@@ -1,6 +1,6 @@
-pub use ed25519_mod::*;
+pub use ed_25519::*;
 #[allow(clippy::too_many_arguments, non_camel_case_types)]
-pub mod ed25519_mod {
+pub mod ed_25519 {
     #![allow(clippy::enum_variant_names)]
     #![allow(dead_code)]
     #![allow(clippy::type_complexity)]
@@ -80,7 +80,7 @@ pub mod ed25519_mod {
         pub fn deploy<T: ethers::core::abi::Tokenize>(
             client: ::std::sync::Arc<M>,
             constructor_args: T,
-        ) -> Result<
+        ) -> ::std::result::Result<
             ethers::contract::builders::ContractDeployer<M, Self>,
             ethers::contract::ContractError<M>,
         > {

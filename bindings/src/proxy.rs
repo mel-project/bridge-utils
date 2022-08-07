@@ -1,6 +1,6 @@
-pub use proxy_mod::*;
+pub use proxy::*;
 #[allow(clippy::too_many_arguments, non_camel_case_types)]
-pub mod proxy_mod {
+pub mod proxy {
     #![allow(clippy::enum_variant_names)]
     #![allow(dead_code)]
     #![allow(clippy::type_complexity)]

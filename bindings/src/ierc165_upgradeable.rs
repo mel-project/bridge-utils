@@ -1,6 +1,6 @@
-pub use ierc165upgradeable_mod::*;
+pub use ierc165_upgradeable::*;
 #[allow(clippy::too_many_arguments, non_camel_case_types)]
-pub mod ierc165upgradeable_mod {
+pub mod ierc165_upgradeable {
     #![allow(clippy::enum_variant_names)]
     #![allow(dead_code)]
     #![allow(clippy::type_complexity)]

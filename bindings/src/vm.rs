@@ -1,6 +1,6 @@
-pub use vm_mod::*;
+pub use vm::*;
 #[allow(clippy::too_many_arguments, non_camel_case_types)]
-pub mod vm_mod {
+pub mod vm {
     #![allow(clippy::enum_variant_names)]
     #![allow(dead_code)]
     #![allow(clippy::type_complexity)]
@@ -1846,7 +1846,9 @@ pub mod vm_mod {
         WriteLine(WriteLineCall),
     }
     impl ethers::core::abi::AbiDecode for VmCalls {
-        fn decode(data: impl AsRef<[u8]>) -> Result<Self, ethers::core::abi::AbiError> {
+        fn decode(
+            data: impl AsRef<[u8]>,
+        ) -> ::std::result::Result<Self, ethers::core::abi::AbiError> {
             if let Ok(decoded) =
                 <AccessesCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
@@ -3075,9 +3077,7 @@ pub mod vm_mod {
         ethers :: contract :: EthAbiType,
         ethers :: contract :: EthAbiCodec,
     )]
-    pub struct GetRecordedLogsReturn(
-        pub ::std::vec::Vec<(Vec<[u8; 32]>, ethers::core::types::Bytes)>,
-    );
+    pub struct GetRecordedLogsReturn(pub ::std::vec::Vec<Log>);
     #[doc = "Container type for all return fields from the `load` function with signature `load(address,bytes32)` and selector `[102, 127, 157, 112]`"]
     #[derive(
         Clone,
