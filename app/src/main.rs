@@ -2,7 +2,6 @@ use std::{
     convert::TryFrom,
     env,
     fs,
-    io,
     ops::Range,
     path::Path,
     sync::Arc,
@@ -65,7 +64,6 @@ use tmelcrypt::{
 
 const BRIDGE_COVHASH: ThemelioAddress = ThemelioAddress(HashVal([0; 32]));
 const DATA_BLOCK_HASH_KEY: &[u8; 13] = b"smt_datablock";
-const NODE_HASH_KEY: &[u8; 8] = b"smt_node";
 const GAS_LIMIT: u32 = 29_000_000;
 
 struct Config {
@@ -99,8 +97,11 @@ impl Config {
 #[derive(Parser, Debug)]
 #[clap(author, version, about, long_about = None)]
 struct Args {
-    #[clap(long)]
-    initial_conditions: bool,
+    #[clap(long, default_value = "")]
+    num_stakedocs: String,
+
+    #[clap(long, default_value = "")]
+    num_transactions: String,
 }
 
 fn random_header(modifier: u128) -> Header {
@@ -245,11 +246,11 @@ fn random_stakedoc(epoch: u64) -> StakeDoc {
         e_start = 0;
     } else {
         e_start = rand::thread_rng()
-            .gen_range(0..epoch);
+            .gen_range(0..epoch + 1);
     }
 
     let e_post_end: u64 = rand::thread_rng()
-        .gen_range(epoch + 1..u64::MAX);
+        .gen_range(epoch + 2..u64::MAX);
 
     StakeDoc {
         pubkey: ed25519_keygen().0,
@@ -342,14 +343,21 @@ fn create_stakes_and_sign_header(num_stakedocs: u32, epoch: u64, header: &[u8]) 
 
     for _ in 0..num_stakedocs {
         let mut stakedoc = random_stakedoc(epoch);
+        println!("{:?}\n", stakedoc);
+
         let keypair = ed25519_keygen();
         stakedoc.pubkey = Ed25519PK::from_bytes(&keypair.0.0).unwrap();
 
-        signatures.push(keypair.1.sign(header).as_slice().try_into().unwrap());
+        let signature: &[u8] = &keypair.1.sign(header);
 
-        epoch_syms += stakedoc.syms_staked;
+        signatures.push(signature[0..32].try_into().unwrap());
+        signatures.push(signature[32..64].try_into().unwrap());
 
-        if stakedoc.e_start <= epoch + 1 && stakedoc.e_post_end > epoch + 1 {
+        if stakedoc.e_start <= epoch && stakedoc.e_post_end >= epoch + 1 {
+            epoch_syms += stakedoc.syms_staked;
+        }
+
+        if stakedoc.e_start <= epoch + 1 && stakedoc.e_post_end >= epoch + 2 {
             next_epoch_syms += stakedoc.syms_staked;
         }
 
@@ -357,12 +365,17 @@ fn create_stakes_and_sign_header(num_stakedocs: u32, epoch: u64, header: &[u8]) 
 
         stakes.append(&mut stakedoc_vec);
     }
+    for i in 0..signatures.len() {
+        println!("signatures[{}] = {}", i, hex::encode(signatures[i]));
+    };
+    println!("\nGenesis Header Epoch Syms: {}", epoch_syms);
+    println!("Next Epoch Syms: {}\n", next_epoch_syms);
 
     let mut stakes_structured = stdcode::serialize(&epoch_syms).unwrap();
     stakes_structured.append(&mut stdcode::serialize(&next_epoch_syms).unwrap());
     stakes_structured.append(&mut stakes);
 
-    (stakes, signatures)
+    (stakes_structured, signatures)
 }
 
 async fn link_libraries(
@@ -640,8 +653,8 @@ async fn setup_bridge() -> H160 {
 
 async fn setup_bridge_proxy(
     genesis_height: u64,
-    genesis_stakes_hash: Vec<u8>,
-    genesis_transactions_hash: Vec<u8>
+    genesis_transactions_hash: Vec<u8>,
+    genesis_stakes_hash: Vec<u8>
 ) -> ThemelioBridge<SignerMiddleware<Provider<Http>, Wallet<SigningKey>>> {
     let bridge_address = match env::var("BRIDGE_ADDRESS") {
         Ok(val) => val.parse::<EthersAddress>().expect("Error parsing bridge address."),
@@ -725,33 +738,35 @@ async fn setup_bridge_proxy(
     let factory = ContractFactory::new(abi, bytecode, client.clone());
 
     let mut func_selector = hex::decode("09f10a3c").unwrap().to_vec();
-    let mut genesis_height = hex::encode(stdcode::serialize(&genesis_height).unwrap());
-    genesis_height = format!("{:0>64}", genesis_height);
+
+    let genesis_height = format!("{:0>64x}", genesis_height);
     let mut genesis_height = hex::decode(genesis_height).unwrap();
 
-    let mut genesis_stakes_hash = genesis_stakes_hash.to_vec();
     let mut genesis_transactions_hash = genesis_transactions_hash.to_vec();
+    let mut genesis_stakes_hash = genesis_stakes_hash.to_vec();
 
     let mut initialization_data: Vec<u8> = vec!();
     initialization_data.append(&mut func_selector);
     initialization_data.append(&mut genesis_height);
-    initialization_data.append(&mut genesis_stakes_hash);
     initialization_data.append(&mut genesis_transactions_hash);
+    initialization_data.append(&mut genesis_stakes_hash);
 
     let constructor_data = (
         Token::Address(bridge_address),
-        Token::Bytes(initialization_data)
+        Token::Bytes(initialization_data.clone())
     );
 
-    let bridge_proxy = factory
+    let bridge_proxy_call = factory
         .deploy(constructor_data)
-        .expect("Unable to deploy bridge proxy.")
+        .expect("Unable to deploy bridge proxy.");
+    let bridge_proxy_receipt = bridge_proxy_call
         .send()
         .await
         .expect("Error awaiting bridge proxy contract creation.");
-    
-    
-    let bridge_proxy_address = bridge_proxy.address();
+
+    println!("\n***** Bridge Proxy deployment receipt *****\n{:#?}\n********************\n", bridge_proxy_receipt);
+
+    let bridge_proxy_address = bridge_proxy_receipt.address();
 
     let wrapped_bridge_proxy = ThemelioBridge::new(bridge_proxy_address, client.clone());
 
@@ -762,19 +777,23 @@ async fn test_e2e(num_stakedocs: u32, num_transactions: u32) -> Result<()> {
     let config = Config::new().unwrap();
 
     let cross_epoch: bool = rand::thread_rng().gen();
+    println!("Crossing epoch?: {}\n", cross_epoch);
+
     let modifier: u128 = rand::thread_rng().gen();
     let mut genesis_header = random_header(modifier);
+    let genesis_header_epoch: u64 = rand::thread_rng().gen_range(0..u64::MAX / STAKE_EPOCH);
     let mut header: Header = random_header(modifier);
 
     if cross_epoch {
-        genesis_header.height = BlockHeight(rand::thread_rng().gen_range(0..u64::MAX / STAKE_EPOCH) - 1);
+        genesis_header.height = BlockHeight((genesis_header_epoch + 1) * STAKE_EPOCH - 1);
         header.height = genesis_header.height + BlockHeight(rand::thread_rng().gen_range(1..STAKE_EPOCH));
     } else {
-        genesis_header.height = BlockHeight(rand::thread_rng().gen_range(0..u64::MAX / STAKE_EPOCH));
-        header.height = genesis_header.height + BlockHeight(rand::thread_rng().gen_range(1..STAKE_EPOCH - (genesis_header.height.0 - genesis_header.height.epoch() * STAKE_EPOCH)))
+        genesis_header.height = BlockHeight(rand::thread_rng().gen_range(
+            genesis_header_epoch * STAKE_EPOCH..((genesis_header_epoch + 1) * STAKE_EPOCH)
+        ).into());
+        header.height = BlockHeight(rand::thread_rng().gen_range(genesis_header.height.0 + 1..(genesis_header_epoch + 1) * STAKE_EPOCH));
     }
-
-    let genesis_header_epoch = genesis_header.height.epoch();
+    println!("Genesis Header height: {}\nHeader Height: {}\n", genesis_header.height.0, header.height.0);
 
     // create random transactions with ethereum addresses in additional_data of first output
     let mut datablocks = create_datablocks(num_transactions);
@@ -785,11 +804,13 @@ async fn test_e2e(num_stakedocs: u32, num_transactions: u32) -> Result<()> {
         .expect("Error converting to usize.");
 
     datablocks[index].outputs[0].covhash = BRIDGE_COVHASH;
+    datablocks[index].outputs[0].additional_data = config.wallet.address().0.to_vec();
 
     let tx_to_prove = datablocks
         .get(index)
         .ok_or("Unable to get tx datablock to prove.")
         .expect("Error getting tx to prove.");
+    println!("{:?}\n", tx_to_prove);
 
     let denom = tx_to_prove
         .outputs[0]
@@ -801,11 +822,14 @@ async fn test_e2e(num_stakedocs: u32, num_transactions: u32) -> Result<()> {
         Denom::Custom(tx_hash) => tx_hash.0,
         _ => HashVal::random()
     };
+    println!("Denom: {}\n", denom);
 
     let value: u128 = tx_to_prove
         .outputs[0]
         .value
         .into();
+
+    println!("Value: {}\n", value);
 
     let serialized_tx = stdcode::serialize(&tx_to_prove)
         .expect("Unable to serialize tx.");
@@ -823,9 +847,11 @@ async fn test_e2e(num_stakedocs: u32, num_transactions: u32) -> Result<()> {
     let proof = tree.proof(index);
 
     let root = tree.root_hash();
+    println!("Transactions Hash: {}\n", hex::encode(&root));
 
     // replace the random 'transactions_hash' from 'header' with the root of our merkle tree
     header.transactions_hash = HashVal(root);
+    println!("{:#?}\n", header);
 
     // create random staker keypairs, serialize header and sign with each sk, store in vecs
     let serialized_header = stdcode::serialize(&header).expect("Unable to serialize header.");
@@ -838,10 +864,11 @@ async fn test_e2e(num_stakedocs: u32, num_transactions: u32) -> Result<()> {
 
     let stakes_hash = blake3::keyed_hash(
         blake3::hash(DATA_BLOCK_HASH_KEY).as_bytes(),
-        &hex::decode(&stakes).unwrap()
+        &stakes
     );
+    println!("Stakes Hash: {}\n", stakes_hash);
 
-    let wrapped_bridge_proxy = setup_bridge_proxy(genesis_header.height.0, stakes_hash.as_bytes().to_vec(), vec!(0 as u8; 32)).await;
+    let wrapped_bridge_proxy = setup_bridge_proxy(genesis_header.height.0, vec!(0 as u8; 32), stakes_hash.as_bytes().to_vec()).await;
 
     // send tx to verifyStakes()
     let call = wrapped_bridge_proxy.verify_stakes(stakes.clone());
@@ -883,36 +910,17 @@ async fn test_e2e(num_stakedocs: u32, num_transactions: u32) -> Result<()> {
 async fn main() -> Result<()> {
     let args = Args::parse();
 
-    if args.initial_conditions {
+    let num_stakedocs: u32 = args
+        .num_stakedocs
+        .parse()
+        .expect("Please include '--num-stakedocs <int>' flag.");
 
-    } else {
-        let mut num_stakers = String::new();
-        let mut merkle_tree_height = String::new();
+    let num_transactions: u32 = args
+        .num_transactions
+        .parse()
+        .expect("Please include '--num-transactions <int>' flag.");
 
-        println!("Input the desired number of stakers: ");
-        io::stdin()
-            .read_line(&mut num_stakers)
-            .expect("Failed to read number of stakers.");
+    let _ = test_e2e(num_stakedocs, num_transactions).await;
 
-        println!("Input the desired Merkle tree height: ");
-        io::stdin()
-            .read_line(&mut merkle_tree_height)
-            .expect("Failed to read Merkle tree height.");
-
-        let num_stakers: u32 = num_stakers
-            .trim()
-            .parse()
-            .expect("Error parsing number of stakers.");
-
-        let merkle_tree_height: u32 = merkle_tree_height
-            .trim()
-            .parse()
-            .expect("Error parsing Merkle tree height.");
-
-        test_e2e(num_stakers, merkle_tree_height)
-            .await
-            .expect("Error awaiting end-to-end test.");
-    }
-    
     Ok(())
 }
