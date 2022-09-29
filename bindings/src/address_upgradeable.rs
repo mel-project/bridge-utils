@@ -18,33 +18,33 @@ pub mod address_upgradeable {
     use std::sync::Arc;
     pub static ADDRESSUPGRADEABLE_ABI: ethers::contract::Lazy<ethers::core::abi::Abi> =
         ethers::contract::Lazy::new(|| {
-            serde_json::from_str("[]").expect("invalid abi")
+            ethers::core::utils::__serde_json::from_str("[]").expect("invalid abi")
         });
     #[doc = r" Bytecode of the #name contract"]
     pub static ADDRESSUPGRADEABLE_BYTECODE: ethers::contract::Lazy<ethers::core::types::Bytes> =
         ethers::contract::Lazy::new(|| {
-            "0x60808060405234601757603a9081601d823930815050f35b600080fdfe600080fdfea26469706673582212201c6668c921a1c4272d0ecb0b75c61253a4aa698d05993ba718504375a4e907dc64736f6c634300080d0033" . parse () . expect ("invalid bytecode")
+            "0x60808060405234601757603a9081601d823930815050f35b600080fdfe600080fdfea26469706673582212203de1dd7cb057dda3fa63762f6d56430aa299bd5e8ba0068bd3cf183789a9686c64736f6c634300080d0033" . parse () . expect ("invalid bytecode")
         });
-    pub struct AddressUpgradeable<M: Clone>(ethers::contract::Contract<M>);
-    impl<M: Clone> Clone for AddressUpgradeable<M> {
+    pub struct AddressUpgradeable<M>(ethers::contract::Contract<M>);
+    impl<M> Clone for AddressUpgradeable<M> {
         fn clone(&self) -> Self {
             AddressUpgradeable(self.0.clone())
         }
     }
-    impl<M: Clone> std::ops::Deref for AddressUpgradeable<M> {
+    impl<M> std::ops::Deref for AddressUpgradeable<M> {
         type Target = ethers::contract::Contract<M>;
         fn deref(&self) -> &Self::Target {
             &self.0
         }
     }
-    impl<M: ethers::providers::Middleware + Clone> std::fmt::Debug for AddressUpgradeable<M> {
+    impl<M: Middleware> std::fmt::Debug for AddressUpgradeable<M> {
         fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
             f.debug_tuple(stringify!(AddressUpgradeable))
                 .field(&self.address())
                 .finish()
         }
     }
-    impl<M: ethers::providers::Middleware + Clone> AddressUpgradeable<M> {
+    impl<M: ethers::providers::Middleware> AddressUpgradeable<M> {
         #[doc = r" Creates a new contract instance with the specified `ethers`"]
         #[doc = r" client at the given `Address`. The contract derefs to a `ethers::Contract`"]
         #[doc = r" object"]
@@ -95,7 +95,7 @@ pub mod address_upgradeable {
             Ok(deployer)
         }
     }
-    impl<M: ethers::providers::Middleware + Clone> From<ethers::contract::Contract<M>>
+    impl<M: ethers::providers::Middleware> From<ethers::contract::Contract<M>>
         for AddressUpgradeable<M>
     {
         fn from(contract: ethers::contract::Contract<M>) -> Self {

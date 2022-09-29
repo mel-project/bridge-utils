@@ -18,33 +18,33 @@ pub mod std_math {
     use std::sync::Arc;
     pub static STDMATH_ABI: ethers::contract::Lazy<ethers::core::abi::Abi> =
         ethers::contract::Lazy::new(|| {
-            serde_json::from_str("[]").expect("invalid abi")
+            ethers::core::utils::__serde_json::from_str("[]").expect("invalid abi")
         });
     #[doc = r" Bytecode of the #name contract"]
     pub static STDMATH_BYTECODE: ethers::contract::Lazy<ethers::core::types::Bytes> =
         ethers::contract::Lazy::new(|| {
-            "0x60808060405234601757603a9081601d823930815050f35b600080fdfe600080fdfea2646970667358221220e60c1e9dae5231e3cecf4be546a54e3bd123b07b09388aa810313c0e10a3e50864736f6c634300080d0033" . parse () . expect ("invalid bytecode")
+            "0x60808060405234601757603a9081601d823930815050f35b600080fdfe600080fdfea264697066735822122002d3584c01833d29e10a9b8ea34b59ed46196f98cd193421450d674acc9a038b64736f6c634300080d0033" . parse () . expect ("invalid bytecode")
         });
-    pub struct stdMath<M: Clone>(ethers::contract::Contract<M>);
-    impl<M: Clone> Clone for stdMath<M> {
+    pub struct stdMath<M>(ethers::contract::Contract<M>);
+    impl<M> Clone for stdMath<M> {
         fn clone(&self) -> Self {
             stdMath(self.0.clone())
         }
     }
-    impl<M: Clone> std::ops::Deref for stdMath<M> {
+    impl<M> std::ops::Deref for stdMath<M> {
         type Target = ethers::contract::Contract<M>;
         fn deref(&self) -> &Self::Target {
             &self.0
         }
     }
-    impl<M: ethers::providers::Middleware + Clone> std::fmt::Debug for stdMath<M> {
+    impl<M: Middleware> std::fmt::Debug for stdMath<M> {
         fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
             f.debug_tuple(stringify!(stdMath))
                 .field(&self.address())
                 .finish()
         }
     }
-    impl<M: ethers::providers::Middleware + Clone> stdMath<M> {
+    impl<M: ethers::providers::Middleware> stdMath<M> {
         #[doc = r" Creates a new contract instance with the specified `ethers`"]
         #[doc = r" client at the given `Address`. The contract derefs to a `ethers::Contract`"]
         #[doc = r" object"]
@@ -94,7 +94,7 @@ pub mod std_math {
             Ok(deployer)
         }
     }
-    impl<M: ethers::providers::Middleware + Clone> From<ethers::contract::Contract<M>> for stdMath<M> {
+    impl<M: ethers::providers::Middleware> From<ethers::contract::Contract<M>> for stdMath<M> {
         fn from(contract: ethers::contract::Contract<M>) -> Self {
             Self(contract)
         }

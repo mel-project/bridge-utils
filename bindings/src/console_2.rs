@@ -18,33 +18,33 @@ pub mod console_2 {
     use std::sync::Arc;
     pub static CONSOLE2_ABI: ethers::contract::Lazy<ethers::core::abi::Abi> =
         ethers::contract::Lazy::new(|| {
-            serde_json::from_str("[]").expect("invalid abi")
+            ethers::core::utils::__serde_json::from_str("[]").expect("invalid abi")
         });
     #[doc = r" Bytecode of the #name contract"]
     pub static CONSOLE2_BYTECODE: ethers::contract::Lazy<ethers::core::types::Bytes> =
         ethers::contract::Lazy::new(|| {
-            "0x60808060405234601757603a9081601d823930815050f35b600080fdfe600080fdfea2646970667358221220002e805fb1f554ecd354447e1e4a5b9ecba6ca8ac9cd0f2a2eda84deaea958b664736f6c634300080d0033" . parse () . expect ("invalid bytecode")
+            "0x60808060405234601757603a9081601d823930815050f35b600080fdfe600080fdfea26469706673582212200d07be0e01a7bd585be62a310466254e529f2fada0c2be23accfc3d01b95942a64736f6c634300080d0033" . parse () . expect ("invalid bytecode")
         });
     pub struct console2<M>(ethers::contract::Contract<M>);
-    impl<M: Clone> Clone for console2<M> {
+    impl<M> Clone for console2<M> {
         fn clone(&self) -> Self {
             console2(self.0.clone())
         }
     }
-    impl<M: Clone> std::ops::Deref for console2<M> {
+    impl<M> std::ops::Deref for console2<M> {
         type Target = ethers::contract::Contract<M>;
         fn deref(&self) -> &Self::Target {
             &self.0
         }
     }
-    impl<M: ethers::providers::Middleware + Clone> std::fmt::Debug for console2<M> {
+    impl<M: Middleware> std::fmt::Debug for console2<M> {
         fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
             f.debug_tuple(stringify!(console2))
                 .field(&self.address())
                 .finish()
         }
     }
-    impl<M: ethers::providers::Middleware + Clone> console2<M> {
+    impl<M: ethers::providers::Middleware> console2<M> {
         #[doc = r" Creates a new contract instance with the specified `ethers`"]
         #[doc = r" client at the given `Address`. The contract derefs to a `ethers::Contract`"]
         #[doc = r" object"]
@@ -94,7 +94,7 @@ pub mod console_2 {
             Ok(deployer)
         }
     }
-    impl<M: ethers::providers::Middleware + Clone> From<ethers::contract::Contract<M>> for console2<M> {
+    impl<M: ethers::providers::Middleware> From<ethers::contract::Contract<M>> for console2<M> {
         fn from(contract: ethers::contract::Contract<M>) -> Self {
             Self(contract)
         }

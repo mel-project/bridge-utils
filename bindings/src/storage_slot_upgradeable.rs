@@ -18,33 +18,33 @@ pub mod storage_slot_upgradeable {
     use std::sync::Arc;
     pub static STORAGESLOTUPGRADEABLE_ABI: ethers::contract::Lazy<ethers::core::abi::Abi> =
         ethers::contract::Lazy::new(|| {
-            serde_json::from_str("[]").expect("invalid abi")
+            ethers::core::utils::__serde_json::from_str("[]").expect("invalid abi")
         });
     #[doc = r" Bytecode of the #name contract"]
     pub static STORAGESLOTUPGRADEABLE_BYTECODE: ethers::contract::Lazy<ethers::core::types::Bytes> =
         ethers::contract::Lazy::new(|| {
-            "0x60808060405234601757603a9081601d823930815050f35b600080fdfe600080fdfea26469706673582212204d3c59ccf252822a879de2e838d27fb75c906b514e59e0d12c1d7e51c324d14264736f6c634300080d0033" . parse () . expect ("invalid bytecode")
+            "0x60808060405234601757603a9081601d823930815050f35b600080fdfe600080fdfea2646970667358221220ed396a6f499a00894f0028a81d49f331e3620a6a2af1268aefa764f44382486c64736f6c634300080d0033" . parse () . expect ("invalid bytecode")
         });
-    pub struct StorageSlotUpgradeable<M: Clone>(ethers::contract::Contract<M>);
-    impl<M: Clone> Clone for StorageSlotUpgradeable<M> {
+    pub struct StorageSlotUpgradeable<M>(ethers::contract::Contract<M>);
+    impl<M> Clone for StorageSlotUpgradeable<M> {
         fn clone(&self) -> Self {
             StorageSlotUpgradeable(self.0.clone())
         }
     }
-    impl<M: Clone> std::ops::Deref for StorageSlotUpgradeable<M> {
+    impl<M> std::ops::Deref for StorageSlotUpgradeable<M> {
         type Target = ethers::contract::Contract<M>;
         fn deref(&self) -> &Self::Target {
             &self.0
         }
     }
-    impl<M: ethers::providers::Middleware + Clone> std::fmt::Debug for StorageSlotUpgradeable<M> {
+    impl<M: Middleware> std::fmt::Debug for StorageSlotUpgradeable<M> {
         fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
             f.debug_tuple(stringify!(StorageSlotUpgradeable))
                 .field(&self.address())
                 .finish()
         }
     }
-    impl<M: ethers::providers::Middleware + Clone> StorageSlotUpgradeable<M> {
+    impl<M: ethers::providers::Middleware> StorageSlotUpgradeable<M> {
         #[doc = r" Creates a new contract instance with the specified `ethers`"]
         #[doc = r" client at the given `Address`. The contract derefs to a `ethers::Contract`"]
         #[doc = r" object"]
@@ -99,7 +99,7 @@ pub mod storage_slot_upgradeable {
             Ok(deployer)
         }
     }
-    impl<M: ethers::providers::Middleware + Clone> From<ethers::contract::Contract<M>>
+    impl<M: ethers::providers::Middleware> From<ethers::contract::Contract<M>>
         for StorageSlotUpgradeable<M>
     {
         fn from(contract: ethers::contract::Contract<M>) -> Self {

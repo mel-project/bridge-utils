@@ -18,28 +18,28 @@ pub mod erc1967_upgrade_upgradeable {
     use std::sync::Arc;
     pub static ERC1967UPGRADEUPGRADEABLE_ABI: ethers::contract::Lazy<ethers::core::abi::Abi> =
         ethers::contract::Lazy::new(|| {
-            serde_json :: from_str ("[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"previousAdmin\",\"type\":\"address\",\"components\":[],\"indexed\":false},{\"internalType\":\"address\",\"name\":\"newAdmin\",\"type\":\"address\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"AdminChanged\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"beacon\",\"type\":\"address\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"BeaconUpgraded\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"uint8\",\"name\":\"version\",\"type\":\"uint8\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"Initialized\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"implementation\",\"type\":\"address\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"Upgraded\",\"outputs\":[],\"anonymous\":false}]") . expect ("invalid abi")
+            ethers :: core :: utils :: __serde_json :: from_str ("[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"previousAdmin\",\"type\":\"address\",\"components\":[],\"indexed\":false},{\"internalType\":\"address\",\"name\":\"newAdmin\",\"type\":\"address\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"AdminChanged\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"beacon\",\"type\":\"address\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"BeaconUpgraded\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"uint8\",\"name\":\"version\",\"type\":\"uint8\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"Initialized\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"implementation\",\"type\":\"address\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"Upgraded\",\"outputs\":[],\"anonymous\":false}]") . expect ("invalid abi")
         });
     pub struct ERC1967UpgradeUpgradeable<M>(ethers::contract::Contract<M>);
-    impl<M: Clone> Clone for ERC1967UpgradeUpgradeable<M> {
+    impl<M> Clone for ERC1967UpgradeUpgradeable<M> {
         fn clone(&self) -> Self {
             ERC1967UpgradeUpgradeable(self.0.clone())
         }
     }
-    impl<M: Clone> std::ops::Deref for ERC1967UpgradeUpgradeable<M> {
+    impl<M> std::ops::Deref for ERC1967UpgradeUpgradeable<M> {
         type Target = ethers::contract::Contract<M>;
         fn deref(&self) -> &Self::Target {
             &self.0
         }
     }
-    impl<M: ethers::providers::Middleware + Clone> std::fmt::Debug for ERC1967UpgradeUpgradeable<M> {
+    impl<M: Middleware> std::fmt::Debug for ERC1967UpgradeUpgradeable<M> {
         fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
             f.debug_tuple(stringify!(ERC1967UpgradeUpgradeable))
                 .field(&self.address())
                 .finish()
         }
     }
-    impl<M: ethers::providers::Middleware + Clone> ERC1967UpgradeUpgradeable<M> {
+    impl<M: ethers::providers::Middleware> ERC1967UpgradeUpgradeable<M> {
         #[doc = r" Creates a new contract instance with the specified `ethers`"]
         #[doc = r" client at the given `Address`. The contract derefs to a `ethers::Contract`"]
         #[doc = r" object"]
@@ -83,7 +83,7 @@ pub mod erc1967_upgrade_upgradeable {
             self.0.event_with_filter(Default::default())
         }
     }
-    impl<M: ethers::providers::Middleware + Clone> From<ethers::contract::Contract<M>>
+    impl<M: ethers::providers::Middleware> From<ethers::contract::Contract<M>>
         for ERC1967UpgradeUpgradeable<M>
     {
         fn from(contract: ethers::contract::Contract<M>) -> Self {
@@ -93,11 +93,11 @@ pub mod erc1967_upgrade_upgradeable {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthEvent,
         ethers :: contract :: EthDisplay,
+        Default,
     )]
     #[ethevent(name = "AdminChanged", abi = "AdminChanged(address,address)")]
     pub struct AdminChangedFilter {
@@ -107,11 +107,11 @@ pub mod erc1967_upgrade_upgradeable {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthEvent,
         ethers :: contract :: EthDisplay,
+        Default,
     )]
     #[ethevent(name = "BeaconUpgraded", abi = "BeaconUpgraded(address)")]
     pub struct BeaconUpgradedFilter {
@@ -121,11 +121,11 @@ pub mod erc1967_upgrade_upgradeable {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthEvent,
         ethers :: contract :: EthDisplay,
+        Default,
     )]
     #[ethevent(name = "Initialized", abi = "Initialized(uint8)")]
     pub struct InitializedFilter {
@@ -134,11 +134,11 @@ pub mod erc1967_upgrade_upgradeable {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthEvent,
         ethers :: contract :: EthDisplay,
+        Default,
     )]
     #[ethevent(name = "Upgraded", abi = "Upgraded(address)")]
     pub struct UpgradedFilter {

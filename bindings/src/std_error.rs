@@ -18,33 +18,33 @@ pub mod std_error {
     use std::sync::Arc;
     pub static STDERROR_ABI: ethers::contract::Lazy<ethers::core::abi::Abi> =
         ethers::contract::Lazy::new(|| {
-            serde_json :: from_str ("[{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"arithmeticError\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"assertionError\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"divisionError\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"encodeStorageError\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"enumConversionError\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"indexOOBError\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"lowLevelError\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"memOverflowError\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"popError\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"zeroVarError\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\",\"components\":[]}]}]") . expect ("invalid abi")
+            ethers :: core :: utils :: __serde_json :: from_str ("[{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"arithmeticError\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"assertionError\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"divisionError\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"encodeStorageError\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"enumConversionError\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"indexOOBError\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"lowLevelError\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"memOverflowError\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"popError\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"zeroVarError\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\",\"components\":[]}]}]") . expect ("invalid abi")
         });
     #[doc = r" Bytecode of the #name contract"]
     pub static STDERROR_BYTECODE: ethers::contract::Lazy<ethers::core::types::Bytes> =
         ethers::contract::Lazy::new(|| {
-            "0x6080806040523461001a576103e29081610020823930815050f35b600080fdfe608080604052600436101561001357600080fd5b60003560e01c90816305ee8612146100e45750806310332977146100db5780631de45560146100d25780638995290f146100c9578063986c5f68146100c0578063ac3d92c6146100b7578063b22dc54d146100ae578063b67689da146100a5578063d160e4de1461009c5763fa784a441461008f575b38600080fd5b610097610378565b610089565b50610097610344565b50610097610310565b506100976102dc565b50610097610291565b5061009761025d565b50610097610229565b506100976101f5565b506100976101c1565b60003660031901126101255761012190634e487b7160e01b6020820152603260248201526024815261011581610141565b6040519182918261016a565b0390f35b600080fd5b50634e487b7160e01b600052604160045260246000fd5b6060810190811067ffffffffffffffff82111761015d57604052565b61016561012a565b604052565b919091602080825283519081818401526000945b8286106101ab57505080604093941161019e575b601f01601f1916010190565b6000838284010152610192565b858101820151848701604001529481019461017e565b50600036600319011261012557610121604051634e487b7160e01b6020820152600160248201526024815261011581610141565b50600036600319011261012557610121604051634e487b7160e01b6020820152602160248201526024815261011581610141565b50600036600319011261012557610121604051634e487b7160e01b6020820152601160248201526024815261011581610141565b50600036600319011261012557610121604051634e487b7160e01b6020820152604160248201526024815261011581610141565b506000366003190112610125576101216040516020810181811067ffffffffffffffff8211176102cf575b604052600081526040519182918261016a565b6102d761012a565b6102bc565b50600036600319011261012557610121604051634e487b7160e01b6020820152603160248201526024815261011581610141565b50600036600319011261012557610121604051634e487b7160e01b6020820152605160248201526024815261011581610141565b50600036600319011261012557610121604051634e487b7160e01b6020820152602260248201526024815261011581610141565b50600036600319011261012557610121604051634e487b7160e01b602082015260126024820152602481526101158161014156fea2646970667358221220fa159e765fc96c9ea187770a99a97b82cfb58a45f395eddf271da627ded31ad864736f6c634300080d0033" . parse () . expect ("invalid bytecode")
+            "0x6080806040523461001a576103e29081610020823930815050f35b600080fdfe608080604052600436101561001357600080fd5b60003560e01c90816305ee8612146100e45750806310332977146100db5780631de45560146100d25780638995290f146100c9578063986c5f68146100c0578063ac3d92c6146100b7578063b22dc54d146100ae578063b67689da146100a5578063d160e4de1461009c5763fa784a441461008f575b38600080fd5b610097610378565b610089565b50610097610344565b50610097610310565b506100976102dc565b50610097610291565b5061009761025d565b50610097610229565b506100976101f5565b506100976101c1565b60003660031901126101255761012190634e487b7160e01b6020820152603260248201526024815261011581610141565b6040519182918261016a565b0390f35b600080fd5b50634e487b7160e01b600052604160045260246000fd5b6060810190811067ffffffffffffffff82111761015d57604052565b61016561012a565b604052565b919091602080825283519081818401526000945b8286106101ab57505080604093941161019e575b601f01601f1916010190565b6000838284010152610192565b858101820151848701604001529481019461017e565b50600036600319011261012557610121604051634e487b7160e01b6020820152600160248201526024815261011581610141565b50600036600319011261012557610121604051634e487b7160e01b6020820152602160248201526024815261011581610141565b50600036600319011261012557610121604051634e487b7160e01b6020820152601160248201526024815261011581610141565b50600036600319011261012557610121604051634e487b7160e01b6020820152604160248201526024815261011581610141565b506000366003190112610125576101216040516020810181811067ffffffffffffffff8211176102cf575b604052600081526040519182918261016a565b6102d761012a565b6102bc565b50600036600319011261012557610121604051634e487b7160e01b6020820152603160248201526024815261011581610141565b50600036600319011261012557610121604051634e487b7160e01b6020820152605160248201526024815261011581610141565b50600036600319011261012557610121604051634e487b7160e01b6020820152602260248201526024815261011581610141565b50600036600319011261012557610121604051634e487b7160e01b602082015260126024820152602481526101158161014156fea2646970667358221220acd885bd1586cf5cdbbd1a991ace98378ff91584ad393cab44f8a5a856095eb864736f6c634300080d0033" . parse () . expect ("invalid bytecode")
         });
-    pub struct stdError<M: Clone>(ethers::contract::Contract<M>);
-    impl<M: Clone> Clone for stdError<M> {
+    pub struct stdError<M>(ethers::contract::Contract<M>);
+    impl<M> Clone for stdError<M> {
         fn clone(&self) -> Self {
             stdError(self.0.clone())
         }
     }
-    impl<M: Clone> std::ops::Deref for stdError<M> {
+    impl<M> std::ops::Deref for stdError<M> {
         type Target = ethers::contract::Contract<M>;
         fn deref(&self) -> &Self::Target {
             &self.0
         }
     }
-    impl<M: ethers::providers::Middleware + Clone> std::fmt::Debug for stdError<M> {
+    impl<M: Middleware> std::fmt::Debug for stdError<M> {
         fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
             f.debug_tuple(stringify!(stdError))
                 .field(&self.address())
                 .finish()
         }
     }
-    impl<M: ethers::providers::Middleware + Clone> stdError<M> {
+    impl<M: ethers::providers::Middleware> stdError<M> {
         #[doc = r" Creates a new contract instance with the specified `ethers`"]
         #[doc = r" client at the given `Address`. The contract derefs to a `ethers::Contract`"]
         #[doc = r" object"]
@@ -174,7 +174,7 @@ pub mod std_error {
                 .expect("method not found (this should never happen)")
         }
     }
-    impl<M: ethers::providers::Middleware + Clone> From<ethers::contract::Contract<M>> for stdError<M> {
+    impl<M: ethers::providers::Middleware> From<ethers::contract::Contract<M>> for stdError<M> {
         fn from(contract: ethers::contract::Contract<M>) -> Self {
             Self(contract)
         }
@@ -183,11 +183,11 @@ pub mod std_error {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthCall,
         ethers :: contract :: EthDisplay,
+        Default,
     )]
     #[ethcall(name = "arithmeticError", abi = "arithmeticError()")]
     pub struct ArithmeticErrorCall;
@@ -195,11 +195,11 @@ pub mod std_error {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthCall,
         ethers :: contract :: EthDisplay,
+        Default,
     )]
     #[ethcall(name = "assertionError", abi = "assertionError()")]
     pub struct AssertionErrorCall;
@@ -207,11 +207,11 @@ pub mod std_error {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthCall,
         ethers :: contract :: EthDisplay,
+        Default,
     )]
     #[ethcall(name = "divisionError", abi = "divisionError()")]
     pub struct DivisionErrorCall;
@@ -219,11 +219,11 @@ pub mod std_error {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthCall,
         ethers :: contract :: EthDisplay,
+        Default,
     )]
     #[ethcall(name = "encodeStorageError", abi = "encodeStorageError()")]
     pub struct EncodeStorageErrorCall;
@@ -231,11 +231,11 @@ pub mod std_error {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthCall,
         ethers :: contract :: EthDisplay,
+        Default,
     )]
     #[ethcall(name = "enumConversionError", abi = "enumConversionError()")]
     pub struct EnumConversionErrorCall;
@@ -243,11 +243,11 @@ pub mod std_error {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthCall,
         ethers :: contract :: EthDisplay,
+        Default,
     )]
     #[ethcall(name = "indexOOBError", abi = "indexOOBError()")]
     pub struct IndexOOBErrorCall;
@@ -255,11 +255,11 @@ pub mod std_error {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthCall,
         ethers :: contract :: EthDisplay,
+        Default,
     )]
     #[ethcall(name = "lowLevelError", abi = "lowLevelError()")]
     pub struct LowLevelErrorCall;
@@ -267,11 +267,11 @@ pub mod std_error {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthCall,
         ethers :: contract :: EthDisplay,
+        Default,
     )]
     #[ethcall(name = "memOverflowError", abi = "memOverflowError()")]
     pub struct MemOverflowErrorCall;
@@ -279,11 +279,11 @@ pub mod std_error {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthCall,
         ethers :: contract :: EthDisplay,
+        Default,
     )]
     #[ethcall(name = "popError", abi = "popError()")]
     pub struct PopErrorCall;
@@ -291,11 +291,11 @@ pub mod std_error {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthCall,
         ethers :: contract :: EthDisplay,
+        Default,
     )]
     #[ethcall(name = "zeroVarError", abi = "zeroVarError()")]
     pub struct ZeroVarErrorCall;
@@ -455,110 +455,110 @@ pub mod std_error {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthAbiType,
         ethers :: contract :: EthAbiCodec,
+        Default,
     )]
     pub struct ArithmeticErrorReturn(pub ethers::core::types::Bytes);
     #[doc = "Container type for all return fields from the `assertionError` function with signature `assertionError()` and selector `[16, 51, 41, 119]`"]
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthAbiType,
         ethers :: contract :: EthAbiCodec,
+        Default,
     )]
     pub struct AssertionErrorReturn(pub ethers::core::types::Bytes);
     #[doc = "Container type for all return fields from the `divisionError` function with signature `divisionError()` and selector `[250, 120, 74, 68]`"]
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthAbiType,
         ethers :: contract :: EthAbiCodec,
+        Default,
     )]
     pub struct DivisionErrorReturn(pub ethers::core::types::Bytes);
     #[doc = "Container type for all return fields from the `encodeStorageError` function with signature `encodeStorageError()` and selector `[209, 96, 228, 222]`"]
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthAbiType,
         ethers :: contract :: EthAbiCodec,
+        Default,
     )]
     pub struct EncodeStorageErrorReturn(pub ethers::core::types::Bytes);
     #[doc = "Container type for all return fields from the `enumConversionError` function with signature `enumConversionError()` and selector `[29, 228, 85, 96]`"]
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthAbiType,
         ethers :: contract :: EthAbiCodec,
+        Default,
     )]
     pub struct EnumConversionErrorReturn(pub ethers::core::types::Bytes);
     #[doc = "Container type for all return fields from the `indexOOBError` function with signature `indexOOBError()` and selector `[5, 238, 134, 18]`"]
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthAbiType,
         ethers :: contract :: EthAbiCodec,
+        Default,
     )]
     pub struct IndexOOBErrorReturn(pub ethers::core::types::Bytes);
     #[doc = "Container type for all return fields from the `lowLevelError` function with signature `lowLevelError()` and selector `[172, 61, 146, 198]`"]
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthAbiType,
         ethers :: contract :: EthAbiCodec,
+        Default,
     )]
     pub struct LowLevelErrorReturn(pub ethers::core::types::Bytes);
     #[doc = "Container type for all return fields from the `memOverflowError` function with signature `memOverflowError()` and selector `[152, 108, 95, 104]`"]
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthAbiType,
         ethers :: contract :: EthAbiCodec,
+        Default,
     )]
     pub struct MemOverflowErrorReturn(pub ethers::core::types::Bytes);
     #[doc = "Container type for all return fields from the `popError` function with signature `popError()` and selector `[178, 45, 197, 77]`"]
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthAbiType,
         ethers :: contract :: EthAbiCodec,
+        Default,
     )]
     pub struct PopErrorReturn(pub ethers::core::types::Bytes);
     #[doc = "Container type for all return fields from the `zeroVarError` function with signature `zeroVarError()` and selector `[182, 118, 137, 218]`"]
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthAbiType,
         ethers :: contract :: EthAbiCodec,
+        Default,
     )]
     pub struct ZeroVarErrorReturn(pub ethers::core::types::Bytes);
 }

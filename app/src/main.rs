@@ -102,6 +102,9 @@ struct Args {
 
     #[clap(long, default_value = "")]
     num_transactions: String,
+
+    #[clap(long, default_value = "")]
+    themelio_recipient: String
 }
 
 fn random_header(modifier: u128) -> Header {
@@ -773,7 +776,7 @@ async fn setup_bridge_proxy(
     wrapped_bridge_proxy
 }
 
-async fn test_e2e(num_stakedocs: u32, num_transactions: u32) -> Result<()> {
+async fn test_e2e(num_stakedocs: u32, num_transactions: u32, themelio_recipient: [u8; 32]) -> Result<()> {
     let config = Config::new().unwrap();
 
     let cross_epoch: bool = rand::thread_rng().gen();
@@ -833,6 +836,12 @@ async fn test_e2e(num_stakedocs: u32, num_transactions: u32) -> Result<()> {
 
     let serialized_tx = stdcode::serialize(&tx_to_prove)
         .expect("Unable to serialize tx.");
+
+    let tx_hash = *blake3::keyed_hash(
+        blake3::hash(DATA_BLOCK_HASH_KEY).as_bytes(),
+        &serialized_tx
+    ).as_bytes();
+
     let serialized_tx = Bytes::from(serialized_tx);
 
     let datablocks_serded = datablocks
@@ -896,7 +905,7 @@ async fn test_e2e(num_stakedocs: u32, num_transactions: u32) -> Result<()> {
     println!("\n***** verifyTx() receipt *****\n{:#?}\n********************\n", receipt.unwrap());
 
     // send tx to burn()
-    let call = wrapped_bridge_proxy.burn(config.wallet.address(), U256::from(denom.0), U256::from(value), *b"00000000000000000000000000000000")
+    let call = wrapped_bridge_proxy.burn(config.wallet.address(), tx_hash, themelio_recipient)
         .gas(GAS_LIMIT);
     let pending_tx = call.send().await?;
     let receipt = pending_tx.await?;
@@ -920,7 +929,19 @@ async fn main() -> Result<()> {
         .parse()
         .expect("Please include '--num-transactions <int>' flag.");
 
-    let _ = test_e2e(num_stakedocs, num_transactions).await;
+    let themelio_recipient: String = args
+        .themelio_recipient
+        .parse::<String>()
+        .expect("Please include '--themelio-recipient <address>' flag.")
+        .strip_prefix("0x")
+        .expect("Address must start with '0x'.")
+        .to_string();
+    let themelio_recipient: [u8; 32] = hex::decode(themelio_recipient)
+        .expect("Invalid Themelio recipient address.")
+        .try_into()
+        .expect("Expected an address of length 32");
+
+    let _ = test_e2e(num_stakedocs, num_transactions, themelio_recipient).await;
 
     Ok(())
 }

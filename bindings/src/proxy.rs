@@ -18,28 +18,28 @@ pub mod proxy {
     use std::sync::Arc;
     pub static PROXY_ABI: ethers::contract::Lazy<ethers::core::abi::Abi> =
         ethers::contract::Lazy::new(|| {
-            serde_json :: from_str ("[{\"inputs\":[],\"stateMutability\":\"payable\",\"type\":\"fallback\",\"outputs\":[]},{\"inputs\":[],\"stateMutability\":\"payable\",\"type\":\"receive\",\"outputs\":[]}]") . expect ("invalid abi")
+            ethers :: core :: utils :: __serde_json :: from_str ("[{\"inputs\":[],\"stateMutability\":\"payable\",\"type\":\"fallback\",\"outputs\":[]},{\"inputs\":[],\"stateMutability\":\"payable\",\"type\":\"receive\",\"outputs\":[]}]") . expect ("invalid abi")
         });
-    pub struct Proxy<M: Clone>(ethers::contract::Contract<M>);
-    impl<M: Clone> Clone for Proxy<M> {
+    pub struct Proxy<M>(ethers::contract::Contract<M>);
+    impl<M> Clone for Proxy<M> {
         fn clone(&self) -> Self {
             Proxy(self.0.clone())
         }
     }
-    impl<M: Clone> std::ops::Deref for Proxy<M> {
+    impl<M> std::ops::Deref for Proxy<M> {
         type Target = ethers::contract::Contract<M>;
         fn deref(&self) -> &Self::Target {
             &self.0
         }
     }
-    impl<M: ethers::providers::Middleware + Clone> std::fmt::Debug for Proxy<M> {
+    impl<M: Middleware> std::fmt::Debug for Proxy<M> {
         fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
             f.debug_tuple(stringify!(Proxy))
                 .field(&self.address())
                 .finish()
         }
     }
-    impl<M: ethers::providers::Middleware + Clone> Proxy<M> {
+    impl<M: ethers::providers::Middleware> Proxy<M> {
         #[doc = r" Creates a new contract instance with the specified `ethers`"]
         #[doc = r" client at the given `Address`. The contract derefs to a `ethers::Contract`"]
         #[doc = r" object"]
@@ -50,7 +50,7 @@ pub mod proxy {
             ethers::contract::Contract::new(address.into(), PROXY_ABI.clone(), client).into()
         }
     }
-    impl<M: ethers::providers::Middleware + Clone> From<ethers::contract::Contract<M>> for Proxy<M> {
+    impl<M: ethers::providers::Middleware> From<ethers::contract::Contract<M>> for Proxy<M> {
         fn from(contract: ethers::contract::Contract<M>) -> Self {
             Self(contract)
         }
