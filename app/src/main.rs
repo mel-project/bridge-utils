@@ -107,6 +107,15 @@ struct Args {
     themelio_recipient: String
 }
 
+struct ProofArgs {
+    contract_address: EthersAddress,
+    tx_hash: H256,
+    coins_slot: H256,
+    block: Option<BlockId>
+}
+
+const COINS_SLOT: H256 = H256([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 254]);
+
 fn random_header(modifier: u128) -> Header {
     if modifier == 0 {
         Header {
@@ -776,7 +785,7 @@ async fn setup_bridge_proxy(
     wrapped_bridge_proxy
 }
 
-async fn test_e2e(num_stakedocs: u32, num_transactions: u32, themelio_recipient: [u8; 32]) -> Result<()> {
+async fn test_e2e(num_stakedocs: u32, num_transactions: u32, themelio_recipient: [u8; 32]) -> Result<ProofArgs, eyre::Error> {
     let config = Config::new().unwrap();
 
     let cross_epoch: bool = rand::thread_rng().gen();
@@ -880,10 +889,11 @@ async fn test_e2e(num_stakedocs: u32, num_transactions: u32, themelio_recipient:
     let wrapped_bridge_proxy = setup_bridge_proxy(genesis_header.height.0, vec!(0 as u8; 32), stakes_hash.as_bytes().to_vec()).await;
 
     // send tx to verifyStakes()
-    let call = wrapped_bridge_proxy.verify_stakes(stakes.clone());
+    let call = wrapped_bridge_proxy
+        .verify_stakes(stakes.clone())
+        .gas(GAS_LIMIT);
     let pending_tx = call.send().await?;
     let receipt = pending_tx.await?;
-
     println!("\n*** verifyStakers() receipt ***\n{:#?}\n********************\n", receipt.unwrap());
 
     // send tx to verifyHeader
@@ -892,7 +902,6 @@ async fn test_e2e(num_stakedocs: u32, num_transactions: u32, themelio_recipient:
         .gas(GAS_LIMIT);
     let pending_tx = call.send().await?;
     let receipt = pending_tx.await?;
-
     println!("\n***** verifyHeader() receipt *****\n{:#?}\n********************\n", receipt.unwrap());
 
     // send tx to verifyTx()
@@ -901,7 +910,6 @@ async fn test_e2e(num_stakedocs: u32, num_transactions: u32, themelio_recipient:
         .gas(GAS_LIMIT);
     let pending_tx = call.send().await?;
     let receipt = pending_tx.await?;
-
     println!("\n***** verifyTx() receipt *****\n{:#?}\n********************\n", receipt.unwrap());
 
     // send tx to burn()
@@ -909,8 +917,31 @@ async fn test_e2e(num_stakedocs: u32, num_transactions: u32, themelio_recipient:
         .gas(GAS_LIMIT);
     let pending_tx = call.send().await?;
     let receipt = pending_tx.await?;
-
     println!("\n***** burn() receipt *****\n{:#?}\n********************\n", receipt.unwrap());
+
+    let proof_args = ProofArgs{
+        contract_address: wrapped_bridge_proxy.address(),
+        tx_hash: H256(tx_hash),
+        coins_slot: COINS_SLOT,
+        block: None,
+    };
+
+    Ok(proof_args)
+}
+
+async fn get_proof(proof_args: ProofArgs) -> Result<()> {
+    let config = Config::new()
+        .expect("Error initializing configuration.");
+
+    let provider = Provider::<Http>::try_from(config.rpc)
+        .expect("Provider unable to be instantiated.");
+
+    let locations: Vec<H256> = vec!();
+
+    let proof = provider.get_proof(proof_args.contract_address, locations, proof_args.block)
+        .await?;
+
+    println!("{:#?}", proof);
 
     Ok(())
 }
@@ -941,7 +972,12 @@ async fn main() -> Result<()> {
         .try_into()
         .expect("Expected an address of length 32");
 
-    let _ = test_e2e(num_stakedocs, num_transactions, themelio_recipient).await;
+    let result = test_e2e(num_stakedocs, num_transactions, themelio_recipient).await;
+
+    match result {
+        Ok(proof_args) => get_proof(proof_args).await?,
+        Err(err) => println!("{:?}", err)
+    };
 
     Ok(())
 }

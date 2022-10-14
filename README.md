@@ -12,9 +12,9 @@ the Themelio assets which are to be bridged. Once the transaction is verified, E
 minted to the Ethereum recipient. The final step in the bridge life cycle is burning the tokens,
 which emits an event which will be used as a receipt to thaw the frozen assets on Themelio (the
 Themelio recipient is specified as an argument in the burn() and burnBatch() functions). This CLI
-program takes 2 flags, `--num-stakedocs` and `--num-transactions` (indirectly specifying the
-desired merkle proof length), and uses that many random Themelio stakedoc and transaction structs
-in its operations.
+program takes 3 flags, `--num-stakedocs`, `--num-transactions`, and `--themelio-recipient`,
+which specify the size of the stakes root preimage, the transaction tree height (and indirectly the
+Merkle proof length), and the address to release the funds to on Themelio, respectively.
 
 Each time it is run a new ThemelioProxy contract will be created, but you can use environment
 variables to specify the addresses of predeployed Ed25519, Blake3, and ThemelioBridge contracts

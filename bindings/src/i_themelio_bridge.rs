@@ -18,7 +18,7 @@ pub mod i_themelio_bridge {
     use std::sync::Arc;
     pub static ITHEMELIOBRIDGE_ABI: ethers::contract::Lazy<ethers::core::abi::Abi> =
         ethers::contract::Lazy::new(|| {
-            ethers :: core :: utils :: __serde_json :: from_str ("[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"previousAdmin\",\"type\":\"address\",\"components\":[],\"indexed\":false},{\"internalType\":\"address\",\"name\":\"newAdmin\",\"type\":\"address\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"AdminChanged\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"bool\",\"name\":\"approved\",\"type\":\"bool\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"ApprovalForAll\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"beacon\",\"type\":\"address\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"BeaconUpgraded\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"height\",\"type\":\"uint256\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"HeaderVerified\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"uint8\",\"name\":\"version\",\"type\":\"uint8\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"Initialized\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"keccakStakesHash\",\"type\":\"bytes32\",\"components\":[],\"indexed\":false},{\"internalType\":\"bytes32\",\"name\":\"blake3StakesHash\",\"type\":\"bytes32\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"StakesVerified\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"themelioRecipient\",\"type\":\"bytes32\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"TokensBurned\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"TokensMinted\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"uint256[]\",\"name\":\"ids\",\"type\":\"uint256[]\",\"components\":[],\"indexed\":false},{\"internalType\":\"uint256[]\",\"name\":\"values\",\"type\":\"uint256[]\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"TransferBatch\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\",\"components\":[],\"indexed\":false},{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"TransferSingle\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"tx_hash\",\"type\":\"bytes32\",\"components\":[],\"indexed\":true},{\"internalType\":\"uint256\",\"name\":\"height\",\"type\":\"uint256\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"TxVerified\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"value\",\"type\":\"string\",\"components\":[],\"indexed\":false},{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"URI\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"implementation\",\"type\":\"address\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"Upgraded\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"balanceOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"accounts\",\"type\":\"address[]\",\"components\":[]},{\"internalType\":\"uint256[]\",\"name\":\"ids\",\"type\":\"uint256[]\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"balanceOfBatch\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account_\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"id_\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"value_\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"bytes32\",\"name\":\"themelioRecipient_\",\"type\":\"bytes32\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"burn\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account_\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256[]\",\"name\":\"ids_\",\"type\":\"uint256[]\",\"components\":[]},{\"internalType\":\"uint256[]\",\"name\":\"values_\",\"type\":\"uint256[]\",\"components\":[]},{\"internalType\":\"bytes32\",\"name\":\"themelioRecipient_\",\"type\":\"bytes32\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"burnBatch\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"headerLimbo\",\"outputs\":[{\"internalType\":\"uint128\",\"name\":\"votes\",\"type\":\"uint128\",\"components\":[]},{\"internalType\":\"uint64\",\"name\":\"bytesVerified\",\"type\":\"uint64\",\"components\":[]},{\"internalType\":\"uint64\",\"name\":\"stakeDocIndex\",\"type\":\"uint64\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"headers\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"transactionsHash\",\"type\":\"bytes32\",\"components\":[]},{\"internalType\":\"bytes32\",\"name\":\"stakesHash\",\"type\":\"bytes32\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"blockHeight_\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"bytes32\",\"name\":\"transactionsHash_\",\"type\":\"bytes32\",\"components\":[]},{\"internalType\":\"bytes32\",\"name\":\"stakesHash_\",\"type\":\"bytes32\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"initialize\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"isApprovedForAll\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"proxiableUUID\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256[]\",\"name\":\"ids\",\"type\":\"uint256[]\",\"components\":[]},{\"internalType\":\"uint256[]\",\"name\":\"amounts\",\"type\":\"uint256[]\",\"components\":[]},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"safeBatchTransferFrom\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"safeTransferFrom\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"bool\",\"name\":\"approved\",\"type\":\"bool\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"setApprovalForAll\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"spends\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"interfaceId\",\"type\":\"bytes4\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"supportsInterface\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newImplementation\",\"type\":\"address\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"upgradeTo\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newImplementation\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\",\"components\":[]}],\"stateMutability\":\"payable\",\"type\":\"function\",\"name\":\"upgradeToAndCall\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"uri\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"verifierHeight_\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"bytes\",\"name\":\"header_\",\"type\":\"bytes\",\"components\":[]},{\"internalType\":\"bytes\",\"name\":\"stakes_\",\"type\":\"bytes\",\"components\":[]},{\"internalType\":\"bytes32[]\",\"name\":\"signatures_\",\"type\":\"bytes32[]\",\"components\":[]},{\"internalType\":\"bool\",\"name\":\"firstTime_\",\"type\":\"bool\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"verifyHeader\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"stakes_\",\"type\":\"bytes\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"verifyStakes\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"transaction_\",\"type\":\"bytes\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"txIndex_\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"blockHeight_\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"bytes32[]\",\"name\":\"proof_\",\"type\":\"bytes32[]\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"verifyTx\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]}]") . expect ("invalid abi")
+            ethers :: core :: utils :: __serde_json :: from_str ("[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"previousAdmin\",\"type\":\"address\",\"components\":[],\"indexed\":false},{\"internalType\":\"address\",\"name\":\"newAdmin\",\"type\":\"address\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"AdminChanged\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"bool\",\"name\":\"approved\",\"type\":\"bool\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"ApprovalForAll\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"beacon\",\"type\":\"address\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"BeaconUpgraded\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"height\",\"type\":\"uint256\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"HeaderVerified\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"uint8\",\"name\":\"version\",\"type\":\"uint8\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"Initialized\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"stakesHash\",\"type\":\"bytes32\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"StakesVerified\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"themelioRecipient\",\"type\":\"bytes32\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"TokensBurned\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"uint256[]\",\"name\":\"ids\",\"type\":\"uint256[]\",\"components\":[],\"indexed\":false},{\"internalType\":\"uint256[]\",\"name\":\"values\",\"type\":\"uint256[]\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"TransferBatch\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\",\"components\":[],\"indexed\":false},{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"TransferSingle\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"height\",\"type\":\"uint256\",\"components\":[],\"indexed\":true},{\"internalType\":\"bytes32\",\"name\":\"txHash\",\"type\":\"bytes32\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"TxVerified\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"value\",\"type\":\"string\",\"components\":[],\"indexed\":false},{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"URI\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"implementation\",\"type\":\"address\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"Upgraded\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"balanceOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"accounts\",\"type\":\"address[]\",\"components\":[]},{\"internalType\":\"uint256[]\",\"name\":\"ids\",\"type\":\"uint256[]\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"balanceOfBatch\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account_\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"bytes32\",\"name\":\"txHash_\",\"type\":\"bytes32\",\"components\":[]},{\"internalType\":\"bytes32\",\"name\":\"themelioRecipient_\",\"type\":\"bytes32\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"burn\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account_\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"bytes32[]\",\"name\":\"txHashes_\",\"type\":\"bytes32[]\",\"components\":[]},{\"internalType\":\"bytes32\",\"name\":\"themelioRecipient_\",\"type\":\"bytes32\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"burnBatch\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"coins\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"denom\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"bytes32\",\"name\":\"status\",\"type\":\"bytes32\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"headerLimbo\",\"outputs\":[{\"internalType\":\"uint128\",\"name\":\"votes\",\"type\":\"uint128\",\"components\":[]},{\"internalType\":\"uint64\",\"name\":\"bytesVerified\",\"type\":\"uint64\",\"components\":[]},{\"internalType\":\"uint64\",\"name\":\"stakeDocIndex\",\"type\":\"uint64\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"headers\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"transactionsHash\",\"type\":\"bytes32\",\"components\":[]},{\"internalType\":\"bytes32\",\"name\":\"stakesHash\",\"type\":\"bytes32\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"blockHeight_\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"bytes32\",\"name\":\"transactionsHash_\",\"type\":\"bytes32\",\"components\":[]},{\"internalType\":\"bytes32\",\"name\":\"stakesHash_\",\"type\":\"bytes32\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"initialize\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"isApprovedForAll\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"proxiableUUID\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256[]\",\"name\":\"ids\",\"type\":\"uint256[]\",\"components\":[]},{\"internalType\":\"uint256[]\",\"name\":\"amounts\",\"type\":\"uint256[]\",\"components\":[]},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"safeBatchTransferFrom\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"safeTransferFrom\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"bool\",\"name\":\"approved\",\"type\":\"bool\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"setApprovalForAll\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"stakesHashes\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"interfaceId\",\"type\":\"bytes4\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"supportsInterface\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newImplementation\",\"type\":\"address\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"upgradeTo\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newImplementation\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\",\"components\":[]}],\"stateMutability\":\"payable\",\"type\":\"function\",\"name\":\"upgradeToAndCall\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"uri\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"verifierHeight_\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"bytes\",\"name\":\"header_\",\"type\":\"bytes\",\"components\":[]},{\"internalType\":\"bytes\",\"name\":\"stakes_\",\"type\":\"bytes\",\"components\":[]},{\"internalType\":\"bytes32[]\",\"name\":\"signatures_\",\"type\":\"bytes32[]\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"verifyHeader\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"stakes_\",\"type\":\"bytes\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"verifyStakes\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"transaction_\",\"type\":\"bytes\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"txIndex_\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"blockHeight_\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"bytes32[]\",\"name\":\"proof_\",\"type\":\"bytes32[]\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"verifyTx\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]}]") . expect ("invalid abi")
         });
     pub struct IThemelioBridge<M>(ethers::contract::Contract<M>);
     impl<M> Clone for IThemelioBridge<M> {
@@ -71,34 +71,42 @@ pub mod i_themelio_bridge {
                 .method_hash([78, 18, 115, 244], (accounts, ids))
                 .expect("method not found (this should never happen)")
         }
-        #[doc = "Calls the contract's `burn` (0x66d8caa0) function"]
+        #[doc = "Calls the contract's `burn` (0x195f1cff) function"]
         pub fn burn(
             &self,
             account: ethers::core::types::Address,
-            id: ethers::core::types::U256,
-            value: ethers::core::types::U256,
+            tx_hash: [u8; 32],
             themelio_recipient: [u8; 32],
         ) -> ethers::contract::builders::ContractCall<M, ()> {
             self.0
-                .method_hash(
-                    [102, 216, 202, 160],
-                    (account, id, value, themelio_recipient),
-                )
+                .method_hash([25, 95, 28, 255], (account, tx_hash, themelio_recipient))
                 .expect("method not found (this should never happen)")
         }
-        #[doc = "Calls the contract's `burnBatch` (0xc02b0cb5) function"]
+        #[doc = "Calls the contract's `burnBatch` (0x112ab37a) function"]
         pub fn burn_batch(
             &self,
             account: ethers::core::types::Address,
-            ids: ::std::vec::Vec<ethers::core::types::U256>,
-            values: ::std::vec::Vec<ethers::core::types::U256>,
+            tx_hashes: ::std::vec::Vec<[u8; 32]>,
             themelio_recipient: [u8; 32],
         ) -> ethers::contract::builders::ContractCall<M, ()> {
             self.0
-                .method_hash(
-                    [192, 43, 12, 181],
-                    (account, ids, values, themelio_recipient),
-                )
+                .method_hash([17, 42, 179, 122], (account, tx_hashes, themelio_recipient))
+                .expect("method not found (this should never happen)")
+        }
+        #[doc = "Calls the contract's `coins` (0x3b1afd1f) function"]
+        pub fn coins(
+            &self,
+            p0: [u8; 32],
+        ) -> ethers::contract::builders::ContractCall<
+            M,
+            (
+                ethers::core::types::U256,
+                ethers::core::types::U256,
+                [u8; 32],
+            ),
+        > {
+            self.0
+                .method_hash([59, 26, 253, 31], p0)
                 .expect("method not found (this should never happen)")
         }
         #[doc = "Calls the contract's `headerLimbo` (0xae567a4b) function"]
@@ -185,10 +193,13 @@ pub mod i_themelio_bridge {
                 .method_hash([162, 44, 180, 101], (operator, approved))
                 .expect("method not found (this should never happen)")
         }
-        #[doc = "Calls the contract's `spends` (0xfd367df0) function"]
-        pub fn spends(&self, p0: [u8; 32]) -> ethers::contract::builders::ContractCall<M, bool> {
+        #[doc = "Calls the contract's `stakesHashes` (0x7d5dc7c8) function"]
+        pub fn stakes_hashes(
+            &self,
+            p0: [u8; 32],
+        ) -> ethers::contract::builders::ContractCall<M, [u8; 32]> {
             self.0
-                .method_hash([253, 54, 125, 240], p0)
+                .method_hash([125, 93, 199, 200], p0)
                 .expect("method not found (this should never happen)")
         }
         #[doc = "Calls the contract's `supportsInterface` (0x01ffc9a7) function"]
@@ -228,19 +239,18 @@ pub mod i_themelio_bridge {
                 .method_hash([14, 137, 52, 28], p0)
                 .expect("method not found (this should never happen)")
         }
-        #[doc = "Calls the contract's `verifyHeader` (0x703cfbf0) function"]
+        #[doc = "Calls the contract's `verifyHeader` (0x2216bcbc) function"]
         pub fn verify_header(
             &self,
             verifier_height: ethers::core::types::U256,
             header: ethers::core::types::Bytes,
             stakes: ethers::core::types::Bytes,
             signatures: ::std::vec::Vec<[u8; 32]>,
-            first_time: bool,
         ) -> ethers::contract::builders::ContractCall<M, bool> {
             self.0
                 .method_hash(
-                    [112, 60, 251, 240],
-                    (verifier_height, header, stakes, signatures, first_time),
+                    [34, 22, 188, 188],
+                    (verifier_height, header, stakes, signatures),
                 )
                 .expect("method not found (this should never happen)")
         }
@@ -308,12 +318,6 @@ pub mod i_themelio_bridge {
         pub fn tokens_burned_filter(
             &self,
         ) -> ethers::contract::builders::Event<M, TokensBurnedFilter> {
-            self.0.event()
-        }
-        #[doc = "Gets the contract's `TokensMinted` event"]
-        pub fn tokens_minted_filter(
-            &self,
-        ) -> ethers::contract::builders::Event<M, TokensMintedFilter> {
             self.0.event()
         }
         #[doc = "Gets the contract's `TransferBatch` event"]
@@ -431,10 +435,9 @@ pub mod i_themelio_bridge {
         ethers :: contract :: EthDisplay,
         Default,
     )]
-    #[ethevent(name = "StakesVerified", abi = "StakesVerified(bytes32,bytes32)")]
+    #[ethevent(name = "StakesVerified", abi = "StakesVerified(bytes32)")]
     pub struct StakesVerifiedFilter {
-        pub keccak_stakes_hash: [u8; 32],
-        pub blake_3_stakes_hash: [u8; 32],
+        pub stakes_hash: [u8; 32],
     }
     #[derive(
         Clone,
@@ -449,22 +452,6 @@ pub mod i_themelio_bridge {
     pub struct TokensBurnedFilter {
         #[ethevent(indexed)]
         pub themelio_recipient: [u8; 32],
-    }
-    #[derive(
-        Clone,
-        Debug,
-        Eq,
-        PartialEq,
-        ethers :: contract :: EthEvent,
-        ethers :: contract :: EthDisplay,
-        Default,
-    )]
-    #[ethevent(name = "TokensMinted", abi = "TokensMinted(address,uint256)")]
-    pub struct TokensMintedFilter {
-        #[ethevent(indexed)]
-        pub account: ethers::core::types::Address,
-        #[ethevent(indexed)]
-        pub value: ethers::core::types::U256,
     }
     #[derive(
         Clone,
@@ -521,12 +508,12 @@ pub mod i_themelio_bridge {
         ethers :: contract :: EthDisplay,
         Default,
     )]
-    #[ethevent(name = "TxVerified", abi = "TxVerified(bytes32,uint256)")]
+    #[ethevent(name = "TxVerified", abi = "TxVerified(uint256,bytes32)")]
     pub struct TxVerifiedFilter {
         #[ethevent(indexed)]
-        pub tx_hash: [u8; 32],
-        #[ethevent(indexed)]
         pub height: ethers::core::types::U256,
+        #[ethevent(indexed)]
+        pub tx_hash: [u8; 32],
     }
     #[derive(
         Clone,
@@ -566,7 +553,6 @@ pub mod i_themelio_bridge {
         InitializedFilter(InitializedFilter),
         StakesVerifiedFilter(StakesVerifiedFilter),
         TokensBurnedFilter(TokensBurnedFilter),
-        TokensMintedFilter(TokensMintedFilter),
         TransferBatchFilter(TransferBatchFilter),
         TransferSingleFilter(TransferSingleFilter),
         TxVerifiedFilter(TxVerifiedFilter),
@@ -601,9 +587,6 @@ pub mod i_themelio_bridge {
             if let Ok(decoded) = TokensBurnedFilter::decode_log(log) {
                 return Ok(IThemelioBridgeEvents::TokensBurnedFilter(decoded));
             }
-            if let Ok(decoded) = TokensMintedFilter::decode_log(log) {
-                return Ok(IThemelioBridgeEvents::TokensMintedFilter(decoded));
-            }
             if let Ok(decoded) = TransferBatchFilter::decode_log(log) {
                 return Ok(IThemelioBridgeEvents::TransferBatchFilter(decoded));
             }
@@ -632,7 +615,6 @@ pub mod i_themelio_bridge {
                 IThemelioBridgeEvents::InitializedFilter(element) => element.fmt(f),
                 IThemelioBridgeEvents::StakesVerifiedFilter(element) => element.fmt(f),
                 IThemelioBridgeEvents::TokensBurnedFilter(element) => element.fmt(f),
-                IThemelioBridgeEvents::TokensMintedFilter(element) => element.fmt(f),
                 IThemelioBridgeEvents::TransferBatchFilter(element) => element.fmt(f),
                 IThemelioBridgeEvents::TransferSingleFilter(element) => element.fmt(f),
                 IThemelioBridgeEvents::TxVerifiedFilter(element) => element.fmt(f),
@@ -671,7 +653,7 @@ pub mod i_themelio_bridge {
         pub accounts: ::std::vec::Vec<ethers::core::types::Address>,
         pub ids: ::std::vec::Vec<ethers::core::types::U256>,
     }
-    #[doc = "Container type for all input parameters for the `burn` function with signature `burn(address,uint256,uint256,bytes32)` and selector `[102, 216, 202, 160]`"]
+    #[doc = "Container type for all input parameters for the `burn` function with signature `burn(address,bytes32,bytes32)` and selector `[25, 95, 28, 255]`"]
     #[derive(
         Clone,
         Debug,
@@ -681,14 +663,13 @@ pub mod i_themelio_bridge {
         ethers :: contract :: EthDisplay,
         Default,
     )]
-    #[ethcall(name = "burn", abi = "burn(address,uint256,uint256,bytes32)")]
+    #[ethcall(name = "burn", abi = "burn(address,bytes32,bytes32)")]
     pub struct BurnCall {
         pub account: ethers::core::types::Address,
-        pub id: ethers::core::types::U256,
-        pub value: ethers::core::types::U256,
+        pub tx_hash: [u8; 32],
         pub themelio_recipient: [u8; 32],
     }
-    #[doc = "Container type for all input parameters for the `burnBatch` function with signature `burnBatch(address,uint256[],uint256[],bytes32)` and selector `[192, 43, 12, 181]`"]
+    #[doc = "Container type for all input parameters for the `burnBatch` function with signature `burnBatch(address,bytes32[],bytes32)` and selector `[17, 42, 179, 122]`"]
     #[derive(
         Clone,
         Debug,
@@ -698,16 +679,24 @@ pub mod i_themelio_bridge {
         ethers :: contract :: EthDisplay,
         Default,
     )]
-    #[ethcall(
-        name = "burnBatch",
-        abi = "burnBatch(address,uint256[],uint256[],bytes32)"
-    )]
+    #[ethcall(name = "burnBatch", abi = "burnBatch(address,bytes32[],bytes32)")]
     pub struct BurnBatchCall {
         pub account: ethers::core::types::Address,
-        pub ids: ::std::vec::Vec<ethers::core::types::U256>,
-        pub values: ::std::vec::Vec<ethers::core::types::U256>,
+        pub tx_hashes: ::std::vec::Vec<[u8; 32]>,
         pub themelio_recipient: [u8; 32],
     }
+    #[doc = "Container type for all input parameters for the `coins` function with signature `coins(bytes32)` and selector `[59, 26, 253, 31]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthCall,
+        ethers :: contract :: EthDisplay,
+        Default,
+    )]
+    #[ethcall(name = "coins", abi = "coins(bytes32)")]
+    pub struct CoinsCall(pub [u8; 32]);
     #[doc = "Container type for all input parameters for the `headerLimbo` function with signature `headerLimbo(bytes32)` and selector `[174, 86, 122, 75]`"]
     #[derive(
         Clone,
@@ -832,7 +821,7 @@ pub mod i_themelio_bridge {
         pub operator: ethers::core::types::Address,
         pub approved: bool,
     }
-    #[doc = "Container type for all input parameters for the `spends` function with signature `spends(bytes32)` and selector `[253, 54, 125, 240]`"]
+    #[doc = "Container type for all input parameters for the `stakesHashes` function with signature `stakesHashes(bytes32)` and selector `[125, 93, 199, 200]`"]
     #[derive(
         Clone,
         Debug,
@@ -842,8 +831,8 @@ pub mod i_themelio_bridge {
         ethers :: contract :: EthDisplay,
         Default,
     )]
-    #[ethcall(name = "spends", abi = "spends(bytes32)")]
-    pub struct SpendsCall(pub [u8; 32]);
+    #[ethcall(name = "stakesHashes", abi = "stakesHashes(bytes32)")]
+    pub struct StakesHashesCall(pub [u8; 32]);
     #[doc = "Container type for all input parameters for the `supportsInterface` function with signature `supportsInterface(bytes4)` and selector `[1, 255, 201, 167]`"]
     #[derive(
         Clone,
@@ -899,7 +888,7 @@ pub mod i_themelio_bridge {
     )]
     #[ethcall(name = "uri", abi = "uri(uint256)")]
     pub struct UriCall(pub ethers::core::types::U256);
-    #[doc = "Container type for all input parameters for the `verifyHeader` function with signature `verifyHeader(uint256,bytes,bytes,bytes32[],bool)` and selector `[112, 60, 251, 240]`"]
+    #[doc = "Container type for all input parameters for the `verifyHeader` function with signature `verifyHeader(uint256,bytes,bytes,bytes32[])` and selector `[34, 22, 188, 188]`"]
     #[derive(
         Clone,
         Debug,
@@ -911,14 +900,13 @@ pub mod i_themelio_bridge {
     )]
     #[ethcall(
         name = "verifyHeader",
-        abi = "verifyHeader(uint256,bytes,bytes,bytes32[],bool)"
+        abi = "verifyHeader(uint256,bytes,bytes,bytes32[])"
     )]
     pub struct VerifyHeaderCall {
         pub verifier_height: ethers::core::types::U256,
         pub header: ethers::core::types::Bytes,
         pub stakes: ethers::core::types::Bytes,
         pub signatures: ::std::vec::Vec<[u8; 32]>,
-        pub first_time: bool,
     }
     #[doc = "Container type for all input parameters for the `verifyStakes` function with signature `verifyStakes(bytes)` and selector `[108, 15, 217, 76]`"]
     #[derive(
@@ -957,6 +945,7 @@ pub mod i_themelio_bridge {
         BalanceOfBatch(BalanceOfBatchCall),
         Burn(BurnCall),
         BurnBatch(BurnBatchCall),
+        Coins(CoinsCall),
         HeaderLimbo(HeaderLimboCall),
         Headers(HeadersCall),
         Initialize(InitializeCall),
@@ -965,7 +954,7 @@ pub mod i_themelio_bridge {
         SafeBatchTransferFrom(SafeBatchTransferFromCall),
         SafeTransferFrom(SafeTransferFromCall),
         SetApprovalForAll(SetApprovalForAllCall),
-        Spends(SpendsCall),
+        StakesHashes(StakesHashesCall),
         SupportsInterface(SupportsInterfaceCall),
         UpgradeTo(UpgradeToCall),
         UpgradeToAndCall(UpgradeToAndCallCall),
@@ -995,6 +984,10 @@ pub mod i_themelio_bridge {
                 <BurnBatchCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
                 return Ok(IThemelioBridgeCalls::BurnBatch(decoded));
+            }
+            if let Ok(decoded) = <CoinsCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
+            {
+                return Ok(IThemelioBridgeCalls::Coins(decoded));
             }
             if let Ok(decoded) =
                 <HeaderLimboCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
@@ -1036,9 +1029,10 @@ pub mod i_themelio_bridge {
             {
                 return Ok(IThemelioBridgeCalls::SetApprovalForAll(decoded));
             }
-            if let Ok(decoded) = <SpendsCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
+            if let Ok(decoded) =
+                <StakesHashesCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
-                return Ok(IThemelioBridgeCalls::Spends(decoded));
+                return Ok(IThemelioBridgeCalls::StakesHashes(decoded));
             }
             if let Ok(decoded) =
                 <SupportsInterfaceCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
@@ -1083,6 +1077,7 @@ pub mod i_themelio_bridge {
                 IThemelioBridgeCalls::BalanceOfBatch(element) => element.encode(),
                 IThemelioBridgeCalls::Burn(element) => element.encode(),
                 IThemelioBridgeCalls::BurnBatch(element) => element.encode(),
+                IThemelioBridgeCalls::Coins(element) => element.encode(),
                 IThemelioBridgeCalls::HeaderLimbo(element) => element.encode(),
                 IThemelioBridgeCalls::Headers(element) => element.encode(),
                 IThemelioBridgeCalls::Initialize(element) => element.encode(),
@@ -1091,7 +1086,7 @@ pub mod i_themelio_bridge {
                 IThemelioBridgeCalls::SafeBatchTransferFrom(element) => element.encode(),
                 IThemelioBridgeCalls::SafeTransferFrom(element) => element.encode(),
                 IThemelioBridgeCalls::SetApprovalForAll(element) => element.encode(),
-                IThemelioBridgeCalls::Spends(element) => element.encode(),
+                IThemelioBridgeCalls::StakesHashes(element) => element.encode(),
                 IThemelioBridgeCalls::SupportsInterface(element) => element.encode(),
                 IThemelioBridgeCalls::UpgradeTo(element) => element.encode(),
                 IThemelioBridgeCalls::UpgradeToAndCall(element) => element.encode(),
@@ -1109,6 +1104,7 @@ pub mod i_themelio_bridge {
                 IThemelioBridgeCalls::BalanceOfBatch(element) => element.fmt(f),
                 IThemelioBridgeCalls::Burn(element) => element.fmt(f),
                 IThemelioBridgeCalls::BurnBatch(element) => element.fmt(f),
+                IThemelioBridgeCalls::Coins(element) => element.fmt(f),
                 IThemelioBridgeCalls::HeaderLimbo(element) => element.fmt(f),
                 IThemelioBridgeCalls::Headers(element) => element.fmt(f),
                 IThemelioBridgeCalls::Initialize(element) => element.fmt(f),
@@ -1117,7 +1113,7 @@ pub mod i_themelio_bridge {
                 IThemelioBridgeCalls::SafeBatchTransferFrom(element) => element.fmt(f),
                 IThemelioBridgeCalls::SafeTransferFrom(element) => element.fmt(f),
                 IThemelioBridgeCalls::SetApprovalForAll(element) => element.fmt(f),
-                IThemelioBridgeCalls::Spends(element) => element.fmt(f),
+                IThemelioBridgeCalls::StakesHashes(element) => element.fmt(f),
                 IThemelioBridgeCalls::SupportsInterface(element) => element.fmt(f),
                 IThemelioBridgeCalls::UpgradeTo(element) => element.fmt(f),
                 IThemelioBridgeCalls::UpgradeToAndCall(element) => element.fmt(f),
@@ -1146,6 +1142,11 @@ pub mod i_themelio_bridge {
     impl ::std::convert::From<BurnBatchCall> for IThemelioBridgeCalls {
         fn from(var: BurnBatchCall) -> Self {
             IThemelioBridgeCalls::BurnBatch(var)
+        }
+    }
+    impl ::std::convert::From<CoinsCall> for IThemelioBridgeCalls {
+        fn from(var: CoinsCall) -> Self {
+            IThemelioBridgeCalls::Coins(var)
         }
     }
     impl ::std::convert::From<HeaderLimboCall> for IThemelioBridgeCalls {
@@ -1188,9 +1189,9 @@ pub mod i_themelio_bridge {
             IThemelioBridgeCalls::SetApprovalForAll(var)
         }
     }
-    impl ::std::convert::From<SpendsCall> for IThemelioBridgeCalls {
-        fn from(var: SpendsCall) -> Self {
-            IThemelioBridgeCalls::Spends(var)
+    impl ::std::convert::From<StakesHashesCall> for IThemelioBridgeCalls {
+        fn from(var: StakesHashesCall) -> Self {
+            IThemelioBridgeCalls::StakesHashes(var)
         }
     }
     impl ::std::convert::From<SupportsInterfaceCall> for IThemelioBridgeCalls {
@@ -1250,6 +1251,21 @@ pub mod i_themelio_bridge {
         Default,
     )]
     pub struct BalanceOfBatchReturn(pub ::std::vec::Vec<ethers::core::types::U256>);
+    #[doc = "Container type for all return fields from the `coins` function with signature `coins(bytes32)` and selector `[59, 26, 253, 31]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthAbiType,
+        ethers :: contract :: EthAbiCodec,
+        Default,
+    )]
+    pub struct CoinsReturn {
+        pub denom: ethers::core::types::U256,
+        pub value: ethers::core::types::U256,
+        pub status: [u8; 32],
+    }
     #[doc = "Container type for all return fields from the `headerLimbo` function with signature `headerLimbo(bytes32)` and selector `[174, 86, 122, 75]`"]
     #[derive(
         Clone,
@@ -1301,7 +1317,7 @@ pub mod i_themelio_bridge {
         Default,
     )]
     pub struct ProxiableUUIDReturn(pub [u8; 32]);
-    #[doc = "Container type for all return fields from the `spends` function with signature `spends(bytes32)` and selector `[253, 54, 125, 240]`"]
+    #[doc = "Container type for all return fields from the `stakesHashes` function with signature `stakesHashes(bytes32)` and selector `[125, 93, 199, 200]`"]
     #[derive(
         Clone,
         Debug,
@@ -1311,7 +1327,7 @@ pub mod i_themelio_bridge {
         ethers :: contract :: EthAbiCodec,
         Default,
     )]
-    pub struct SpendsReturn(pub bool);
+    pub struct StakesHashesReturn(pub [u8; 32]);
     #[doc = "Container type for all return fields from the `supportsInterface` function with signature `supportsInterface(bytes4)` and selector `[1, 255, 201, 167]`"]
     #[derive(
         Clone,
@@ -1334,7 +1350,7 @@ pub mod i_themelio_bridge {
         Default,
     )]
     pub struct UriReturn(pub String);
-    #[doc = "Container type for all return fields from the `verifyHeader` function with signature `verifyHeader(uint256,bytes,bytes,bytes32[],bool)` and selector `[112, 60, 251, 240]`"]
+    #[doc = "Container type for all return fields from the `verifyHeader` function with signature `verifyHeader(uint256,bytes,bytes,bytes32[])` and selector `[34, 22, 188, 188]`"]
     #[derive(
         Clone,
         Debug,
