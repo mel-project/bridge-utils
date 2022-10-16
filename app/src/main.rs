@@ -28,6 +28,7 @@ use ethers::{
     providers::Provider,
     signers::Signer,
     abi::Token,
+    utils::keccak256,
 };
 use ethers::types::{
     Address as EthersAddress,
@@ -935,8 +936,16 @@ async fn get_proof(proof_args: ProofArgs) -> Result<()> {
 
     let provider = Provider::<Http>::try_from(config.rpc)
         .expect("Provider unable to be instantiated.");
+println!("og hash: {:?}", keccak256([proof_args.tx_hash.as_bytes(), proof_args.coins_slot.as_bytes()].concat()));
+    let location = U256::from(keccak256([proof_args.tx_hash.as_bytes(), proof_args.coins_slot.as_bytes()].concat())) + 2;
+println!("after add: {}", location);
 
-    let locations: Vec<H256> = vec!();
+    let location: Vec<u8> = (0..32).map(|idx| {
+        location.byte(idx)
+    }).rev()
+    .collect();
+
+    let locations: Vec<H256> = vec!(H256::from_slice(&location));
 
     let proof = provider.get_proof(proof_args.contract_address, locations, proof_args.block)
         .await?;
