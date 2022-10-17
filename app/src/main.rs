@@ -9,6 +9,7 @@ use std::{
 use bindings::themelio_bridge::ThemelioBridge;
 use clap::Parser;
 use dotenv::dotenv;
+use ethers::abi::{ethereum_types::BigEndianHash, Token};
 use ethers::prelude::*;
 use ethers::prelude::k256::ecdsa::SigningKey;
 use ethers::utils::*;
@@ -27,7 +28,6 @@ use ethers_solc::{
 use ethers::{
     providers::Provider,
     signers::Signer,
-    abi::Token,
     utils::keccak256,
 };
 use ethers::types::{
@@ -37,12 +37,13 @@ use ethers::types::{
     U256
 };
 use eyre::Result;
+use novasmt::dense::DenseMerkleTree;
 use rand::Rng;
 use rayon::iter::{
     IntoParallelIterator,
     ParallelIterator
 };
-use novasmt::dense::DenseMerkleTree;
+use serde::{Deserialize, Serialize};
 use themelio_structs::{
     Address as ThemelioAddress,
     BlockHeight,
@@ -113,6 +114,19 @@ struct ProofArgs {
     tx_hash: H256,
     coins_slot: H256,
     block: Option<BlockId>
+}
+
+
+#[derive(Debug, Default, Clone, PartialEq, Eq, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PubEIP1186ProofResponse {
+    address: Address,
+    balance: U256,
+    code_hash: H256,
+    nonce: U256,
+    storage_hash: H256,
+    account_proof: Vec<Bytes>,
+    storage_proof: Vec<StorageProof>,
 }
 
 const COINS_SLOT: H256 = H256([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 254]);
@@ -930,29 +944,27 @@ async fn test_e2e(num_stakedocs: u32, num_transactions: u32, themelio_recipient:
     Ok(proof_args)
 }
 
-async fn get_proof(proof_args: ProofArgs) -> Result<()> {
+async fn get_proof(proof_args: ProofArgs) -> Result<Vec<u8>, eyre::Error> {
     let config = Config::new()
         .expect("Error initializing configuration.");
 
     let provider = Provider::<Http>::try_from(config.rpc)
         .expect("Provider unable to be instantiated.");
-println!("og hash: {:?}", keccak256([proof_args.tx_hash.as_bytes(), proof_args.coins_slot.as_bytes()].concat()));
+
     let location = U256::from(keccak256([proof_args.tx_hash.as_bytes(), proof_args.coins_slot.as_bytes()].concat())) + 2;
-println!("after add: {}", location);
 
-    let location: Vec<u8> = (0..32).map(|idx| {
-        location.byte(idx)
-    }).rev()
-    .collect();
-
-    let locations: Vec<H256> = vec!(H256::from_slice(&location));
+    let locations: Vec<H256> = vec!(H256::from_uint(&location));
 
     let proof = provider.get_proof(proof_args.contract_address, locations, proof_args.block)
         .await?;
 
-    println!("{:#?}", proof);
+    let pub_proof: PubEIP1186ProofResponse = stdcode::deserialize(&stdcode::serialize(&proof)?)?;
 
-    Ok(())
+    let account_proof = pub_proof.account_proof.concat();
+    let storage_proof = pub_proof.storage_proof[0].proof.concat();
+    let total_proof = [account_proof, storage_proof].concat();
+
+    Ok(total_proof)
 }
 
 #[tokio::main]
@@ -981,12 +993,11 @@ async fn main() -> Result<()> {
         .try_into()
         .expect("Expected an address of length 32");
 
-    let result = test_e2e(num_stakedocs, num_transactions, themelio_recipient).await;
+    let proof_args = test_e2e(num_stakedocs, num_transactions, themelio_recipient)
+        .await
+        .expect("Error in e2e test.");
 
-    match result {
-        Ok(proof_args) => get_proof(proof_args).await?,
-        Err(err) => println!("{:?}", err)
-    };
+    let proof = get_proof(proof_args).await?;
 
     Ok(())
 }
