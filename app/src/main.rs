@@ -2,6 +2,8 @@ use std::{
     convert::TryFrom,
     env,
     fs,
+    fs::File,
+    io::{Read, Write},
     ops::Range,
     path::Path,
     sync::Arc,
@@ -43,6 +45,7 @@ use rayon::iter::{
     IntoParallelIterator,
     ParallelIterator
 };
+use regex::Regex;
 use serde::{Deserialize, Serialize};
 use themelio_structs::{
     Address as ThemelioAddress,
@@ -109,13 +112,14 @@ struct Args {
     themelio_recipient: String
 }
 
-struct ProofArgs {
+struct ProofVars {
+    coins_slot: H256,
     contract_address: EthersAddress,
     tx_hash: H256,
-    coins_slot: H256,
-    block: Option<BlockId>
+    coin: CoinData,
+    state_root: [u8; 32],
+    block: Option<BlockId>,
 }
-
 
 #[derive(Debug, Default, Clone, PartialEq, Eq, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -132,87 +136,24 @@ pub struct PubEIP1186ProofResponse {
 const COINS_SLOT: H256 = H256([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 254]);
 
 fn random_header(modifier: u128) -> Header {
-    if modifier == 0 {
+    if modifier == 0 || modifier == u8::MAX as u128 || modifier == u16::MAX as u128 || modifier == u32::MAX as u128 ||
+        modifier == u32::MAX as u128 || modifier == u64::MAX as u128 || modifier == u128::MAX {
+        let block_height = if modifier > u64::MAX as u128 {
+            u64::MAX
+        } else {
+            modifier as u64
+        };
+
         Header {
             network: NetID::Mainnet,
             previous: HashVal::random(),
-            height: BlockHeight(u64::MIN),
+            height: BlockHeight(block_height),
             history_hash: HashVal::random(),
             coins_hash: HashVal::random(),
             transactions_hash: HashVal::random(),
-            fee_pool: CoinValue(u128::MIN),
-            fee_multiplier: u128::MIN,
-            dosc_speed: u128::MIN,
-            pools_hash: HashVal::random(),
-            stakes_hash: HashVal::random(),
-        }
-    } else if modifier == <u8 as Into<u128>>::into(u8::MAX) {
-        Header {
-            network: NetID::Mainnet,
-            previous: HashVal::random(),
-            height: BlockHeight(u8::MAX.into()),
-            history_hash: HashVal::random(),
-            coins_hash: HashVal::random(),
-            transactions_hash: HashVal::random(),
-            fee_pool: CoinValue(u8::MAX.into()),
-            fee_multiplier: u8::MAX.into(),
-            dosc_speed: u8::MAX.into(),
-            pools_hash: HashVal::random(),
-            stakes_hash: HashVal::random(),
-        }
-    } else if modifier == <u16 as Into<u128>>::into(u16::MAX) {
-        Header {
-            network: NetID::Mainnet,
-            previous: HashVal::random(),
-            height: BlockHeight(u16::MAX.into()),
-            history_hash: HashVal::random(),
-            coins_hash: HashVal::random(),
-            transactions_hash: HashVal::random(),
-            fee_pool: CoinValue(u16::MAX.into()),
-            fee_multiplier: u16::MAX.into(),
-            dosc_speed: u16::MAX.into(),
-            pools_hash: HashVal::random(),
-            stakes_hash: HashVal::random(),
-        }
-    } else if modifier == <u32 as Into<u128>>::into(u32::MAX) {
-        Header {
-            network: NetID::Mainnet,
-            previous: HashVal::random(),
-            height: BlockHeight(u32::MAX.into()),
-            history_hash: HashVal::random(),
-            coins_hash: HashVal::random(),
-            transactions_hash: HashVal::random(),
-            fee_pool: CoinValue(u32::MAX.into()),
-            fee_multiplier: u32::MAX.into(),
-            dosc_speed: u32::MAX.into(),
-            pools_hash: HashVal::random(),
-            stakes_hash: HashVal::random(),
-        }
-    } else if modifier == <u64 as Into<u128>>::into(u64::MAX) {
-        Header {
-            network: NetID::Mainnet,
-            previous: HashVal::random(),
-            height: BlockHeight(u64::MAX),
-            history_hash: HashVal::random(),
-            coins_hash: HashVal::random(),
-            transactions_hash: HashVal::random(),
-            fee_pool: CoinValue(u64::MAX.into()),
-            fee_multiplier: u64::MAX.into(),
-            dosc_speed: u64::MAX.into(),
-            pools_hash: HashVal::random(),
-            stakes_hash: HashVal::random(),
-        }
-    } else if modifier == u128::MAX {
-        Header {
-            network: NetID::Mainnet,
-            previous: HashVal::random(),
-            height: BlockHeight(u64::MAX),
-            history_hash: HashVal::random(),
-            coins_hash: HashVal::random(),
-            transactions_hash: HashVal::random(),
-            fee_pool: CoinValue(u128::MAX),
-            fee_multiplier: u128::MAX,
-            dosc_speed: u128::MAX,
+            fee_pool: CoinValue(modifier),
+            fee_multiplier: modifier,
+            dosc_speed: modifier,
             pools_hash: HashVal::random(),
             stakes_hash: HashVal::random(),
         }
@@ -800,7 +741,7 @@ async fn setup_bridge_proxy(
     wrapped_bridge_proxy
 }
 
-async fn test_e2e(num_stakedocs: u32, num_transactions: u32, themelio_recipient: [u8; 32]) -> Result<ProofArgs, eyre::Error> {
+async fn test_e2e(num_stakedocs: u32, num_transactions: u32, themelio_recipient: [u8; 32]) -> Result<ProofVars, eyre::Error> {
     let config = Config::new().unwrap();
 
     let cross_epoch: bool = rand::thread_rng().gen();
@@ -837,7 +778,7 @@ async fn test_e2e(num_stakedocs: u32, num_transactions: u32, themelio_recipient:
         .get(index)
         .ok_or("Unable to get tx datablock to prove.")
         .expect("Error getting tx to prove.");
-    println!("{:?}\n", tx_to_prove);
+    println!("{:#?}\n", tx_to_prove);
 
     let denom = tx_to_prove
         .outputs[0]
@@ -934,17 +875,19 @@ async fn test_e2e(num_stakedocs: u32, num_transactions: u32, themelio_recipient:
     let receipt = pending_tx.await?;
     println!("\n***** burn() receipt *****\n{:#?}\n********************\n", receipt.unwrap());
 
-    let proof_args = ProofArgs{
+    let proof_args = ProofVars{
+        coins_slot: COINS_SLOT,
         contract_address: wrapped_bridge_proxy.address(),
         tx_hash: H256(tx_hash),
-        coins_slot: COINS_SLOT,
+        coin: tx_to_prove.outputs[0].clone(),
+        state_root: root,
         block: None,
     };
 
     Ok(proof_args)
 }
 
-async fn get_proof(proof_args: ProofArgs) -> Result<Vec<u8>, eyre::Error> {
+async fn get_proof(proof_args: &ProofVars) -> Result<Vec<u8>, eyre::Error> {
     let config = Config::new()
         .expect("Error initializing configuration.");
 
@@ -967,37 +910,88 @@ async fn get_proof(proof_args: ProofArgs) -> Result<Vec<u8>, eyre::Error> {
     Ok(total_proof)
 }
 
+fn write_to_cov(proof_vars: &ProofVars) -> Result<(), eyre::Error> {
+    let cov_filename = String::from("covenants/bridge.melo");
+    let cov_path = Path::new(&cov_filename);
+    let mut cov = File::open(cov_path)?;
+    let mut cov_contents = String::new();
+    cov.read_to_string(&mut cov_contents)?;
+    drop(cov);
+
+    // find "eth_bridge_addr" value and replace with proof_vars.contract_address
+    let addr_re = Regex::new(r#"let eth_bridge_addr = x"([\da-f]{40})" in"#)?;
+
+    let caps = addr_re.captures(&cov_contents)
+        .expect("Error with capture.");
+
+    let cov_contents = cov_contents.replace(caps.get(1).unwrap().as_str(), &hex::encode(proof_vars.contract_address));
+
+    // find "def get_state_root() =" idx and replace with state_root
+    let root_re = Regex::new(r#"def get_state_root(): Hash =
+    "([\da-f]{64})""#)?;
+
+    let caps = root_re.captures(&cov_contents)
+        .expect("Error with capture.");
+
+    let cov_contents = cov_contents.replace(caps.get(1).unwrap().as_str(), &hex::encode(proof_vars.state_root));
+
+    // repeat with context.yaml and spender_outputs: 0:, parent_denom:, parent_value:, and parent_fake_txhash:
+
+    let mut new_cov = File::create(cov_path)?;
+    new_cov.write(cov_contents.as_bytes())?;
+
+
+    Ok(())
+}
+
 #[tokio::main]
 async fn main() -> Result<()> {
-    let args = Args::parse();
+    // let args = Args::parse();
 
-    let num_stakedocs: u32 = args
-        .num_stakedocs
-        .parse()
-        .expect("Please include '--num-stakedocs <int>' flag.");
+    // let num_stakedocs: u32 = args
+    //     .num_stakedocs
+    //     .parse()
+    //     .expect("Please include '--num-stakedocs <int>' flag.");
 
-    let num_transactions: u32 = args
-        .num_transactions
-        .parse()
-        .expect("Please include '--num-transactions <int>' flag.");
+    // let num_transactions: u32 = args
+    //     .num_transactions
+    //     .parse()
+    //     .expect("Please include '--num-transactions <int>' flag.");
 
-    let themelio_recipient: String = args
-        .themelio_recipient
-        .parse::<String>()
-        .expect("Please include '--themelio-recipient <address>' flag.")
-        .strip_prefix("0x")
-        .expect("Address must start with '0x'.")
-        .to_string();
-    let themelio_recipient: [u8; 32] = hex::decode(themelio_recipient)
-        .expect("Invalid Themelio recipient address.")
-        .try_into()
-        .expect("Expected an address of length 32");
+    // let themelio_recipient: String = args
+    //     .themelio_recipient
+    //     .parse::<String>()
+    //     .expect("Please include '--themelio-recipient <address>' flag.")
+    //     .strip_prefix("0x")
+    //     .expect("Address must start with '0x'.")
+    //     .to_string();
+    // let themelio_recipient: [u8; 32] = hex::decode(themelio_recipient)
+    //     .expect("Invalid Themelio recipient address.")
+    //     .try_into()
+    //     .expect("Expected an address of length 32");
 
-    let proof_args = test_e2e(num_stakedocs, num_transactions, themelio_recipient)
-        .await
-        .expect("Error in e2e test.");
+    // let proof_args = test_e2e(num_stakedocs, num_transactions, themelio_recipient)
+    //     .await
+    //     .expect("Error in e2e test.");
 
-    let proof = get_proof(proof_args).await?;
+    // let proof = get_proof(&proof_args).await?;
+
+    // println!("{:#?}", proof);
+    let proof_vars = ProofVars{
+        coins_slot: COINS_SLOT,
+        tx_hash: H256(HashVal::random().0),
+        contract_address: H160([0u8; 20]),
+        coin: CoinData{
+            covhash: ThemelioAddress(HashVal::random()),
+            value: CoinValue(0),
+            denom: Denom::Mel,
+            additional_data: vec!(),
+        },
+        state_root: [0u8; 32],
+        block: None,
+    };
+
+    write_to_cov(&proof_vars)?;
 
     Ok(())
 }
