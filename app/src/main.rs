@@ -109,13 +109,12 @@ struct Args {
     themelio_recipient: String
 }
 
-struct ProofVars {
+struct ProofArgs {
     coins_slot: H256,
     contract_address: EthersAddress,
     tx_hash: H256,
     coin: CoinData,
-    state_root: [u8; 32],
-    block: Option<BlockId>,
+    block_id: BlockId,
 }
 
 #[derive(Debug, Default, Clone, PartialEq, Eq, Deserialize, Serialize)]
@@ -741,7 +740,7 @@ async fn setup_bridge_proxy(
     wrapped_bridge_proxy
 }
 
-async fn test_e2e(num_stakedocs: u32, num_transactions: u32, themelio_recipient: [u8; 32]) -> Result<ProofVars, eyre::Error> {
+async fn test_e2e(num_stakedocs: u32, num_transactions: u32, themelio_recipient: [u8; 32]) -> Result<ProofArgs, eyre::Error> {
     let config = Config::new().unwrap();
 
     let cross_epoch: bool = rand::thread_rng().gen();
@@ -842,52 +841,91 @@ async fn test_e2e(num_stakedocs: u32, num_transactions: u32, themelio_recipient:
     );
     println!("Stakes Hash: {}\n", stakes_hash);
 
-    let wrapped_bridge_proxy = setup_bridge_proxy(genesis_header.height.0, vec!(0 as u8; 32), stakes_hash.as_bytes().to_vec()).await;
+    let wrapped_bridge_proxy = setup_bridge_proxy(genesis_header.height.0, vec!(0 as u8; 32), stakes_hash.as_bytes().to_vec())
+        .await;
 
     // send tx to verifyStakes()
-    let call = wrapped_bridge_proxy
+    let stakes_call = wrapped_bridge_proxy
         .verify_stakes(stakes.clone())
         .gas(GAS_LIMIT);
-    let pending_tx = call.send().await?;
-    let receipt = pending_tx.await?;
-    println!("\n*** verifyStakers() receipt ***\n{:#?}\n********************\n", receipt.unwrap());
+    let stakes_pending_tx = stakes_call
+        .send()
+        .await?;
+    let stakes_receipt = stakes_pending_tx
+        .await?
+        .expect("Error with verifyStakes() call.");
+    println!("\n*** verifyStakers() receipt ***\n{:#?}\n********************\n", stakes_receipt);
 
     // send tx to verifyHeader
-    let call = wrapped_bridge_proxy
+    let header_call = wrapped_bridge_proxy
         .verify_header(U256::from(genesis_header.height.0), serialized_header_bytes, stakes.clone(), signatures)
         .gas(GAS_LIMIT);
-    let pending_tx = call.send().await?;
-    let receipt = pending_tx.await?;
-    println!("\n***** verifyHeader() receipt *****\n{:#?}\n********************\n", receipt.unwrap());
+    let header_pending_tx = header_call
+        .send()
+        .await?;
+    let header_receipt = header_pending_tx
+        .await?
+        .expect("Error with verifyHeader() call.");
+    println!("\n***** verifyHeader() receipt *****\n{:#?}\n********************\n", header_receipt);
 
     // send tx to verifyTx()
-    let call = wrapped_bridge_proxy
+    let tx_call = wrapped_bridge_proxy
         .verify_tx(serialized_tx, U256::from(index), U256::from(header.height.0), proof)
         .gas(GAS_LIMIT);
-    let pending_tx = call.send().await?;
-    let receipt = pending_tx.await?;
-    println!("\n***** verifyTx() receipt *****\n{:#?}\n********************\n", receipt.unwrap());
+    let tx_pending_tx = tx_call
+        .send()
+        .await?;
+    let tx_receipt = tx_pending_tx
+        .await?
+        .expect("Error with verifyTx() call.");
+    println!("\n***** verifyTx() receipt *****\n{:#?}\n********************\n", tx_receipt);
 
     // send tx to burn()
-    let call = wrapped_bridge_proxy.burn(config.wallet.address(), tx_hash, themelio_recipient)
+    let burn_call = wrapped_bridge_proxy
+        .burn(config.wallet.address(), tx_hash, themelio_recipient)
         .gas(GAS_LIMIT);
-    let pending_tx = call.send().await?;
-    let receipt = pending_tx.await?;
-    println!("\n***** burn() receipt *****\n{:#?}\n********************\n", receipt.unwrap());
+    let burn_pending_tx = burn_call
+        .send()
+        .await?;
+    let burn_receipt = burn_pending_tx
+        .await?
+        .unwrap();
+    println!("\n***** burn() receipt *****\n{:#?}\n********************\n", &burn_receipt);
 
-    let proof_args = ProofVars{
+    let proof_args = ProofArgs{
         coins_slot: COINS_SLOT,
         contract_address: wrapped_bridge_proxy.address(),
         tx_hash: H256(tx_hash),
         coin: tx_to_prove.outputs[0].clone(),
-        state_root: root,
-        block: None,
+        block_id: BlockId::Number(
+            BlockNumber::Number(
+                burn_receipt.block_number
+                    .expect("Error unwrapping block height.")
+            )
+        ),
     };
 
     Ok(proof_args)
 }
 
-async fn get_proof(proof_args: &ProofVars) -> Result<Vec<u8>, eyre::Error> {
+async fn get_state_root(block_height: BlockId) -> H256 {
+    let config = Config::new()
+        .expect("error initializing configuration.");
+
+    let provider = Provider::<Http>::try_from(config.rpc)
+        .expect("Provider unable to be instantiated.");
+
+    let block = provider.get_block(block_height)
+        .await
+        .expect("Error getting block information.")
+        .expect("Error unwrapping block info.");
+
+    let state_root = block.state_root;
+
+    state_root
+}
+
+async fn get_proof(proof_args: &ProofArgs) -> Result<Vec<u8>, eyre::Error> {
     let config = Config::new()
         .expect("Error initializing configuration.");
 
@@ -898,8 +936,10 @@ async fn get_proof(proof_args: &ProofVars) -> Result<Vec<u8>, eyre::Error> {
 
     let locations: Vec<H256> = vec!(H256::from_uint(&location));
 
-    let proof = provider.get_proof(proof_args.contract_address, locations, proof_args.block)
+    let proof = provider.get_proof(proof_args.contract_address, locations, Some(proof_args.block_id))
         .await?;
+
+    println!("{:#?}\n", proof);
 
     let pub_proof: PubEIP1186ProofResponse = stdcode::deserialize(&stdcode::serialize(&proof)?)?;
 
@@ -910,7 +950,7 @@ async fn get_proof(proof_args: &ProofVars) -> Result<Vec<u8>, eyre::Error> {
     Ok(total_proof)
 }
 
-fn write_to_cov(proof_vars: &ProofVars) -> Result<(), eyre::Error> {
+fn write_to_cov(proof_args: &ProofArgs, state_root: H256) -> Result<(), eyre::Error> {
     let cov_filename = String::from("covenants/bridge.melo");
     let cov_path = Path::new(&cov_filename);
     let mut cov = File::open(cov_path)?;
@@ -918,15 +958,23 @@ fn write_to_cov(proof_vars: &ProofVars) -> Result<(), eyre::Error> {
     cov.read_to_string(&mut cov_contents)?;
     drop(cov);
 
-    // find "eth_bridge_addr" value and replace with proof_vars.contract_address
+    // find "eth_bridge_addr" value and replace with proof_args.contract_address
     let addr_re = Regex::new(r#"eth_bridge_addr = x"([\da-f]{40})"#)?;
 
-    let cov_contents = addr_re.replace(&cov_contents, String::from("eth_bridge_addr = x\"") + &hex::encode(proof_vars.contract_address.as_bytes()));
+    let cov_contents = addr_re
+        .replace(
+            &cov_contents,
+            String::from("eth_bridge_addr = x\"") + &hex::encode(proof_args.contract_address.as_bytes())
+        );
 
     // find "def get_state_root() =" and replace with state_root
     let root_re = Regex::new(r#"get_state_root\(\): Hash =\s+x"([\da-f]+)"#)?;
 
-    let cov_contents = root_re.replace(&cov_contents, String::from("get_state_root(): Hash =\n\tx\"") + &hex::encode(proof_vars.state_root));
+    let cov_contents = root_re
+        .replace(
+            &cov_contents,
+            String::from("get_state_root(): Hash =\n\tx\"") + &hex::encode(state_root)
+        );
 
     // write updated contents to bridge.melo
     let mut new_cov = File::create(cov_path)?;
@@ -979,7 +1027,12 @@ async fn main() -> Result<()> {
         .await
         .expect("Error in e2e test.");
 
-    write_to_cov(&proof_vars)?;
+    let state_root = get_state_root(proof_vars.block_id)
+        .await;
+
+    println!("State root at proof height {:?} : {:#?}\n********************\n", proof_vars.block_id, state_root);
+
+    write_to_cov(&proof_vars, state_root)?;
 
     let mut coin = proof_vars.coin.clone();
     let proof = get_proof(&proof_vars).await?;
