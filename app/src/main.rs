@@ -39,6 +39,7 @@ use ethers::types::{
     U256
 };
 use eyre::Result;
+use melorun::{SpendContext};
 use novasmt::dense::DenseMerkleTree;
 use rand::Rng;
 use rayon::iter::{
@@ -66,10 +67,6 @@ use tmelcrypt::{
     Ed25519PK,
     HashVal,
 };
-
-const BRIDGE_COVHASH: ThemelioAddress = ThemelioAddress(HashVal([0; 32]));
-const DATA_BLOCK_HASH_KEY: &[u8; 13] = b"smt_datablock";
-const GAS_LIMIT: u32 = 29_000_000;
 
 struct Config {
     pub wallet: LocalWallet,
@@ -133,7 +130,10 @@ pub struct PubEIP1186ProofResponse {
     storage_proof: Vec<StorageProof>,
 }
 
+const BRIDGE_COVHASH: ThemelioAddress = ThemelioAddress(HashVal([0; 32]));
 const COINS_SLOT: H256 = H256([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 254]);
+const DATA_BLOCK_HASH_KEY: &[u8; 13] = b"smt_datablock";
+const GAS_LIMIT: u32 = 29_000_000;
 
 fn random_header(modifier: u128) -> Header {
     if modifier == 0 || modifier == u8::MAX as u128 || modifier == u16::MAX as u128 || modifier == u32::MAX as u128 ||
@@ -778,7 +778,7 @@ async fn test_e2e(num_stakedocs: u32, num_transactions: u32, themelio_recipient:
         .get(index)
         .ok_or("Unable to get tx datablock to prove.")
         .expect("Error getting tx to prove.");
-    println!("{:#?}\n", tx_to_prove);
+    println!("{:?}\n", tx_to_prove);
 
     let denom = tx_to_prove
         .outputs[0]
@@ -919,79 +919,73 @@ fn write_to_cov(proof_vars: &ProofVars) -> Result<(), eyre::Error> {
     drop(cov);
 
     // find "eth_bridge_addr" value and replace with proof_vars.contract_address
-    let addr_re = Regex::new(r#"let eth_bridge_addr = x"([\da-f]{40})" in"#)?;
+    let addr_re = Regex::new(r#"eth_bridge_addr = x"([\da-f]{40})"#)?;
 
-    let caps = addr_re.captures(&cov_contents)
-        .expect("Error with capture.");
+    let cov_contents = addr_re.replace(&cov_contents, String::from("eth_bridge_addr = x\"") + &hex::encode(proof_vars.contract_address.as_bytes()));
 
-    let cov_contents = cov_contents.replace(caps.get(1).unwrap().as_str(), &hex::encode(proof_vars.contract_address));
+    // find "def get_state_root() =" and replace with state_root
+    let root_re = Regex::new(r#"get_state_root\(\): Hash =\s+x"([\da-f]+)"#)?;
 
-    // find "def get_state_root() =" idx and replace with state_root
-    let root_re = Regex::new(r#"def get_state_root(): Hash =
-    "([\da-f]{64})""#)?;
+    let cov_contents = root_re.replace(&cov_contents, String::from("get_state_root(): Hash =\n\tx\"") + &hex::encode(proof_vars.state_root));
 
-    let caps = root_re.captures(&cov_contents)
-        .expect("Error with capture.");
-
-    let cov_contents = cov_contents.replace(caps.get(1).unwrap().as_str(), &hex::encode(proof_vars.state_root));
-
-    // repeat with context.yaml and spender_outputs: 0:, parent_denom:, parent_value:, and parent_fake_txhash:
-
+    // write updated contents to bridge.melo
     let mut new_cov = File::create(cov_path)?;
     new_cov.write(cov_contents.as_bytes())?;
 
+    Ok(())
+}
+
+fn write_to_context(coin: CoinData, tx_hash: HashVal) -> Result<(), eyre::Error> {
+    let context_filename = String::from("covenants/context.yaml");
+    let mut env_file: SpendContext = serde_yaml::from_str(&std::fs::read_to_string(&context_filename)?)?;
+
+    env_file.spender_outputs.insert(0, coin.clone());
+    env_file.parent_denom = coin.denom;
+    env_file.parent_value = coin.value;
+    env_file.parent_fake_txhash = tx_hash;
+
+    std::fs::write(&context_filename, serde_yaml::to_string(&env_file)?)?;
 
     Ok(())
 }
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    // let args = Args::parse();
+    let args = Args::parse();
 
-    // let num_stakedocs: u32 = args
-    //     .num_stakedocs
-    //     .parse()
-    //     .expect("Please include '--num-stakedocs <int>' flag.");
+    let num_stakedocs: u32 = args
+        .num_stakedocs
+        .parse()
+        .expect("Please include '--num-stakedocs <int>' flag.");
 
-    // let num_transactions: u32 = args
-    //     .num_transactions
-    //     .parse()
-    //     .expect("Please include '--num-transactions <int>' flag.");
+    let num_transactions: u32 = args
+        .num_transactions
+        .parse()
+        .expect("Please include '--num-transactions <int>' flag.");
 
-    // let themelio_recipient: String = args
-    //     .themelio_recipient
-    //     .parse::<String>()
-    //     .expect("Please include '--themelio-recipient <address>' flag.")
-    //     .strip_prefix("0x")
-    //     .expect("Address must start with '0x'.")
-    //     .to_string();
-    // let themelio_recipient: [u8; 32] = hex::decode(themelio_recipient)
-    //     .expect("Invalid Themelio recipient address.")
-    //     .try_into()
-    //     .expect("Expected an address of length 32");
+    let themelio_recipient: String = args
+        .themelio_recipient
+        .parse::<String>()
+        .expect("Please include '--themelio-recipient <address>' flag.")
+        .strip_prefix("0x")
+        .expect("Address must start with '0x'.")
+        .to_string();
+    let themelio_recipient: [u8; 32] = hex::decode(themelio_recipient)
+        .expect("Invalid Themelio recipient address.")
+        .try_into()
+        .expect("Expected an address of length 32");
 
-    // let proof_args = test_e2e(num_stakedocs, num_transactions, themelio_recipient)
-    //     .await
-    //     .expect("Error in e2e test.");
-
-    // let proof = get_proof(&proof_args).await?;
-
-    // println!("{:#?}", proof);
-    let proof_vars = ProofVars{
-        coins_slot: COINS_SLOT,
-        tx_hash: H256(HashVal::random().0),
-        contract_address: H160([0u8; 20]),
-        coin: CoinData{
-            covhash: ThemelioAddress(HashVal::random()),
-            value: CoinValue(0),
-            denom: Denom::Mel,
-            additional_data: vec!(),
-        },
-        state_root: [0u8; 32],
-        block: None,
-    };
+    let proof_vars = test_e2e(num_stakedocs, num_transactions, themelio_recipient)
+        .await
+        .expect("Error in e2e test.");
 
     write_to_cov(&proof_vars)?;
+
+    let mut coin = proof_vars.coin.clone();
+    let proof = get_proof(&proof_vars).await?;
+    coin.additional_data = proof;
+
+    write_to_context(coin, HashVal(proof_vars.tx_hash.0))?;
 
     Ok(())
 }
