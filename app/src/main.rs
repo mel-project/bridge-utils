@@ -6,6 +6,7 @@ use std::{
     io::{Read, Write},
     ops::Range,
     path::Path,
+    process::{Command, Output},
     sync::Arc,
 };
 use bindings::themelio_bridge::ThemelioBridge;
@@ -997,6 +998,17 @@ fn write_to_context(coin: CoinData, tx_hash: HashVal) -> Result<(), eyre::Error>
     Ok(())
 }
 
+fn spawn_covenant() -> Output {
+    let output = Command::new("melorun")
+        .arg("covenants/bridge.melo")
+        .arg("-s")
+        .arg("covenants/context.yaml")
+        .output()
+        .expect("Failed to execute command");
+
+    output
+}
+
 #[tokio::main]
 async fn main() -> Result<()> {
     let args = Args::parse();
@@ -1039,6 +1051,14 @@ async fn main() -> Result<()> {
     coin.additional_data = proof;
 
     write_to_context(coin, HashVal(proof_vars.tx_hash.0))?;
+
+    let output = spawn_covenant();
+
+    if output.status.success() {
+        println!("Success:\n{}", String::from_utf8(output.stdout)?);
+    } else {
+        println!("Error:\n{}", String::from_utf8(output.stderr)?);
+    }
 
     Ok(())
 }
