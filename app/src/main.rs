@@ -1042,7 +1042,7 @@ async fn main() -> Result<()> {
     let state_root = get_state_root(proof_vars.block_id)
         .await;
 
-    println!("State root at proof height {:?} : {:#?}\n********************\n", proof_vars.block_id, state_root);
+    println!("State root at proof height {:?} : {:#?}\n********************\n\n", proof_vars.block_id, state_root);
 
     write_to_cov(&proof_vars, state_root)?;
 
@@ -1055,7 +1055,7 @@ async fn main() -> Result<()> {
     let output = spawn_covenant();
 
     if output.status.success() {
-        println!("Success:\n{}", String::from_utf8(output.stdout)?);
+        println!("Success:\n{}", String::from_utf8(output.stderr)?);
     } else {
         println!("Error:\n{}", String::from_utf8(output.stderr)?);
     }
