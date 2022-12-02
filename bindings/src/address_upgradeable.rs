@@ -16,14 +16,16 @@ pub mod address_upgradeable {
     use ethers::providers::Middleware;
     #[doc = "AddressUpgradeable was auto-generated with ethers-rs Abigen. More information at: https://github.com/gakonst/ethers-rs"]
     use std::sync::Arc;
+    # [rustfmt :: skip] const __ABI : & str = "[]" ;
+    #[doc = r" The parsed JSON-ABI of the contract."]
     pub static ADDRESSUPGRADEABLE_ABI: ethers::contract::Lazy<ethers::core::abi::Abi> =
         ethers::contract::Lazy::new(|| {
-            ethers::core::utils::__serde_json::from_str("[]").expect("invalid abi")
+            ethers::core::utils::__serde_json::from_str(__ABI).expect("invalid abi")
         });
     #[doc = r" Bytecode of the #name contract"]
     pub static ADDRESSUPGRADEABLE_BYTECODE: ethers::contract::Lazy<ethers::core::types::Bytes> =
         ethers::contract::Lazy::new(|| {
-            "0x60808060405234601757603a9081601d823930815050f35b600080fdfe600080fdfea26469706673582212203de1dd7cb057dda3fa63762f6d56430aa299bd5e8ba0068bd3cf183789a9686c64736f6c634300080d0033" . parse () . expect ("invalid bytecode")
+            "0x60808060405234601757603a9081601d823930815050f35b600080fdfe600080fdfea2646970667358221220b9cfbb165daae386a409cb318ec3ae55583197bde99e66a7e0653be340ea537864736f6c63430008100033" . parse () . expect ("invalid bytecode")
         });
     pub struct AddressUpgradeable<M>(ethers::contract::Contract<M>);
     impl<M> Clone for AddressUpgradeable<M> {
@@ -37,7 +39,7 @@ pub mod address_upgradeable {
             &self.0
         }
     }
-    impl<M: Middleware> std::fmt::Debug for AddressUpgradeable<M> {
+    impl<M> std::fmt::Debug for AddressUpgradeable<M> {
         fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
             f.debug_tuple(stringify!(AddressUpgradeable))
                 .field(&self.address())

@@ -16,14 +16,16 @@ pub mod storage_slot_upgradeable {
     use ethers::providers::Middleware;
     #[doc = "StorageSlotUpgradeable was auto-generated with ethers-rs Abigen. More information at: https://github.com/gakonst/ethers-rs"]
     use std::sync::Arc;
+    # [rustfmt :: skip] const __ABI : & str = "[]" ;
+    #[doc = r" The parsed JSON-ABI of the contract."]
     pub static STORAGESLOTUPGRADEABLE_ABI: ethers::contract::Lazy<ethers::core::abi::Abi> =
         ethers::contract::Lazy::new(|| {
-            ethers::core::utils::__serde_json::from_str("[]").expect("invalid abi")
+            ethers::core::utils::__serde_json::from_str(__ABI).expect("invalid abi")
         });
     #[doc = r" Bytecode of the #name contract"]
     pub static STORAGESLOTUPGRADEABLE_BYTECODE: ethers::contract::Lazy<ethers::core::types::Bytes> =
         ethers::contract::Lazy::new(|| {
-            "0x60808060405234601757603a9081601d823930815050f35b600080fdfe600080fdfea2646970667358221220ed396a6f499a00894f0028a81d49f331e3620a6a2af1268aefa764f44382486c64736f6c634300080d0033" . parse () . expect ("invalid bytecode")
+            "0x60808060405234601757603a9081601d823930815050f35b600080fdfe600080fdfea264697066735822122077605331f9c62ea8705b40fd1f8e882d8287cb73cc26dbc8a2c54d3c2be3c78064736f6c63430008100033" . parse () . expect ("invalid bytecode")
         });
     pub struct StorageSlotUpgradeable<M>(ethers::contract::Contract<M>);
     impl<M> Clone for StorageSlotUpgradeable<M> {
@@ -37,7 +39,7 @@ pub mod storage_slot_upgradeable {
             &self.0
         }
     }
-    impl<M: Middleware> std::fmt::Debug for StorageSlotUpgradeable<M> {
+    impl<M> std::fmt::Debug for StorageSlotUpgradeable<M> {
         fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
             f.debug_tuple(stringify!(StorageSlotUpgradeable))
                 .field(&self.address())

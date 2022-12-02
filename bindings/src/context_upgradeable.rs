@@ -16,9 +16,11 @@ pub mod context_upgradeable {
     use ethers::providers::Middleware;
     #[doc = "ContextUpgradeable was auto-generated with ethers-rs Abigen. More information at: https://github.com/gakonst/ethers-rs"]
     use std::sync::Arc;
+    # [rustfmt :: skip] const __ABI : & str = "[{\"inputs\":[{\"internalType\":\"uint8\",\"name\":\"version\",\"type\":\"uint8\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"Initialized\",\"outputs\":[],\"anonymous\":false}]" ;
+    #[doc = r" The parsed JSON-ABI of the contract."]
     pub static CONTEXTUPGRADEABLE_ABI: ethers::contract::Lazy<ethers::core::abi::Abi> =
         ethers::contract::Lazy::new(|| {
-            ethers :: core :: utils :: __serde_json :: from_str ("[{\"inputs\":[{\"internalType\":\"uint8\",\"name\":\"version\",\"type\":\"uint8\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"Initialized\",\"outputs\":[],\"anonymous\":false}]") . expect ("invalid abi")
+            ethers::core::utils::__serde_json::from_str(__ABI).expect("invalid abi")
         });
     pub struct ContextUpgradeable<M>(ethers::contract::Contract<M>);
     impl<M> Clone for ContextUpgradeable<M> {
@@ -32,7 +34,7 @@ pub mod context_upgradeable {
             &self.0
         }
     }
-    impl<M: Middleware> std::fmt::Debug for ContextUpgradeable<M> {
+    impl<M> std::fmt::Debug for ContextUpgradeable<M> {
         fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
             f.debug_tuple(stringify!(ContextUpgradeable))
                 .field(&self.address())

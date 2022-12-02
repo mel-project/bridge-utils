@@ -16,9 +16,11 @@ pub mod ierc1822_proxiable {
     use ethers::providers::Middleware;
     #[doc = "IERC1822Proxiable was auto-generated with ethers-rs Abigen. More information at: https://github.com/gakonst/ethers-rs"]
     use std::sync::Arc;
+    # [rustfmt :: skip] const __ABI : & str = "[{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"proxiableUUID\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\",\"components\":[]}]}]" ;
+    #[doc = r" The parsed JSON-ABI of the contract."]
     pub static IERC1822PROXIABLE_ABI: ethers::contract::Lazy<ethers::core::abi::Abi> =
         ethers::contract::Lazy::new(|| {
-            ethers :: core :: utils :: __serde_json :: from_str ("[{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"proxiableUUID\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\",\"components\":[]}]}]") . expect ("invalid abi")
+            ethers::core::utils::__serde_json::from_str(__ABI).expect("invalid abi")
         });
     pub struct IERC1822Proxiable<M>(ethers::contract::Contract<M>);
     impl<M> Clone for IERC1822Proxiable<M> {
@@ -32,7 +34,7 @@ pub mod ierc1822_proxiable {
             &self.0
         }
     }
-    impl<M: Middleware> std::fmt::Debug for IERC1822Proxiable<M> {
+    impl<M> std::fmt::Debug for IERC1822Proxiable<M> {
         fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
             f.debug_tuple(stringify!(IERC1822Proxiable))
                 .field(&self.address())

@@ -16,9 +16,11 @@ pub mod i_beacon {
     use ethers::providers::Middleware;
     #[doc = "IBeacon was auto-generated with ethers-rs Abigen. More information at: https://github.com/gakonst/ethers-rs"]
     use std::sync::Arc;
+    # [rustfmt :: skip] const __ABI : & str = "[{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"implementation\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\",\"components\":[]}]}]" ;
+    #[doc = r" The parsed JSON-ABI of the contract."]
     pub static IBEACON_ABI: ethers::contract::Lazy<ethers::core::abi::Abi> =
         ethers::contract::Lazy::new(|| {
-            ethers :: core :: utils :: __serde_json :: from_str ("[{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"implementation\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\",\"components\":[]}]}]") . expect ("invalid abi")
+            ethers::core::utils::__serde_json::from_str(__ABI).expect("invalid abi")
         });
     pub struct IBeacon<M>(ethers::contract::Contract<M>);
     impl<M> Clone for IBeacon<M> {
@@ -32,7 +34,7 @@ pub mod i_beacon {
             &self.0
         }
     }
-    impl<M: Middleware> std::fmt::Debug for IBeacon<M> {
+    impl<M> std::fmt::Debug for IBeacon<M> {
         fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
             f.debug_tuple(stringify!(IBeacon))
                 .field(&self.address())

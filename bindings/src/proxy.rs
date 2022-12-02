@@ -16,9 +16,11 @@ pub mod proxy {
     use ethers::providers::Middleware;
     #[doc = "Proxy was auto-generated with ethers-rs Abigen. More information at: https://github.com/gakonst/ethers-rs"]
     use std::sync::Arc;
+    # [rustfmt :: skip] const __ABI : & str = "[{\"inputs\":[],\"stateMutability\":\"payable\",\"type\":\"fallback\",\"outputs\":[]},{\"inputs\":[],\"stateMutability\":\"payable\",\"type\":\"receive\",\"outputs\":[]}]" ;
+    #[doc = r" The parsed JSON-ABI of the contract."]
     pub static PROXY_ABI: ethers::contract::Lazy<ethers::core::abi::Abi> =
         ethers::contract::Lazy::new(|| {
-            ethers :: core :: utils :: __serde_json :: from_str ("[{\"inputs\":[],\"stateMutability\":\"payable\",\"type\":\"fallback\",\"outputs\":[]},{\"inputs\":[],\"stateMutability\":\"payable\",\"type\":\"receive\",\"outputs\":[]}]") . expect ("invalid abi")
+            ethers::core::utils::__serde_json::from_str(__ABI).expect("invalid abi")
         });
     pub struct Proxy<M>(ethers::contract::Contract<M>);
     impl<M> Clone for Proxy<M> {
@@ -32,7 +34,7 @@ pub mod proxy {
             &self.0
         }
     }
-    impl<M: Middleware> std::fmt::Debug for Proxy<M> {
+    impl<M> std::fmt::Debug for Proxy<M> {
         fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
             f.debug_tuple(stringify!(Proxy))
                 .field(&self.address())

@@ -9,7 +9,10 @@ use std::{
     process::{Command, Output},
     sync::Arc,
 };
-use bindings::themelio_bridge::ThemelioBridge;
+use bindings::{
+    themelio_bridge::ThemelioBridge,
+    themelio_bridge_proxy::{THEMELIOBRIDGEPROXY_ABI, THEMELIOBRIDGEPROXY_BYTECODE},
+};
 use clap::Parser;
 use dotenv::dotenv;
 use ethers::abi::{ethereum_types::BigEndianHash, Token};
@@ -61,11 +64,11 @@ use themelio_structs::{
     StakeDoc,
     Transaction,
     TxKind,
-    TxHash, STAKE_EPOCH
+    TxHash,
+    STAKE_EPOCH
 };
 use tmelcrypt::{
-    ed25519_keygen,
-    Ed25519PK,
+    Ed25519SK,
     HashVal,
 };
 
@@ -221,7 +224,7 @@ fn random_stakedoc(epoch: u64) -> StakeDoc {
         .gen_range(epoch + 2..u64::MAX);
 
     StakeDoc {
-        pubkey: ed25519_keygen().0,
+        pubkey: Ed25519SK::generate().to_public(),
         e_start,
         e_post_end,
         syms_staked: CoinValue(rand::thread_rng().gen_range(0..u32::MAX as u128)),
@@ -313,10 +316,10 @@ fn create_stakes_and_sign_header(num_stakedocs: u32, epoch: u64, header: &[u8]) 
         let mut stakedoc = random_stakedoc(epoch);
         println!("{:?}\n", stakedoc);
 
-        let keypair = ed25519_keygen();
-        stakedoc.pubkey = Ed25519PK::from_bytes(&keypair.0.0).unwrap();
+        let keypair = Ed25519SK::generate();
+        stakedoc.pubkey = keypair.to_public();
 
-        let signature: &[u8] = &keypair.1.sign(header);
+        let signature = keypair.sign(header);
 
         signatures.push(signature[0..32].try_into().unwrap());
         signatures.push(signature[32..64].try_into().unwrap());
@@ -411,7 +414,7 @@ async fn link_libraries(
 
             let compiled = compiled
                 .find("Blake3Sol")
-                .expect("Could not find contract.");
+                .expect("Could not find blake3 contract.");
 
             let (abi, bytecode, _runtime_bytecode) = compiled
                 .into_parts_or_default();
@@ -576,7 +579,7 @@ async fn setup_bridge() -> H160 {
 
     let compiled = compiled
         .find("ThemelioBridge")
-        .expect("Could not find contract.");
+        .expect("Could not find ThemelioBridge contract.");
 
     let mut bytecode = compiled.bin.unwrap().clone();
 
@@ -638,9 +641,6 @@ async fn setup_bridge_proxy(
         .next()
         .expect("Error accessing path.");
 
-    let themelio_bridge_proxy_source = source
-        .join("contracts/src/ThemelioBridgeProxy.sol");
-
     let remappings = vec!(
         Remapping {
             name: String::from("openzeppelin-contracts/contracts/proxy/ERC1967/"),
@@ -663,25 +663,6 @@ async fn setup_bridge_proxy(
 
     settings.remappings = remappings;
 
-    let compiler_input = CompilerInput {
-        language: "Solidity".to_string(),
-        sources: Sources::from([(
-            "contracts/ThemelioBridgeProxy.sol".into(),
-            Source {
-                content: fs::read_to_string(themelio_bridge_proxy_source)
-                    .expect("Unable to read file.")
-            },
-        )]),
-        settings,
-    };
-
-    let compiled = Solc::default().compile_exact(&compiler_input)
-        .expect("Could not compile contracts.");
-
-    let (abi, bytecode, _runtime_bytecode) = compiled
-        .find("ThemelioBridgeProxy")
-        .expect("Could not find contract.")
-        .into_parts_or_default();
 
     let config = Config::new()
         .expect("Error initializing configuration.");
@@ -703,7 +684,11 @@ async fn setup_bridge_proxy(
     let client = SignerMiddleware::new(provider.clone(), wallet);
     let client = Arc::new(client);
 
-    let factory = ContractFactory::new(abi, bytecode, client.clone());
+    let factory = ContractFactory::new(
+        THEMELIOBRIDGEPROXY_ABI.clone(),
+        THEMELIOBRIDGEPROXY_BYTECODE.clone(),
+        client.clone()
+    );
 
     let mut func_selector = hex::decode("09f10a3c").unwrap().to_vec();
 
@@ -859,7 +844,13 @@ async fn test_e2e(num_stakedocs: u32, num_transactions: u32, themelio_recipient:
 
     // send tx to verifyHeader
     let header_call = wrapped_bridge_proxy
-        .verify_header(U256::from(genesis_header.height.0), serialized_header_bytes, stakes.clone(), signatures)
+        .verify_header(
+            genesis_header.height.0.into(),
+            serialized_header_bytes,
+            stakes.clone(),
+            signatures,
+            100.into()
+        )
         .gas(GAS_LIMIT);
     let header_pending_tx = header_call
         .send()
@@ -1042,7 +1033,7 @@ async fn main() -> Result<()> {
     let state_root = get_state_root(proof_vars.block_id)
         .await;
 
-    println!("State root at proof height {:?} : {:#?}\n********************\n\n", proof_vars.block_id, state_root);
+    println!("\nState root at proof height {:?} : {:#?}\n\n********************\n", proof_vars.block_id, state_root);
 
     write_to_cov(&proof_vars, state_root)?;
 
